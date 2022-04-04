@@ -7,7 +7,6 @@ from os.path import expanduser as user
 import cpuinfo
 
 if len(sys.argv) != 1 and not ('-h' in sys.argv[1] or '--help' in sys.argv[1]):
-    print(sys.argv[1])
     print('Initialising Jina NOW...')
 
 from now.deployment.deployment import cmd
