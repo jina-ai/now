@@ -46,7 +46,7 @@ def create_local_cluster(kind_path):
         )
         if err and 'failed to create cluster' in err.decode('utf-8'):
             print('\n' + err.decode('utf-8').split('ERROR')[-1])
-            exit(0)
+            exit(1)
         spinner.ok("📦")
 
 
