@@ -14,10 +14,10 @@
 
 NOW gives the world access to customized neural image search in just one line of code.
 Main features
-- 👶 **Easy**: No engineering skills required
-- ⚡ **Fast**: Set up your search case within minutes
+- 🐥 **Easy**: No engineering skills required
+- 🐎 **Fast**: Set up your search case within minutes
 - 🌈 **quality**: If you provide labels to your documents, jina NOW fine-tunes a model for you
-[//]: # (- : **reliable**: we take care of the deployment and maintainance)
+- 🌳 **reliable**: we take care of the deployment and maintainance
 
 ### Pip
 ```bash
@@ -41,6 +41,17 @@ jina-now start --quality medium --data /local/img/folder
 ```bash
 jina-now stop
 ```
+
+### Requirements
+- `python 3.7`, `3.8` or `3.9`
+#### Local execution
+- `docker` installation
+- 10 GB assigned to docker
+- user must be permitted to run docker containers
+#### Google Cloud deployment
+- billing account enabled
+#### Jina Flow as a service
+- no further requirements (coming soon)
 
 ## Supported Modalities (more will be added)
 
