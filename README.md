@@ -2,7 +2,7 @@
 <img src="https://user-images.githubusercontent.com/11627845/160392052-69672e7f-2e4d-45ee-a617-4384256bb6e8.jpg" alt="Jina NOW logo: The data structure for unstructured data" width="300px">
 <br>
 
-<b>One line to host them all. Bootstrap your search case in minutes.</b>
+<b>One line to host them all. Bootstrap your image search case in minutes.</b>
 </p>
 
 <p align=center>
@@ -12,13 +12,12 @@
 
 <!-- start elevator-pitch -->
 
-NOW gives the world access to customized neural search in just one line of code.
-
-Data privacy is becoming increasingly important. And with most data being private, you can't use public search engines (like Google) to search for it. This is where Jina NOW comes in, letting you build a search engine for your private data with just one terminal command.
-
-- 🔒 **Private data**: Create your own search engine with your own private data
-- 🌐 **Democratization of neural search**: Empowers everyone to use neural search - even people who wouldn't normally have access to AI
-- 🔋 **Batteries included**: simple defaults allow you to provide just the data and get your search use case up and running
+NOW gives the world access to customized neural image search in just one line of code.
+Main features
+- 👶 **Easy**: No engineering skills required
+- ⚡ **Fast**: Set up your search case within minutes
+- 🌈 **quality**: If you provide labels to your documents, jina NOW fine-tunes a model for you
+[//]: # (- : **reliable**: we take care of the deployment and maintainance)
 
 ### Pip
 ```bash
