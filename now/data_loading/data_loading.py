@@ -101,8 +101,18 @@ def load_data(
                     exit(1)
             else:
                 da = DocumentArray.from_files(path + '/**')
-                da.apply(lambda d: d.load_uri_to_image_tensor())
-                da.apply(lambda d: to_jpg(d))
+
+                def convert_fn(d):
+                    try:
+                        d.load_uri_to_image_tensor()
+                        return to_jpg(d)
+                    except:
+                        return d
+
+                with yaspin(text="Pre-processing data", color="green") as spinner:
+                    da.apply(convert_fn)
+                    da = DocumentArray(d for d in da if d.blob != b'')
+                    spinner.ok('🏭')
                 ds_type = 'local_folder'
 
                 # for d in da:
