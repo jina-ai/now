@@ -8,9 +8,6 @@ import cpuinfo
 
 if len(sys.argv) != 1 and not ('-h' in sys.argv[1] or '--help' in sys.argv[1]):
     print('Initialising Jina NOW...')
-
-from now.deployment.deployment import cmd
-
 cur_dir = pathlib.Path(__file__).parents[1].resolve()
 
 
@@ -71,6 +68,8 @@ def cli(args=None):
 
         print(__version__)
         exit(0)
+
+    from now.deployment.deployment import cmd
 
     os.environ['JINA_LOG_LEVEL'] = 'CRITICAL'
     os_type = platform.system().lower()
