@@ -17,7 +17,7 @@ Main features
 - 🐥 **Easy**: No engineering skills required
 - 🐎 **Fast**: Set up your search case within minutes
 - 🌈 **quality**: If you provide labels to your documents, jina NOW fine-tunes a model for you
-- 🌳 **reliable**: we take care of the deployment and maintainance
+- 🌳 **reliable**: we take care of the deployment and maintenance (coming soon)
 
 ### Pip
 ```bash
