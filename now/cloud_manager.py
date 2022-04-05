@@ -41,9 +41,12 @@ def create_local_cluster(kind_path):
             cowsay.cow('see you soon 👋')
             exit(0)
     with yaspin(text="Setting up local cluster", color="green") as spinner:
-        cmd(
+        _, err = cmd(
             f'{kind_path} create cluster --name {cluster_name} --config {cur_dir}/kind.yml',
         )
+        if err and 'failed to create cluster' in err.decode('utf-8'):
+            print('\n' + err.decode('utf-8').split('ERROR')[-1])
+            exit(0)
         spinner.ok("📦")
 
 
