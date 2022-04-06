@@ -16,8 +16,8 @@ NOW gives the world access to customized neural image search in just one line of
 Main features
 - 🐥 **Easy**: No engineering skills required
 - 🐎 **Fast**: Set up your search case within minutes
-- 🌈 **quality**: If you provide labels to your documents, jina NOW fine-tunes a model for you
-- 🌳 **reliable**: we take care of the deployment and maintenance (coming soon)
+- 🌈 **Quality**: If you provide labels to your documents, Jina NOW fine-tunes a model for you
+- 🌳 **Reliable**: We take care of the deployment and maintenance (coming soon)
 
 ### Pip
 ```bash
