@@ -2,7 +2,9 @@ import json
 import os
 import pkgutil
 import shutil
+import signal
 import stat
+import sys
 from collections import namedtuple
 
 import numpy as np
@@ -386,3 +388,13 @@ def copytree(src, dst, symlinks=False, ignore=None):
             copytree(s, d, symlinks, ignore)
         else:
             shutil.copy2(s, d)
+
+
+def my_handler(signum, frame, spinner):
+    with spinner.hidden():
+        sys.stdout.write("Program terminated!\n")
+    spinner.stop()
+    exit(0)
+
+
+sigmap = {signal.SIGINT: my_handler, signal.SIGTERM: my_handler}

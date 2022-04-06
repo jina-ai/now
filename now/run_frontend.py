@@ -22,7 +22,7 @@ def run(
     **kwargs,
 ):
     # deployment
-    with yaspin(text="Deploy frontend", color="green") as spinner:
+    with yaspin(sigmap=sigmap, text="Deploy frontend", color="green") as spinner:
         apply_replace(
             f'{cur_dir}/deployment/k8s_frontend-deployment.yml',
             {

@@ -11,6 +11,7 @@ from yaspin.spinners import Spinners
 
 from now.cloud_manager import is_local_cluster
 from now.deployment.deployment import apply_replace, cmd
+from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
 
@@ -60,7 +61,9 @@ def wait_for_all_pods_in_ns(ns, num_pods, max_wait=1800):
 
 def deploy_k8s(f, ns, num_pods, tmpdir, **kwargs):
     k8_path = os.path.join(tmpdir, f'k8s/{ns}')
-    with yaspin(text="Convert Flow to Kubernetes YAML", color="green") as spinner:
+    with yaspin(
+        sigmap=sigmap, text="Convert Flow to Kubernetes YAML", color="green"
+    ) as spinner:
         f.to_k8s_yaml(k8_path)
         spinner.ok('🔄')
 
@@ -70,6 +73,7 @@ def deploy_k8s(f, ns, num_pods, tmpdir, **kwargs):
     # deploy flow
     with yaspin(
         Spinners.earth,
+        sigmap=sigmap,
         text="Deploy Jina Flow (might take a bit)",
     ) as spinner:
         gateway_host_internal = f'gateway.{ns}.svc.cluster.local'

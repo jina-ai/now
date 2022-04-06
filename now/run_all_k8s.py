@@ -8,6 +8,7 @@ from now.cloud_manager import setup_cluster
 from now.deployment.deployment import cmd
 from now.dialog import get_context_names, get_user_input, prompt_plus
 from now.system_information import get_system_state
+from now.utils import sigmap
 
 
 def stop_now(contexts, active_context, **kwargs):
@@ -26,12 +27,16 @@ def stop_now(contexts, active_context, **kwargs):
         ]
         cluster = prompt_plus(questions, 'cluster')
     if cluster == 'kind-jina-now':
-        with yaspin(text=f"Remove local cluster {cluster}", color="green") as spinner:
+        with yaspin(
+            sigmap=sigmap, text=f"Remove local cluster {cluster}", color="green"
+        ) as spinner:
             cmd(f'{kwargs["kind_path"]} delete clusters jina-now')
             spinner.ok('💀')
         cowsay.cow('local jina NOW cluster removed')
     else:
-        with yaspin(text=f"Remove jina NOW from {cluster}", color="green") as spinner:
+        with yaspin(
+            sigmap=sigmap, text=f"Remove jina NOW from {cluster}", color="green"
+        ) as spinner:
             cmd(f'{kwargs["kubectl_path"]} delete ns nowapi')
             spinner.ok('💀')
         cowsay.cow(f'nowapi namespace removed from {cluster}')

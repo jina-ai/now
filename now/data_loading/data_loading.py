@@ -10,7 +10,7 @@ from docarray import DocumentArray
 from yaspin import yaspin
 
 from now.data_loading.convert_datasets_to_jpeg import to_jpg
-from now.utils import download
+from now.utils import download, sigmap
 
 
 def _fetch_da_from_url(
@@ -26,7 +26,7 @@ def _fetch_da_from_url(
     if not os.path.exists(data_path):
         download(url, data_path)
 
-    with yaspin(text="Extracting dataset", color="green") as spinner:
+    with yaspin(sigmap=sigmap, text="Extracting dataset", color="green") as spinner:
         da = DocumentArray.load_binary(data_path)
         spinner.ok("📂")
     return da
@@ -109,7 +109,9 @@ def load_data(
                     except:
                         return d
 
-                with yaspin(text="Pre-processing data", color="green") as spinner:
+                with yaspin(
+                    sigmap=sigmap, text="Pre-processing data", color="green"
+                ) as spinner:
                     da.apply(convert_fn)
                     da = DocumentArray(d for d in da if d.blob != b'')
                     spinner.ok('🏭')

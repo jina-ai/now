@@ -5,7 +5,7 @@ from datetime import datetime
 
 from yaspin import yaspin
 
-from now.utils import copytree
+from now.utils import copytree, sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
 
@@ -28,7 +28,9 @@ def push_to_hub(tmpdir):
     dst_path = os.path.join(tmpdir, 'now/hub/head_encoder')
     copytree(src_path, dst_path)
     bashCommand = f"jina hub push --private {dst_path} -t {name} --force-update {class_name} --secret {secret}"
-    with yaspin(text="Push fine-tuned model to Jina Hub", color="green") as spinner:
+    with yaspin(
+        sigmap=sigmap, text="Push fine-tuned model to Jina Hub", color="green"
+    ) as spinner:
         with open(os.path.join(tmpdir, "NUL"), "w") as fh:
             process = subprocess.Popen(bashCommand.split(), stdout=fh)
         output, error = process.communicate()

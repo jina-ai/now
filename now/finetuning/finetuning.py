@@ -20,9 +20,9 @@ from yaspin import yaspin
 from now.deployment.deployment import cmd
 from now.deployment.flow import batch, deploy_k8s
 from now.hub.head_encoder.head_encoder import LinearHead
-from now.utils import get_device
+from now.utils import get_device, sigmap
 
-epochs = 50  # use early stopping
+epochs = 5  # use early stopping
 
 
 def finetune_layer(ds, batch_size, final_layer_output_dim, embedding_size, tmpdir):
@@ -97,7 +97,9 @@ def finetune_layer(ds, batch_size, final_layer_output_dim, embedding_size, tmpdi
 
 def add_clip_embeddings(dataset, vision_model, tmpdir, **kwargs):
     need_to_add_embeddings = False
-    with yaspin(text="Check if embeddings already exist", color="green") as spinner:
+    with yaspin(
+        sigmap=sigmap, text="Check if embeddings already exist", color="green"
+    ) as spinner:
         for k, da in dataset.items():
             if da is None:
                 continue

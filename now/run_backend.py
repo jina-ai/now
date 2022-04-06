@@ -8,6 +8,7 @@ from yaspin import yaspin
 from now.data_loading.data_loading import fill_missing, load_data
 from now.deployment.flow import deploy_flow
 from now.dialog import UserInput
+from now.utils import sigmap
 
 
 def save_mean(da, tmpdir):
@@ -78,7 +79,7 @@ def run(user_input: UserInput, is_debug, tmpdir, **kwargs):
                 dataset, batch_size, final_layer_output_dim, embedding_size, tmpdir
             )
 
-        with yaspin(text="Create overview", color="green") as spinner:
+        with yaspin(sigmap=sigmap, text="Create overview", color="green") as spinner:
             try:
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore")

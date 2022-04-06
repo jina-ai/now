@@ -15,6 +15,7 @@ from now.deployment.deployment import cmd
 from now.system_information import get_system_state
 from now.thridparty.PyInquirer import Separator
 from now.thridparty.PyInquirer.prompt import prompt
+from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
 NEW_CLUSTER = '🐣 create new'
@@ -92,7 +93,7 @@ def prompt_plus(questions, attribute, **kwargs):
         if attribute in answer:
             return answer[attribute]
         else:
-            os.system('clear')
+            print("\n" * 10)
             cowsay.cow('see you soon 👋')
             exit(0)
 
@@ -285,7 +286,9 @@ def ask_new_cluster(user_input: UserInput, os_type, arch):
         out, _ = cmd('which gcloud')
         if not out:
             if not os.path.exists(user('~/.cache/jina-now/google-cloud-sdk')):
-                with yaspin(text='Setting up gcloud', color='green') as spinner:
+                with yaspin(
+                    sigmap=sigmap, text='Setting up gcloud', color='green'
+                ) as spinner:
                     cmd(
                         f'/bin/bash {cur_dir}/scripts/install_gcloud.sh {os_type} {arch}',
                     )

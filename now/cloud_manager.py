@@ -10,6 +10,7 @@ from yaspin import yaspin
 from now.deployment.deployment import cmd
 from now.dialog import prompt_plus
 from now.gke_deploy import create_gke_cluster
+from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
 
@@ -35,16 +36,22 @@ def create_local_cluster(kind_path):
         ]
         recreate = prompt_plus(questions, 'proceed')
         if recreate:
-            with yaspin(text="Remove local cluster", color="green") as spinner:
+            with yaspin(
+                sigmap=sigmap, text="Remove local cluster", color="green"
+            ) as spinner:
                 cmd(f'{kind_path} delete clusters {cluster_name}')
                 spinner.ok('💀')
         else:
             cowsay.cow('see you soon 👋')
             exit(0)
-    with yaspin(text="Setting up local cluster", color="green") as spinner:
+    with yaspin(
+        sigmap=sigmap, text="Setting up local cluster", color="green"
+    ) as spinner:
         kindest_images = docker.from_env().images.list('kindest/node')
         if len(kindest_images) == 0:
-            print('Download kind image to set up local cluster - this might take a while :)')
+            print(
+                'Download kind image to set up local cluster - this might take a while :)'
+            )
         _, err = cmd(
             f'{kind_path} create cluster --name {cluster_name} --config {cur_dir}/kind.yml',
         )
@@ -104,7 +111,9 @@ def ask_existing(kubectl_path):
         ]
         remove = prompt_plus(questions, 'proceed')
         if remove:
-            with yaspin(text="Remove old deployment", color="green") as spinner:
+            with yaspin(
+                sigmap=sigmap, text="Remove old deployment", color="green"
+            ) as spinner:
                 cmd(f'{kubectl_path} delete ns nowapi')
                 spinner.ok('💀')
         else:
