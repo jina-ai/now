@@ -204,6 +204,7 @@ def save_before_after_image(path):
     draw.text((im1.width + 150, 100), "Query", 0, font=font)
     draw.text((im1.width // 2, 100), "Top-k", 0, font=font)
     draw.text((im1.width + 100 + (im2.width // 2), 100), "Top-k", 0, font=font)
+    dst.show(title=path.split('.')[0])
     dst.save(path)
     for imgs in figs:
         for img in imgs:
