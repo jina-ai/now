@@ -37,6 +37,7 @@ class LinearHead(Module):
         self.mean = load_mean(mean_path)
 
     def forward(self, x):
+        x = x.cpu()
         x -= self.mean
         x = x.float()
         x = self.linear1(x)

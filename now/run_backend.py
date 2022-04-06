@@ -94,7 +94,7 @@ def run(user_input: UserInput, is_debug, tmpdir, **kwargs):
                         finetuned_model_path,
                         class_label='finetuner_label',
                     )
-            except Exception:
+            except Exception as e:
                 pass
             spinner.ok('🖼')
         print(
