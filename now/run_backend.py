@@ -98,9 +98,7 @@ def run(user_input: UserInput, is_debug, tmpdir, **kwargs):
                 pass
             spinner.ok('🖼')
         print(
-            f'{20*"*"}'
-            f'\nbefore-after comparison result is saved in the current working directory as image\n'
-            f'{20*"*"}'
+            f'before-after comparison result is saved in the current working directory as image'
         )
         executor_name = push_to_hub(tmpdir)
     else:
