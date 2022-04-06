@@ -22,7 +22,7 @@ from now.deployment.flow import batch, deploy_k8s
 from now.hub.head_encoder.head_encoder import LinearHead
 from now.utils import get_device, sigmap
 
-epochs = 5  # use early stopping
+epochs = 50  # use early stopping
 
 
 def finetune_layer(ds, batch_size, final_layer_output_dim, embedding_size, tmpdir):
