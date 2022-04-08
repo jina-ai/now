@@ -20,11 +20,17 @@ Data privacy is becoming increasingly important. And with most data being privat
 - 🌐 **Democratization of neural search**: Empowers everyone to use neural search - even people who wouldn't normally have access to AI
 - 🔋 **Batteries included**: simple defaults allow you to provide just the data and get your search use case up and running
 
-### Pip
+### Installation
+
 ```bash
 pip install jina-now
 ```
 In case you need sudo for running Docker, install and use jina-now using sudo as well.
+
+#### Mac M1
+
+For the Mac M1 it is generally recommended using a conda environment as outlined in the [Jina documentation](https://docs.jina.ai/get-started/install/troubleshooting/#on-mac-m1).
+
 ### Usage
 ```bash
 jina-now [start | stop] --data [pushpullid | localpath | url] --quality [medium | good | excellent] --cluster [k8s-cluster-name]
