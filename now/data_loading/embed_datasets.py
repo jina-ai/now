@@ -58,10 +58,11 @@ def to_jpg(image_docs):
 
     def convert_to_jpeg(d: Document):
         if not d.blob:
-            d.convert_image_tensor_to_blob()
-            im = Image.fromarray(d.tensor)
-            d.tensor = None
-            d.blob = pil2bytes(im)
+            d.convert_image_tensor_to_blob(image_format='jpeg')
+            # TODO: Why we need separate conversion if same is done above?
+            # im = Image.fromarray(d.tensor)
+            # d.tensor = None
+            # d.blob = pil2bytes(im)
         return d
 
     image_docs.apply(convert_to_jpeg)
