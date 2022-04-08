@@ -61,6 +61,19 @@ setup(
     setup_requires=['setuptools>=18.0', 'wheel'],
     install_requires=install_requires,
     entry_points={"console_scripts": ["jina-now = now.cli:cli"]},
+    extras_require={
+        'test': [
+            'pytest',
+            'pytest-timeout',
+            'pytest-mock',
+            'pytest-cov',
+            'pytest-repeat',
+            'pytest-reraise',
+            'mock',
+            'pytest-custom_exit_code',
+            'black==22.3.0',
+        ]
+    },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
