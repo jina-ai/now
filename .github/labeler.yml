@@ -1,0 +1,49 @@
+# Add 'label1' to any changes within 'example' folder or any subfolders
+area/docs:
+  - docs/**/*
+  - ./*.md
+
+area/testing:
+  - tests/**/*
+
+area/setup:
+  - setup.py
+  - setup.cfg
+  - requirements.txt
+  - requirements_pip.txt
+  - MANIFEST.in
+
+area/core:
+  - now/**/*
+
+area/entrypoint:
+  - now/cli/__init__.py
+
+area/housekeeping:
+  - .github/**/*
+  - ./.gitignore
+  - ./*.yaml
+  - ./*.yml
+
+area/cicd:
+  - .github/workflows/**/*
+
+area/docker:
+  - Dockerfiles/**/*
+  - ./.dockerignore
+
+area/script:
+  - scripts/**/*
+
+component/cli:
+  - now/cli/**/*
+
+component/data:
+  - now/data_loading/**/*
+
+component/deploymeny:
+  - now/deployment/**/*
+
+component/finetuning:
+  - now/finetuning/**/*
+
