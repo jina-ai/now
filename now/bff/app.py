@@ -19,4 +19,4 @@ def read_root():
     return {'Hello': 'World!'}
 
 
-app.include_router(api_router, prefix="/")
+app.include_router(api_router)

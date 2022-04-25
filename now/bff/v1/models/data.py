@@ -13,4 +13,6 @@ class Data(BaseModel):
     )
 
     class Config:
-        allow_mutation = False
+        case_sensitive = False
+        validate_assignment = True
+        arbitrary_types_allowed = True
