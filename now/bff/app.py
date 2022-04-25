@@ -10,7 +10,7 @@ from now.bff.decorators import api_method, timed
 from now.bff.v1.api import v1_router
 
 logging.config.dictConfig(api_settings.DEFAULT_LOGGING_CONFIG)
-logger = logging.getLogger('api.app')
+logger = logging.getLogger('bff.app')
 logger.setLevel(api_settings.DEFAULT_LOGGING_LEVEL)
 
 
@@ -44,15 +44,15 @@ def build_app():
         """
         return (
             f'{__title__} v{__version__} 🚀 {__summary__} ✨ '
-            f'author: {__author__} email: {__email__} 📄 '
+            f'author: {__author__} email: {__email__} 📄  '
             'Check out /docs or /redoc for the API documentation!'
         )
 
     @app.on_event('startup')
     def startup():
         logger.info(
-            f'Finetuner API v{__version__} started! '
-            f'Listening to [::]:{api_settings.port}'
+            f'Jina NOW v{__version__} started! '
+            f'Listening to [::]:{api_settings.DEFAULT_PORT}'
         )
 
     app.include_router(v1_router, prefix='/api/v1')
