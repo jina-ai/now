@@ -1,8 +1,9 @@
 from typing import List
 
 from docarray import Document, DocumentArray
-from fastapi import APIRouter
+from fastapi import APIRouter, File, UploadFile
 from jina import Client
+from starlette.responses import StreamingResponse
 
 from now.bff.v1.models.data import Data as DataAPIModel
 
@@ -37,21 +38,25 @@ def search(query: str, host: str, limit: int = 10):
     """
     query_doc = Document(text=query)
     c = Client(host=host, port=31080)
-    matches = c.post('/search', query_doc, limit=limit)['@m']
+    matches = c.post('/search', query_doc, parameters={"limit": limit})['@m']
     # TODO: return matches
 
 
-@router.get(
+@router.post(
     "/search",
     response_model=DataAPIModel,
-    summary='Search text data via image as query',
+    summary='Search image data via image as query',
 )
-def search(image_uri: str, host: str, limit: int = 10):
+def search(
+    host: str = 'localhost', image_file: UploadFile = File(...), limit: int = 10
+):
     """
-    Retrieve matching texts for a given image uri as query
+    Retrieve matching images for a given image uri as query
     """
-    query_doc = Document(uri=image_uri)
-    query_doc.load_uri_to_image_tensor(224, 224)
+    # TODO: Uri or FileUploader?
+    contents = image_file.file.read()
+    query_doc = Document(blob=contents)
+    query_doc.convert_blob_to_image_tensor(224, 224)
     c = Client(host=host, port=31080)
-    matches = c.post('/search', query_doc, limit=limit)['@m']
-    # TODO: return matches
+    matches = c.post('/search', query_doc, parameters={"limit": limit})['@m']
+    return StreamingResponse(iter(matches.texts))
