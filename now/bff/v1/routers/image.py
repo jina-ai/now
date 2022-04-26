@@ -32,7 +32,7 @@ def index(host: str, data: List[str]):
     response_model=JinaResponseModel,
     summary='Search image data via text as query',
 )
-def search(host: str, query: str, limit: int = 10):
+def search(query: str, host: str = 'localhost', limit: int = 10):
     """
     Retrieve matching images for a given text as query
     """

@@ -32,11 +32,11 @@ def build_app():
     @app.get('/ping')
     @api_method
     @timed
-    def check_liveness() -> dict:
+    def check_liveness() -> str:
         """
         Sanity check - this will let the caller know that the service is operational.
         """
-        return {"ping": "pong!"}
+        return 'pong!'
 
     @app.get('/')
     @api_method
