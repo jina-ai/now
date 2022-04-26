@@ -17,6 +17,7 @@ def test_client():
 @pytest.fixture(scope='package')
 def backend_server():
     kwargs = {
+        'output_modality': 'image',
         'data': 'best-artworks',
         'quality': 'medium',
         'cluster': NEW_CLUSTER,
