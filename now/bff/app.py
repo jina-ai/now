@@ -3,6 +3,8 @@ import sys
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+from starlette.requests import Request
 
 import now.bff.settings as api_settings
 from now.bff import __author__, __email__, __summary__, __title__, __version__
@@ -24,6 +26,7 @@ def build_app():
             'author': __author__,
             'email': __email__,
         },
+        docs_url=None,
     )
 
     @app.get('/ping')
@@ -55,6 +58,15 @@ def build_app():
             f'Listening to [::]:{api_settings.DEFAULT_PORT}'
         )
 
+    def _render_custom_swagger_html(req: Request) -> HTMLResponse:
+        import urllib.request
+
+        swagger_url = 'https://api.jina.ai/swagger'
+        req = urllib.request.Request(swagger_url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req) as f:
+            return HTMLResponse(f.read().decode())
+
+    app.add_route('/docs', _render_custom_swagger_html, include_in_schema=False)
     app.include_router(v1_router, prefix='/api/v1')
 
     return app

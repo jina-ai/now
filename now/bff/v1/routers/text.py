@@ -3,16 +3,16 @@ from typing import List
 from docarray import Document, DocumentArray
 from fastapi import APIRouter, File, UploadFile
 from jina import Client
-from starlette.responses import StreamingResponse
-
-from now.bff.v1.models.data import Data as DataAPIModel
+from jina.serve.runtimes.gateway.http.models import JinaResponseModel
 
 router = APIRouter()
 
 
 # Index
 @router.post(
-    "/index", response_model=DataAPIModel, summary='Add more data to the indexer'
+    "/index",
+    response_model=JinaResponseModel,
+    summary='Add more data to the indexer',
 )
 def index(data: List[str], host: str):
     """
@@ -27,9 +27,9 @@ def index(data: List[str], host: str):
 
 
 # Search
-@router.get(
+@router.post(
     "/search/{query}",
-    response_model=DataAPIModel,
+    response_model=JinaResponseModel,
     summary='Search text data via text as query',
 )
 def search(query: str, host: str, limit: int = 10):
@@ -38,17 +38,20 @@ def search(query: str, host: str, limit: int = 10):
     """
     query_doc = Document(text=query)
     c = Client(host=host, port=31080)
-    matches = c.post('/search', query_doc, parameters={"limit": limit})['@m']
-    # TODO: return matches
+    docs = c.post('/search', query_doc, parameters={"limit": limit})
+    del docs[...][:, 'embedding']
+    return docs
 
 
 @router.post(
     "/search",
-    response_model=DataAPIModel,
+    response_model=JinaResponseModel,
     summary='Search image data via image as query',
 )
 def search(
-    host: str = 'localhost', image_file: UploadFile = File(...), limit: int = 10
+    host: str = 'localhost',
+    image_file: UploadFile = File(...),
+    limit: int = 10,
 ):
     """
     Retrieve matching images for a given image uri as query
@@ -58,5 +61,6 @@ def search(
     query_doc = Document(blob=contents)
     query_doc.convert_blob_to_image_tensor(224, 224)
     c = Client(host=host, port=31080)
-    matches = c.post('/search', query_doc, parameters={"limit": limit})['@m']
-    return StreamingResponse(iter(matches.texts))
+    docs = c.post('/search', query_doc, parameters={"limit": limit})
+    del docs[...][:, 'embedding']
+    return docs

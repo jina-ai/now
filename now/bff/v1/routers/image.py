@@ -2,17 +2,17 @@ from typing import List
 
 from docarray import Document, DocumentArray
 from fastapi import APIRouter, File, UploadFile
-from fastapi.responses import StreamingResponse
 from jina import Client
-
-from now.bff.v1.models.data import Data as DataAPIModel
+from jina.serve.runtimes.gateway.http.models import JinaResponseModel
 
 router = APIRouter()
 
 
 # Index
 @router.post(
-    "/index", response_model=DataAPIModel, summary='Add more data to the indexer'
+    "/index",
+    response_model=JinaResponseModel,
+    summary='Add more data to the indexer',
 )
 def index(host: str, data: List[str]):
     """
@@ -29,7 +29,7 @@ def index(host: str, data: List[str]):
 # Search
 @router.post(
     "/search/{query}",
-    response_model=DataAPIModel,
+    response_model=JinaResponseModel,
     summary='Search image data via text as query',
 )
 def search(host: str, query: str, limit: int = 10):
@@ -38,17 +38,20 @@ def search(host: str, query: str, limit: int = 10):
     """
     query_doc = Document(text=query)
     c = Client(host=host, port=31080)
-    matches = c.post('/search', query_doc, parameters={"limit": limit})['@m']
-    return StreamingResponse(iter(matches.blobs))
+    docs = c.post('/search', query_doc, parameters={"limit": limit})
+    del docs[...][:, ('embedding', 'tensor')]
+    return {"data": docs.to_dict()}
 
 
 @router.post(
     "/search",
-    response_model=DataAPIModel,
+    response_model=JinaResponseModel,
     summary='Search image data via image as query',
 )
 def search(
-    host: str = 'localhost', image_file: UploadFile = File(...), limit: int = 10
+    host: str = 'localhost',
+    image_file: UploadFile = File(...),
+    limit: int = 10,
 ):
     """
     Retrieve matching images for a given image uri as query
@@ -58,5 +61,6 @@ def search(
     query_doc = Document(blob=contents)
     query_doc.convert_blob_to_image_tensor(224, 224)
     c = Client(host=host, port=31080)
-    matches = c.post('/search', query_doc, parameters={"limit": limit})['@m']
-    return StreamingResponse(iter(matches.blobs))
+    docs = c.post('/search', query_doc, parameters={"limit": limit})
+    del docs[...][:, ('embedding', 'tensor')]
+    return {"data": docs.to_dict()}
