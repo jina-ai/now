@@ -17,7 +17,7 @@ def test_client():
 @pytest.fixture(scope='package')
 def backend_server():
     kwargs = {
-        'data': 'best_artworks',
+        'data': 'best-artworks',
         'quality': 'medium',
         'cluster': NEW_CLUSTER,
         'cluster_new': 'local',
