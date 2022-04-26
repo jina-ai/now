@@ -32,7 +32,7 @@ def index(data: List[str], host: str):
     response_model=JinaResponseModel,
     summary='Search text data via text as query',
 )
-def search(query: str, host: str, limit: int = 10):
+def search(query: str, host: str = 'localhost', limit: int = 10):
     """
     Retrieve matching texts for a given text as query
     """
@@ -46,7 +46,7 @@ def search(query: str, host: str, limit: int = 10):
 @router.post(
     "/search",
     response_model=JinaResponseModel,
-    summary='Search image data via image as query',
+    summary='Search text data via image as query',
 )
 def search(
     host: str = 'localhost',
