@@ -3,9 +3,13 @@ k8s
 now/hub/head_encoder/best_model_ndcg
 now/hub/head_encoder/mean.bin
 *.idea
+
+# png images
 *.png
+# don't ignore them if it is inside docs / frontend
 !docs/*
 !docs/**/*
+!now/frontend/*
 
 data/
 jina-now/
