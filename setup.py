@@ -35,7 +35,7 @@ with pathlib.Path('requirements.txt').open() as requirements_txt:
     ]
 sys_platform = platform.system().lower()
 # if sys_platform == 'darwin':
-torch_requirement = ['torch==1.10.2']
+torch_requirement = ['torch>=1.10.2']
 # else:
 #     torch_requirement = [
 #         'torch==1.10.2+cpu',
