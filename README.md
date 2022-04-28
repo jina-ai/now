@@ -41,6 +41,7 @@ In case you need sudo for running Docker, install and use jina-now using sudo as
 #### Mac M1
 
 For the Mac M1 it is generally recommended using a conda environment as outlined in the [Jina documentation](https://docs.jina.ai/get-started/install/troubleshooting/#on-mac-m1).
+In a new conda environment first execute `conda install grpcio tokenizers protobuf`. Then run `pip install jina-now`.
 
 ### Usage
 ```bash
