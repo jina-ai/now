@@ -107,7 +107,7 @@ extensions = [
     'sphinx_inline_tabs',
 ]
 
-myst_enable_extensions = ['colon_fence', 'substitution', 'deflist']
+myst_enable_extensions = ['colon_fence', 'substitution']
 
 # -- Custom 404 page
 
@@ -125,7 +125,7 @@ notfound_context = {
 }
 notfound_no_urls_prefix = True
 
-apidoc_module_dir = '../client'
+apidoc_module_dir = repo_dir
 apidoc_output_dir = 'api'
 apidoc_excluded_paths = ['tests', 'legacy', 'hub', 'toy*', 'setup.py']
 apidoc_separate_modules = True

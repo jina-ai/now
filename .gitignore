@@ -6,10 +6,10 @@ now/hub/head_encoder/mean.bin
 
 # png images
 *.png
-# don't ignore them if it is inside docs / frontend
-!docs/*
-!docs/**/*
-!now/frontend/*
+# but don't ignore them if it is inside docs / frontend
+!docs/*.png
+!docs/**/*.png
+!now/frontend/*.png
 
 data/
 jina-now/
@@ -23,4 +23,11 @@ __pycache__/
 build
 jina_now.egg-info
 dist
+
+# sphinx generated docs
 docs/_build
+docs/_build/*
+docs/_build/**/*
+docs/api
+docs/api/*
+docs/api/**/*
