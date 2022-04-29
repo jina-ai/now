@@ -49,8 +49,8 @@ def search(query: str, host: str = 'localhost', limit: int = 10):
     summary='Search text data via image as query',
 )
 def search(
-    host: str = 'localhost',
     image_file: UploadFile = File(...),
+    host: str = 'localhost',
     limit: int = 10,
 ):
     """

@@ -45,10 +45,19 @@ def test_backend(
         search_text = 'test'
 
     # Perform end-to-end check via bff
-    response = test_client.post(
-        f'/api/v1/image/{search_text}',
-        params={'limit': 9},  # limit has no effect as of now
-    )
+    if output_modality == 'image':
+        response = test_client.post(
+            f'/api/v1/image/search{search_text}',
+            params={'limit': 9},  # limit has no effect as of now
+        )
+    elif output_modality == 'text':
+        response = test_client.post(
+            f'/api/v1/text/search{search_text}',
+            params={'limit': 9},  # limit has no effect as of now
+        )
+    else:
+        # add more here when the new modality is added
+        response = None
     assert response.status_code == 200
     # Limit param is not respected and hence 20 matches are returned
     # Therefore, once the limit is implemented in the CustomIndexer,

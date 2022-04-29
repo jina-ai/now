@@ -14,7 +14,7 @@ router = APIRouter()
     response_model=JinaResponseModel,
     summary='Add more data to the indexer',
 )
-def index(host: str, data: List[str]):
+def index(data: List[str], host: str):
     """
     Append the image data to the indexer
     """
@@ -49,8 +49,8 @@ def search(query: str, host: str = 'localhost', limit: int = 10):
     summary='Search image data via image as query',
 )
 def search(
-    host: str = 'localhost',
     image_file: UploadFile = File(...),
+    host: str = 'localhost',
     limit: int = 10,
 ):
     """
