@@ -1,8 +1,7 @@
 from argparse import Namespace
 
 import pytest
-from docarray import Document
-from jina import Client
+from fastapi.testclient import TestClient
 
 from now.cli import cli
 from now.dialog import NEW_CLUSTER
@@ -21,6 +20,7 @@ def test_backend(
     quality: str,
     cluster: str,
     new_cluster_type: str,
+    test_client: TestClient,
 ):
     # sandbox = dataset == 'best-artworks'
     # deactivate sandbox since it is hanging from time to time
@@ -44,14 +44,13 @@ def test_backend(
     else:
         search_text = 'test'
 
-    client = Client(
-        host='localhost',
-        protocol="grpc",
-        port=31080,  # 30080 for frontend, 31080 for backend
+    # Perform end-to-end check via bff
+    response = test_client.post(
+        f'/api/v1/image/{search_text}',
+        params={'limit': 9},  # limit has no effect as of now
     )
-    response = client.search(
-        Document(text=search_text),
-        parameters={"limit": 9, "filter": {}},
-    )
-
-    assert response[0].matches
+    assert response.status_code == 200
+    # Limit param is not respected and hence 20 matches are returned
+    # Therefore, once the limit is implemented in the CustomIndexer,
+    # we should change the below value to 9
+    assert len(response[0].matches) == 20
