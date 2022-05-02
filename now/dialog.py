@@ -209,16 +209,18 @@ def _configure_dataset_music(user_input: UserInput, **kwargs):
 
 
 def _configure_sandbox(user_input: UserInput, **kwargs):
-    sandbox = _prompt_value(
-        name='sandbox',
-        prompt_message='Use Sandbox to save memory? (process data on our servers)',
-        choices=[
-            {'name': '⛔ no', 'value': False},
-            {'name': '✅ yes', 'value': True},
-        ],
-        **kwargs,
-    )
-    user_input.sandbox = sandbox
+    # sandbox = _prompt_value(
+    #     name='sandbox',
+    #     prompt_message='Use Sandbox to save memory? (process data on our servers)',
+    #     choices=[
+    #         {'name': '⛔ no', 'value': False},
+    #         {'name': '✅ yes', 'value': True},
+    #     ],
+    #     **kwargs,
+    # )
+    # user_input.sandbox = sandbox
+    # Deactivated sandbox for now since it is hanging sometimes
+    user_input.sandbox = False
     return user_input
 
 
