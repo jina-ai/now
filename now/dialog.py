@@ -66,6 +66,8 @@ class UserInput:
 def configure_user_input(**kwargs) -> UserInput:
     print_headline()
     user_input = _configure_output_modality(UserInput(), **kwargs)
+    user_input = _configure_dataset(user_input, **kwargs)
+    user_input = _configure_cluster(user_input, **kwargs)
     user_input = _configure_sandbox(user_input, **kwargs)
     return user_input
 
@@ -130,12 +132,34 @@ def _configure_output_modality(user_input: UserInput, **kwargs) -> UserInput:
         **kwargs,
     )
     user_input.output_modality = modality
-    if modality == Modalities.IMAGE:
-        return _configure_dataset_image(user_input, **kwargs)
-    elif modality == Modalities.TEXT:
-        return _configure_dataset_text(user_input, **kwargs)
+    return user_input
+
+
+def _configure_dataset(user_input: UserInput, **kwargs) -> UserInput:
+    if user_input.output_modality == Modalities.IMAGE:
+        user_input = _configure_dataset_image(user_input, **kwargs)
+    elif user_input.output_modality == Modalities.TEXT:
+        user_input = _configure_dataset_text(user_input, **kwargs)
     else:
-        return _configure_dataset_music(user_input, **kwargs)
+        user_input = _configure_dataset_music(user_input, **kwargs)
+
+    dataset = user_input.data
+    if dataset in AVAILABLE_DATASET[user_input.output_modality]:
+        user_input.is_custom_dataset = False
+        if user_input.output_modality == Modalities.MUSIC:
+            return user_input
+        else:
+            return _configure_quality(user_input, **kwargs)
+    else:
+        user_input.is_custom_dataset = True
+        if dataset == 'custom':
+            return _configure_custom_dataset(user_input, **kwargs)
+        else:
+            _parse_custom_data_from_cli(dataset, user_input)
+            if user_input.output_modality == Modalities.MUSIC:
+                return user_input
+            else:
+                return _configure_quality(user_input, **kwargs)
 
 
 def _configure_dataset_image(user_input: UserInput, **kwargs) -> UserInput:
@@ -169,7 +193,7 @@ def _configure_dataset_image(user_input: UserInput, **kwargs) -> UserInput:
         **kwargs,
     )
     user_input.data = dataset
-    return _configure_dataset(user_input, **kwargs)
+    return user_input
 
 
 def _configure_dataset_text(user_input: UserInput, **kwargs) -> UserInput:
@@ -186,7 +210,7 @@ def _configure_dataset_text(user_input: UserInput, **kwargs) -> UserInput:
         **kwargs,
     )
     user_input.data = dataset
-    return _configure_dataset(user_input, **kwargs)
+    return user_input
 
 
 def _configure_dataset_music(user_input: UserInput, **kwargs):
@@ -205,7 +229,7 @@ def _configure_dataset_music(user_input: UserInput, **kwargs):
         **kwargs,
     )
     user_input.data = dataset
-    return _configure_dataset(user_input, **kwargs)
+    return user_input
 
 
 def _configure_sandbox(user_input: UserInput, **kwargs):
@@ -222,26 +246,6 @@ def _configure_sandbox(user_input: UserInput, **kwargs):
     return user_input
 
 
-def _configure_dataset(user_input: UserInput, **kwargs) -> UserInput:
-    dataset = user_input.data
-    if dataset in AVAILABLE_DATASET[user_input.output_modality]:
-        user_input.is_custom_dataset = False
-        if user_input.output_modality == Modalities.MUSIC:
-            return _configure_cluster(user_input, **kwargs)
-        else:
-            return _configure_quality(user_input, **kwargs)
-    else:
-        user_input.is_custom_dataset = True
-        if dataset == 'custom':
-            return _configure_custom_dataset(user_input, **kwargs)
-        else:
-            _parse_custom_data_from_cli(dataset, user_input)
-            if user_input.output_modality == Modalities.MUSIC:
-                return _configure_cluster(user_input, **kwargs)
-            else:
-                return _configure_quality(user_input, **kwargs)
-
-
 def _configure_custom_dataset(user_input: UserInput, **kwargs) -> UserInput:
     def configure_docarray() -> UserInput:
         dataset_secret = _prompt_value(
@@ -253,7 +257,7 @@ def _configure_custom_dataset(user_input: UserInput, **kwargs) -> UserInput:
         if user_input.output_modality == Modalities.IMAGE:
             return _configure_quality(user_input, **kwargs)
         else:
-            return _configure_cluster(user_input, **kwargs)
+            return user_input
 
     def configure_url() -> UserInput:
         dataset_url = _prompt_value(
@@ -265,7 +269,7 @@ def _configure_custom_dataset(user_input: UserInput, **kwargs) -> UserInput:
         if user_input.output_modality == Modalities.IMAGE:
             return _configure_quality(user_input, **kwargs)
         else:
-            return _configure_cluster(user_input, **kwargs)
+            return user_input
 
     def configure_path() -> UserInput:
         dataset_path = _prompt_value(
@@ -277,7 +281,7 @@ def _configure_custom_dataset(user_input: UserInput, **kwargs) -> UserInput:
         if user_input.output_modality == Modalities.IMAGE:
             return _configure_quality(user_input, **kwargs)
         else:
-            return _configure_cluster(user_input, **kwargs)
+            return user_input
 
     custom_dataset_type = _prompt_value(
         name='custom_dataset_type',
