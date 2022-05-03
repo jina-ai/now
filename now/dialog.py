@@ -3,11 +3,6 @@ This module implements a command-line dialog with the user.
 Its goal is to configure a UserInput object with users specifications.
 Optionally, values can be passed from the command-line when jina-now is launched. In that case,
 the dialog won't ask for the value.
-
-The dialog can be seen as a decision tree, where based on user input new questions (nodes in the tree)
-are asked. This tree is realized by recursive function calls, each function call representing a node
-that modifies the user object based and returns a call to the next configuration step based on the
-user's configuration.
 """
 from __future__ import annotations, print_function, unicode_literals
 
@@ -65,13 +60,14 @@ class UserInput:
 
 def configure_user_input(**kwargs) -> UserInput:
     print_headline()
+
     user_input = UserInput()
     _configure_output_modality(user_input, **kwargs)
     _configure_dataset(user_input, **kwargs)
-    if user_input.output_modality != Modalities.MUSIC:
-        _configure_quality(user_input, **kwargs)
+    _configure_quality(user_input, **kwargs)
     _configure_cluster(user_input, **kwargs)
     _configure_sandbox(user_input, **kwargs)
+
     return user_input
 
 
@@ -120,7 +116,7 @@ def _configure_dataset(user_input: UserInput, **kwargs) -> None:
         _configure_dataset_image(user_input, **kwargs)
     elif user_input.output_modality == Modalities.TEXT:
         _configure_dataset_text(user_input, **kwargs)
-    else:
+    elif user_input.output_modality == Modalities.MUSIC:
         _configure_dataset_music(user_input, **kwargs)
 
     if user_input.data in AVAILABLE_DATASET[user_input.output_modality]:
@@ -165,7 +161,7 @@ def _configure_dataset_image(user_input: UserInput, **kwargs) -> None:
     )
 
 
-def _configure_dataset_text(user_input: UserInput, **kwargs) -> UserInput:
+def _configure_dataset_text(user_input: UserInput, **kwargs):
     user_input.data = _prompt_value(
         name='data',
         prompt_message='What dataset do you want to use?',
@@ -204,7 +200,7 @@ def _configure_dataset_music(user_input: UserInput, **kwargs):
 
 def _configure_custom_dataset(user_input: UserInput, **kwargs) -> None:
     """Asks user questions to setup custom dataset in user_input."""
-    custom_dataset_type = _prompt_value(
+    user_input.custom_dataset_type = _prompt_value(
         name='custom_dataset_type',
         prompt_message='How do you want to provide input? (format: https://docarray.jina.ai/)',
         choices=[
@@ -223,29 +219,25 @@ def _configure_custom_dataset(user_input: UserInput, **kwargs) -> None:
         ],
         **kwargs,
     )
-    user_input.custom_dataset_type = custom_dataset_type
 
-    if custom_dataset_type == 'docarray':
-        dataset_secret = _prompt_value(
+    if user_input.custom_dataset_type == 'docarray':
+        user_input.dataset_secret = _prompt_value(
             name='dataset_secret',
             prompt_message='Please enter your docarray secret.',
             prompt_type='password',
         )
-        user_input.dataset_secret = dataset_secret
-    elif custom_dataset_type == 'url':
-        dataset_url = _prompt_value(
+    elif user_input.custom_dataset_type == 'url':
+        user_input.dataset_url = _prompt_value(
             name='dataset_url',
             prompt_message='Please paste in your url for the docarray.',
             prompt_type='input',
         )
-        user_input.dataset_url = dataset_url
-    elif custom_dataset_type == 'path':
-        dataset_path = _prompt_value(
+    elif user_input.custom_dataset_type == 'path':
+        user_input.dataset_path = _prompt_value(
             name='dataset_path',
             prompt_message='Please enter the path to the local folder.',
             prompt_type='input',
         )
-        user_input.dataset_path = dataset_path
 
 
 def _configure_cluster(user_input: UserInput, **kwargs) -> None:
@@ -308,6 +300,8 @@ def _configure_cluster(user_input: UserInput, **kwargs) -> None:
 
 def _configure_quality(user_input: UserInput, **kwargs) -> None:
     """Asks users questions to set quality attribute of user_input"""
+    if user_input.output_modality == Modalities.MUSIC:
+        return
     user_input.quality = _prompt_value(
         name='quality',
         choices=[
@@ -333,7 +327,7 @@ def _configure_quality(user_input: UserInput, **kwargs) -> None:
 
 
 def _configure_sandbox(user_input: UserInput, **kwargs):
-    sandbox = _prompt_value(
+    user_input.sandbox = _prompt_value(
         name='sandbox',
         prompt_message='Use Sandbox to save memory? (process data on our servers)',
         choices=[
@@ -342,7 +336,6 @@ def _configure_sandbox(user_input: UserInput, **kwargs):
         ],
         **kwargs,
     )
-    user_input.sandbox = sandbox
 
 
 def _construct_cluster_choices(active_context, contexts):
