@@ -65,10 +65,14 @@ class UserInput:
 
 def configure_user_input(**kwargs) -> UserInput:
     print_headline()
-    user_input = _configure_output_modality(UserInput(), **kwargs)
-    user_input = _configure_dataset(user_input, **kwargs)
-    user_input = _configure_cluster(user_input, **kwargs)
-    user_input = _configure_sandbox(user_input, **kwargs)
+
+    user_input = UserInput()
+    _configure_output_modality(user_input, **kwargs)
+    _configure_dataset(user_input, **kwargs)
+    _configure_quality(user_input, **kwargs)
+    _configure_cluster(user_input, **kwargs)
+    _configure_sandbox(user_input, **kwargs)
+
     return user_input
 
 
@@ -115,7 +119,7 @@ def print_headline():
     print()
 
 
-def _configure_output_modality(user_input: UserInput, **kwargs) -> UserInput:
+def _configure_output_modality(user_input: UserInput, **kwargs):
     modality = _prompt_value(
         name='output_modality',
         choices=[
@@ -124,7 +128,7 @@ def _configure_output_modality(user_input: UserInput, **kwargs) -> UserInput:
             {
                 'name': '🥁 Music Search',
                 'value': Modalities.MUSIC,
-                'disabled': AVAILABLE_SOON,
+                # 'disabled': AVAILABLE_SOON,
             },
         ],
         prompt_message='Which modalities you want to work with?',
@@ -132,34 +136,25 @@ def _configure_output_modality(user_input: UserInput, **kwargs) -> UserInput:
         **kwargs,
     )
     user_input.output_modality = modality
-    return user_input
 
 
-def _configure_dataset(user_input: UserInput, **kwargs) -> UserInput:
+def _configure_dataset(user_input: UserInput, **kwargs):
     if user_input.output_modality == Modalities.IMAGE:
-        user_input = _configure_dataset_image(user_input, **kwargs)
+        _configure_dataset_image(user_input, **kwargs)
     elif user_input.output_modality == Modalities.TEXT:
-        user_input = _configure_dataset_text(user_input, **kwargs)
+        _configure_dataset_text(user_input, **kwargs)
     else:
-        user_input = _configure_dataset_music(user_input, **kwargs)
+        _configure_dataset_music(user_input, **kwargs)
 
     dataset = user_input.data
     if dataset in AVAILABLE_DATASET[user_input.output_modality]:
         user_input.is_custom_dataset = False
-        if user_input.output_modality == Modalities.MUSIC:
-            return user_input
-        else:
-            return _configure_quality(user_input, **kwargs)
     else:
         user_input.is_custom_dataset = True
         if dataset == 'custom':
-            return _configure_custom_dataset(user_input, **kwargs)
+            _configure_custom_dataset(user_input, **kwargs)
         else:
             _parse_custom_data_from_cli(dataset, user_input)
-            if user_input.output_modality == Modalities.MUSIC:
-                return user_input
-            else:
-                return _configure_quality(user_input, **kwargs)
 
 
 def _configure_dataset_image(user_input: UserInput, **kwargs) -> UserInput:
@@ -246,43 +241,7 @@ def _configure_sandbox(user_input: UserInput, **kwargs):
     return user_input
 
 
-def _configure_custom_dataset(user_input: UserInput, **kwargs) -> UserInput:
-    def configure_docarray() -> UserInput:
-        dataset_secret = _prompt_value(
-            name='dataset_secret',
-            prompt_message='Please enter your docarray secret.',
-            prompt_type='password',
-        )
-        user_input.dataset_secret = dataset_secret
-        if user_input.output_modality == Modalities.IMAGE:
-            return _configure_quality(user_input, **kwargs)
-        else:
-            return user_input
-
-    def configure_url() -> UserInput:
-        dataset_url = _prompt_value(
-            name='dataset_url',
-            prompt_message='Please paste in your url for the docarray.',
-            prompt_type='input',
-        )
-        user_input.dataset_url = dataset_url
-        if user_input.output_modality == Modalities.IMAGE:
-            return _configure_quality(user_input, **kwargs)
-        else:
-            return user_input
-
-    def configure_path() -> UserInput:
-        dataset_path = _prompt_value(
-            name='dataset_path',
-            prompt_message='Please enter the path to the local folder.',
-            prompt_type='input',
-        )
-        user_input.dataset_path = dataset_path
-        if user_input.output_modality == Modalities.IMAGE:
-            return _configure_quality(user_input, **kwargs)
-        else:
-            return user_input
-
+def _configure_custom_dataset(user_input: UserInput, **kwargs):
     custom_dataset_type = _prompt_value(
         name='custom_dataset_type',
         prompt_message='How do you want to provide input? (format: https://docarray.jina.ai/)',
@@ -305,14 +264,31 @@ def _configure_custom_dataset(user_input: UserInput, **kwargs) -> UserInput:
 
     user_input.custom_dataset_type = custom_dataset_type
     if custom_dataset_type == 'docarray':
-        return configure_docarray()
+        dataset_secret = _prompt_value(
+            name='dataset_secret',
+            prompt_message='Please enter your docarray secret.',
+            prompt_type='password',
+        )
+        user_input.dataset_secret = dataset_secret
+
     if custom_dataset_type == 'url':
-        return configure_url()
+        dataset_url = _prompt_value(
+            name='dataset_url',
+            prompt_message='Please paste in your url for the docarray.',
+            prompt_type='input',
+        )
+        user_input.dataset_url = dataset_url
+
     if custom_dataset_type == 'path':
-        return configure_path()
+        dataset_path = _prompt_value(
+            name='dataset_path',
+            prompt_message='Please enter the path to the local folder.',
+            prompt_type='input',
+        )
+        user_input.dataset_path = dataset_path
 
 
-def _configure_cluster(user_input: UserInput, **kwargs) -> UserInput:
+def _configure_cluster(user_input: UserInput, **kwargs):
     def configure_new_cluster() -> UserInput:
         new_cluster_type = _prompt_value(
             name='new_cluster_type',
@@ -361,17 +337,17 @@ def _configure_cluster(user_input: UserInput, **kwargs) -> UserInput:
     )
     if cluster == NEW_CLUSTER['value']:
         user_input.cluster = cluster
-        return configure_new_cluster()
+        configure_new_cluster()
     else:
         user_input.cluster = cluster
         if not _cluster_running(cluster):
             print(f'Cluster {cluster} is not running. Please select a different one.')
-            return _configure_cluster(user_input, **kwargs)
-        else:
-            return user_input
+            _configure_cluster(user_input, **kwargs)
 
 
-def _configure_quality(user_input: UserInput, **kwargs) -> UserInput:
+def _configure_quality(user_input: UserInput, **kwargs):
+    if user_input.output_modality == Modalities.MUSIC:
+        return
     quality = _prompt_value(
         name='quality',
         choices=[
@@ -395,7 +371,6 @@ def _configure_quality(user_input: UserInput, **kwargs) -> UserInput:
 
     user_input.quality = quality
     _, user_input.model_variant = IMAGE_MODEL_QUALITY_MAP[quality]
-    return _configure_cluster(user_input, **kwargs)
 
 
 def _construct_cluster_choices(active_context, contexts):
