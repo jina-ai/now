@@ -40,7 +40,7 @@ def search(query: str, host: str = 'localhost', limit: int = 10):
     c = Client(host=host, port=31080)
     docs = c.post('/search', query_doc, parameters={"limit": limit})
     del docs[...][:, 'embedding']
-    return docs
+    return {"data": docs.to_dict()}
 
 
 @router.post(
@@ -63,4 +63,4 @@ def search(
     c = Client(host=host, port=31080)
     docs = c.post('/search', query_doc, parameters={"limit": limit})
     del docs[...][:, 'embedding']
-    return docs
+    return {"data": docs.to_dict()}
