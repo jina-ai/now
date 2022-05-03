@@ -48,7 +48,7 @@ def deploy_streamlit():
     # put this on the top so that it shows immediately, while the rest is loading
     st.set_page_config(page_title="NOW", page_icon='https://jina.ai/favicon.ico')
     _, mid, _ = st.columns([0.8, 1, 1])
-    img = Image.open('./logo.png')
+    img = Image.open('./logo.jpg')
     with mid:
         st.image(img)
     setup_session_state()
