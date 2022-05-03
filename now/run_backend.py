@@ -3,12 +3,11 @@ import pickle
 import warnings
 from os.path import join as osp
 
-from yaspin import yaspin
-
 from now.data_loading.data_loading import load_data
 from now.deployment.flow import deploy_flow
 from now.dialog import UserInput
 from now.finetuning.finetuning import fill_missing
+from now.log.log import yaspin_extended
 from now.utils import sigmap
 
 
@@ -102,7 +101,9 @@ def run(user_input: UserInput, is_debug, tmpdir, kubectl_path: str):
                 dataset, batch_size, final_layer_output_dim, embedding_size, tmpdir
             )
 
-        with yaspin(sigmap=sigmap, text="Create overview", color="green") as spinner:
+        with yaspin_extended(
+            sigmap=sigmap, text="Create overview", color="green"
+        ) as spinner:
             try:
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore")

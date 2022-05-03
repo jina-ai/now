@@ -6,7 +6,6 @@ from os.path import join as osp
 from typing import Optional
 
 from docarray import Document, DocumentArray
-from yaspin import yaspin
 
 from now.constants import (
     BASE_STORAGE_URL,
@@ -17,6 +16,7 @@ from now.constants import (
 )
 from now.data_loading.convert_datasets_to_jpeg import to_thumbnail_jpg
 from now.dialog import UserInput
+from now.log.log import yaspin_extended
 from now.utils import download, sigmap
 
 
@@ -69,7 +69,9 @@ def _fetch_da_from_url(
     if not os.path.exists(data_path):
         download(url, data_path)
 
-    with yaspin(sigmap=sigmap, text="Extracting dataset", color="green") as spinner:
+    with yaspin_extended(
+        sigmap=sigmap, text="Extracting dataset", color="green"
+    ) as spinner:
         da = DocumentArray.load_binary(data_path)
         spinner.ok("📂")
     return da
@@ -117,7 +119,7 @@ def _load_from_disk(dataset_path: str, modality: Modalities) -> DocumentArray:
                     return d
 
         if convert_fn is not None:
-            with yaspin(
+            with yaspin_extended(
                 sigmap=sigmap, text="Pre-processing data", color="green"
             ) as spinner:
                 da.apply(convert_fn)

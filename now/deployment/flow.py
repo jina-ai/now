@@ -6,11 +6,11 @@ from time import sleep
 from kubernetes import client as k8s_client
 from kubernetes import config
 from tqdm import tqdm
-from yaspin import yaspin
 from yaspin.spinners import Spinners
 
 from now.cloud_manager import is_local_cluster
 from now.deployment.deployment import apply_replace, cmd
+from now.log.log import yaspin_extended
 from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
@@ -61,7 +61,7 @@ def wait_for_all_pods_in_ns(ns, num_pods, max_wait=1800):
 
 def deploy_k8s(f, ns, num_pods, tmpdir, kubectl_path):
     k8_path = os.path.join(tmpdir, f'k8s/{ns}')
-    with yaspin(
+    with yaspin_extended(
         sigmap=sigmap, text="Convert Flow to Kubernetes YAML", color="green"
     ) as spinner:
         f.to_k8s_yaml(k8_path)
@@ -71,7 +71,7 @@ def deploy_k8s(f, ns, num_pods, tmpdir, kubectl_path):
     cmd(f'{kubectl_path} create namespace {ns}')
 
     # deploy flow
-    with yaspin(
+    with yaspin_extended(
         Spinners.earth,
         sigmap=sigmap,
         text="Deploy Jina Flow (might take a bit)",

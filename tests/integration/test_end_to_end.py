@@ -6,6 +6,7 @@ from jina import Client
 
 from now.cli import cli
 from now.dialog import NEW_CLUSTER
+from now.log import log
 
 
 @pytest.mark.parametrize(
@@ -22,6 +23,7 @@ def test_backend(
     cluster: str,
     new_cluster_type: str,
 ):
+    log.TEST = True
     sandbox = dataset == 'best-artworks'
     kwargs = {
         'output_modality': output_modality,
