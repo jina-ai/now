@@ -3,11 +3,6 @@ This module implements a command-line dialog with the user.
 Its goal is to configure a UserInput object with users specifications.
 Optionally, values can be passed from the command-line when jina-now is launched. In that case,
 the dialog won't ask for the value.
-
-The dialog can be seen as a decision tree, where based on user input new questions (nodes in the tree)
-are asked. This tree is realized by recursive function calls, each function call representing a node
-that modifies the user object based and returns a call to the next configuration step based on the
-user's configuration.
 """
 from __future__ import annotations, print_function, unicode_literals
 
@@ -128,7 +123,7 @@ def _configure_output_modality(user_input: UserInput, **kwargs):
             {
                 'name': '🥁 Music Search',
                 'value': Modalities.MUSIC,
-                # 'disabled': AVAILABLE_SOON,
+                'disabled': AVAILABLE_SOON,
             },
         ],
         prompt_message='Which modalities you want to work with?',
@@ -157,7 +152,7 @@ def _configure_dataset(user_input: UserInput, **kwargs):
             _parse_custom_data_from_cli(dataset, user_input)
 
 
-def _configure_dataset_image(user_input: UserInput, **kwargs) -> UserInput:
+def _configure_dataset_image(user_input: UserInput, **kwargs):
     dataset = _prompt_value(
         name='data',
         prompt_message='What dataset do you want to use?',
@@ -188,10 +183,9 @@ def _configure_dataset_image(user_input: UserInput, **kwargs) -> UserInput:
         **kwargs,
     )
     user_input.data = dataset
-    return user_input
 
 
-def _configure_dataset_text(user_input: UserInput, **kwargs) -> UserInput:
+def _configure_dataset_text(user_input: UserInput, **kwargs):
     dataset = _prompt_value(
         name='data',
         prompt_message='What dataset do you want to use?',
@@ -205,7 +199,6 @@ def _configure_dataset_text(user_input: UserInput, **kwargs) -> UserInput:
         **kwargs,
     )
     user_input.data = dataset
-    return user_input
 
 
 def _configure_dataset_music(user_input: UserInput, **kwargs):
@@ -224,11 +217,10 @@ def _configure_dataset_music(user_input: UserInput, **kwargs):
         **kwargs,
     )
     user_input.data = dataset
-    return user_input
 
 
 def _configure_sandbox(user_input: UserInput, **kwargs):
-    sandbox = _prompt_value(
+    user_input.sandbox = _prompt_value(
         name='sandbox',
         prompt_message='Use Sandbox to save memory? (process data on our servers)',
         choices=[
@@ -237,8 +229,6 @@ def _configure_sandbox(user_input: UserInput, **kwargs):
         ],
         **kwargs,
     )
-    user_input.sandbox = sandbox
-    return user_input
 
 
 def _configure_custom_dataset(user_input: UserInput, **kwargs):
@@ -264,32 +254,29 @@ def _configure_custom_dataset(user_input: UserInput, **kwargs):
 
     user_input.custom_dataset_type = custom_dataset_type
     if custom_dataset_type == 'docarray':
-        dataset_secret = _prompt_value(
+        user_input.dataset_secret = _prompt_value(
             name='dataset_secret',
             prompt_message='Please enter your docarray secret.',
             prompt_type='password',
         )
-        user_input.dataset_secret = dataset_secret
 
-    if custom_dataset_type == 'url':
-        dataset_url = _prompt_value(
+    elif custom_dataset_type == 'url':
+        user_input.dataset_url = _prompt_value(
             name='dataset_url',
             prompt_message='Please paste in your url for the docarray.',
             prompt_type='input',
         )
-        user_input.dataset_url = dataset_url
 
-    if custom_dataset_type == 'path':
-        dataset_path = _prompt_value(
+    elif custom_dataset_type == 'path':
+        user_input.dataset_path = _prompt_value(
             name='dataset_path',
             prompt_message='Please enter the path to the local folder.',
             prompt_type='input',
         )
-        user_input.dataset_path = dataset_path
 
 
 def _configure_cluster(user_input: UserInput, **kwargs):
-    def configure_new_cluster() -> UserInput:
+    def configure_new_cluster():
         new_cluster_type = _prompt_value(
             name='new_cluster_type',
             choices=[
@@ -323,7 +310,6 @@ def _configure_cluster(user_input: UserInput, **kwargs):
         user_input.new_cluster_type = new_cluster_type
         if user_input.new_cluster_type == 'gke':
             _maybe_install_gke(**kwargs)
-        return user_input
 
     choices = _construct_cluster_choices(
         active_context=kwargs.get('active_context'), contexts=kwargs.get('contexts')
