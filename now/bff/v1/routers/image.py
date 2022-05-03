@@ -47,7 +47,7 @@ def search(
     limit: int = 10,
 ):
     """
-    Retrieve matching images for a given query. Query should be base64 encoded
+    Retrieve matching images for a given query. Query should be `base64` encoded
     using human-readable characters - `utf-8`.
     """
     try:

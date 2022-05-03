@@ -42,7 +42,7 @@ def search(
     limit: int = 10,
 ):
     """
-    Retrieve matching texts for a given text as query. Query should be base64 encoded
+    Retrieve matching texts for a given text as query. Query should be `base64` encoded
     using human-readable characters - `utf-8`.
     """
     try:
