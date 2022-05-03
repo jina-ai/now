@@ -4,6 +4,7 @@ from argparse import Namespace
 import pytest
 from fastapi.testclient import TestClient
 
+from now.cli import cli
 from now.dialog import NEW_CLUSTER
 
 
@@ -35,7 +36,7 @@ def test_backend(
         'proceed': True,
     }
     kwargs = Namespace(**kwargs)
-    # cli(args=kwargs)
+    cli(args=kwargs)
 
     if dataset == 'best-artworks':
         search_text = 'impressionism'
