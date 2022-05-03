@@ -6,6 +6,8 @@ from fastapi import APIRouter, HTTPException
 from jina import Client
 from jina.serve.runtimes.gateway.http.models import JinaResponseModel
 
+from now.bff.v1.routers.helper import process_query
+
 router = APIRouter()
 
 
@@ -49,17 +51,7 @@ def search(
     using human-readable characters - `utf-8`.
     """
     try:
-        base64_bytes = query.encode(
-            'utf-8'
-        )  # This might not be necessary as `utf-8` is set by default
-        if modality == 'text':
-            message_bytes = base64.b64decode(base64_bytes).decode('utf-8')
-            query_doc = Document(text=message_bytes)
-        elif modality == 'image':
-            message_bytes = base64.decodebytes(base64_bytes)
-            query_doc = Document(blob=message_bytes)
-        else:
-            raise HTTPException(status_code=404, detail=f'Wrong modality selected.')
+        query_doc = process_query(query, modality)
     except Exception as e:
         raise HTTPException(
             status_code=404,
