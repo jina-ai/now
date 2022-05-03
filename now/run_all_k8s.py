@@ -58,7 +58,7 @@ def run_k8s(os_type: str = 'linux', arch: str = 'x86_64', **kwargs):
             **kwargs,
         )
         with tempfile.TemporaryDirectory() as tmpdir:
-            docker_frontend_tag = '0.0.7'
+            docker_frontend_tag = '0.0.8-dev-update-logo'
 
             setup_cluster(user_input.cluster, user_input.new_cluster_type, **kwargs)
             (
