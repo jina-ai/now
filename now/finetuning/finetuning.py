@@ -1,5 +1,6 @@
 import math
 import os
+import random
 from copy import deepcopy
 from time import sleep
 
@@ -151,3 +152,43 @@ def add_clip_embeddings(dataset, vision_model, tmpdir, kubectl_path):
 
             dataset[k] = (embedding_dataset + results).shuffle(42)
     cmd(f'{kubectl_path} delete ns {ns}')
+
+
+def fill_missing(ds, train_val_split_ratio, num_default_val_queries, is_debug):
+    if ds['train'] is None:
+        ds['train'] = ds['index']
+    if ds['val'] is None:
+        # TODO makes split based on classes rather than instances
+        split_index = max(
+            int(len(ds['train']) * train_val_split_ratio),
+            len(ds['train']) - 5000,
+        )
+        train = ds['train']
+        ds['train'], ds['val'] = train[:split_index], train[split_index:]
+
+    if ds['val_index'] is None:
+        ds['val_index'] = deepcopy(ds['val'])
+    if ds['val_query'] is None:
+        if is_debug:
+            num_queries = 10
+        else:
+            num_queries = 100
+
+        ds['val_query'] = DocumentArray(
+            [deepcopy(doc) for doc in random.sample(ds['val_index'], num_queries)]
+        )
+        # for d in ds['val_query']:
+        #     ds['val_index'].remove(d)
+
+    if ds['val_index_image'] is None:
+        ds['val_index_image'] = deepcopy(
+            # DocumentArray(d for d in ds['val'] if d.blob is not None)
+            DocumentArray(d for d in ds['val'] if d.blob != b'')
+        )
+    if ds['val_query_image'] is None:
+        ds['val_query_image'] = DocumentArray(
+            [
+                deepcopy(doc)
+                for doc in random.sample(ds['val_index_image'], num_default_val_queries)
+            ]
+        )

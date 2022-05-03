@@ -508,17 +508,30 @@ def _build_lyrics(
         lyrics = lyrics.sample(frac=1)
 
     # create sentences from lyrics
-    data = []
-    for idx, row in lyrics.iterrows():
+    data, all_sentences = [], []
+    for idx, row in tqdm(lyrics.iterrows()):
         if 0 < max_size <= len(data):
             break
         row = row.to_dict()
         _sentences = row.pop('Lyric').split('\n')
-        # filter empty and repeating sentences
-        _sentences = set(filter(lambda x: len(x) > 0, _sentences))
+        # filter empty, duplicate and one-word sentences and the ones containing special characters in beginning and end
+        _sentences = set(
+            filter(
+                lambda s: len(s) > 0
+                and not re.fullmatch(r"\W+[\s\w]*\W+", s)
+                and not re.fullmatch(r"\W", s)
+                and not re.fullmatch(r"\w+", s)
+                and not re.fullmatch(r"\w+[.]+", s)
+                and s not in all_sentences,
+                _sentences,
+            )
+        )
         for _sentence in _sentences:
             if 0 < max_size <= len(data):
                 break
+            all_sentences.append(_sentence)
+            if re.fullmatch(r".*\w", _sentence):
+                _sentence += "."
             data.append(
                 _DataPoint(
                     text=_sentence,
@@ -527,8 +540,7 @@ def _build_lyrics(
                         # 'artist': row['Artist'],
                         # 'artist_genres': row['Genres'],
                         # 'song': row['SName'],
-                        # 'additional_info': [row['Artist'], row['SName']],
-                        'additional_info': f"{row['SName']} by {row['Artist']}",
+                        'additional_info': [row['SName'], row['Artist']],
                     },
                 )
             )

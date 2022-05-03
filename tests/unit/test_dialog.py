@@ -8,7 +8,12 @@ from typing import Dict
 import pytest
 from pytest_mock import MockerFixture
 
-from now.dialog import QUALITY_MAP, Modalities, UserInput, configure_user_input
+from now.dialog import (
+    IMAGE_MODEL_QUALITY_MAP,
+    Modalities,
+    UserInput,
+    configure_user_input,
+)
 
 
 class CmdPromptMock:
@@ -61,7 +66,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
         UserInput(
             is_custom_dataset=False,
             create_new_cluster=True,
-            model_variant=QUALITY_MAP['good'][1],
+            model_variant=IMAGE_MODEL_QUALITY_MAP['good'][1],
         ),
     ),
     (
@@ -77,7 +82,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
         UserInput(
             is_custom_dataset=False,
             create_new_cluster=True,
-            model_variant=QUALITY_MAP['medium'][1],
+            model_variant=IMAGE_MODEL_QUALITY_MAP['medium'][1],
         ),
     ),
     (
@@ -95,7 +100,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
         UserInput(
             is_custom_dataset=True,
             create_new_cluster=True,
-            model_variant=QUALITY_MAP['medium'][1],
+            model_variant=IMAGE_MODEL_QUALITY_MAP['medium'][1],
         ),
     ),
     (
@@ -161,7 +166,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
         UserInput(
             is_custom_dataset=True,
             create_new_cluster=True,
-            model_variant=QUALITY_MAP['medium'][1],
+            model_variant=IMAGE_MODEL_QUALITY_MAP['medium'][1],
         ),
     ),
     (
@@ -177,7 +182,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
         UserInput(
             is_custom_dataset=False,
             create_new_cluster=True,
-            model_variant=QUALITY_MAP['good'][1],
+            model_variant=IMAGE_MODEL_QUALITY_MAP['good'][1],
         ),
     ),
     (
@@ -204,7 +209,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
         UserInput(
             is_custom_dataset=False,
             create_new_cluster=True,
-            model_variant=QUALITY_MAP['good'][1],
+            model_variant=IMAGE_MODEL_QUALITY_MAP['good'][1],
         ),
     ),
     (
@@ -218,7 +223,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
         UserInput(
             is_custom_dataset=False,
             create_new_cluster=True,
-            model_variant=QUALITY_MAP['good'][1],
+            model_variant=IMAGE_MODEL_QUALITY_MAP['good'][1],
         ),
     ),
     (
@@ -235,7 +240,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
         UserInput(
             is_custom_dataset=False,
             create_new_cluster=True,
-            model_variant=QUALITY_MAP['medium'][1],
+            model_variant=IMAGE_MODEL_QUALITY_MAP['medium'][1],
         ),
     ),
 ]

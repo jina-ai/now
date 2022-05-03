@@ -1,22 +1,64 @@
 import base64
 import os
-import random
 import uuid
 from copy import deepcopy
 from os.path import join as osp
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Union
 
 import torch
 from clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
 from docarray import Document, DocumentArray
 from yaspin import yaspin
 
+from now.constants import (
+    BASE_STORAGE_URL,
+    IMAGE_MODEL_QUALITY_MAP,
+    DatasetTypes,
+    Modalities,
+    Qualities,
+)
 from now.data_loading.convert_datasets_to_jpeg import to_thumbnail_jpg
-from now.dialog import QUALITY_MAP, Modalities
+from now.dialog import UserInput
 from now.utils import download, sigmap
 
 _tokenizer = _Tokenizer()
+
+
+def load_data(user_input: UserInput) -> DocumentArray:
+    """
+    Based on the user input, this function will pull the configured DocArray.
+
+    :param user_input: The configured user object. Result from the Jina Now cli dialog.
+    :return: The loaded DocumentArray.
+    """
+    da = None
+
+    if not user_input.is_custom_dataset:
+        print('⬇  Download DocArray')
+        url = get_dataset_url(
+            user_input.data, user_input.quality, user_input.output_modality
+        )
+        da = _fetch_da_from_url(url)
+
+    else:
+        if user_input.custom_dataset_type == DatasetTypes.DOCARRAY:
+            print('⬇  Pull DocArray')
+            da = _pull_docarray(user_input.dataset_secret)
+        elif user_input.custom_dataset_type == DatasetTypes.URL:
+            print('⬇  Pull DocArray')
+            da = _fetch_da_from_url(user_input.dataset_url)
+        elif user_input.custom_dataset_type == DatasetTypes.PATH:
+            print('💿  Loading DocArray from disk')
+            da = _load_from_disk(user_input.dataset_path, user_input.output_modality)
+
+    if da is None:
+        raise ValueError(
+            f'Could not load DocArray. Please check your configuration: {user_input}.'
+        )
+    da = da.shuffle(seed=42)
+    da = _deep_copy_da(da)
+    return da
 
 
 def _fetch_da_from_url(
@@ -38,98 +80,39 @@ def _fetch_da_from_url(
     return da
 
 
-def remove_duplicates(da: DocumentArray):
-    """Some da"""
-    # known_set = set()
-    # unique_dataset = DocumentArray()
-    # for i, d in enumerate(da):
-    #     d.id = str(uuid.uuid4())
-    #     l = d.tags['finetuner_label']
-    #     if d.text and l in known_set:
-    #         continue
-    #     unique_dataset.append(d)
-    #     known_set.add(l)
-    # return unique_dataset
-    # da_text = DocumentArray(d for d in da if d.text)
-    # da_img = DocumentArray(d for d in da if not d.text)
-    # da_text.embeddings = da_text.embeddings - da_text.embeddings.mean(0)
-    # da_img.embeddings = da_img.embeddings - da_img.embeddings.mean(0)
-
-    new_da = DocumentArray()
-    for i, d in enumerate(da):
-        new_doc = deepcopy(d)
-        new_doc.id = str(uuid.uuid4())
-        new_da.append(new_doc)
-    return new_da
-
-
-def load_data(
-    output_modality: str,
-    data: str,
-    model_quality: str,
-    is_custom: bool,
-    custom_type: str,
-    secret: Optional[str],
-    url: Optional[str],
-    path: Optional[str],
-) -> Tuple[DocumentArray, str]:
-
-    data_folder = None
-    if not is_custom:
-        print('⬇  Download data')
-        if output_modality == Modalities.IMAGE:
-            data_folder = 'jpeg'
-        elif output_modality == Modalities.TEXT:
-            data_folder = 'text'
-        elif output_modality == Modalities.MUSIC:
-            data_folder = 'music'
-        url = (
-            'https://storage.googleapis.com/jina-fashion-data/data/one-line/datasets/'
-            f'{data_folder}/{data}.{QUALITY_MAP[model_quality][0]}.bin'
+def _pull_docarray(dataset_secret: str):
+    try:
+        return DocumentArray.pull(token=dataset_secret, show_progress=True)
+    except Exception:
+        print(
+            '💔 oh no, the secret of your docarray is wrong, or it was deleted after 14 days'
         )
-        da = _fetch_da_from_url(url)
-        ds_type = 'demo'
+        exit(1)
 
+
+def _load_from_disk(dataset_path: str, modality: Modalities) -> DocumentArray:
+    if os.path.isfile(dataset_path):
+        try:
+            return DocumentArray.load_binary(dataset_path)
+        except Exception as e:
+            print(f'Failed to load the binary file provided under path {dataset_path}')
+            exit(1)
+    elif os.path.isdir(dataset_path):
+        with yaspin(
+            sigmap=sigmap, text="Loading and pre-processing data", color="green"
+        ) as spinner:
+            if modality == Modalities.IMAGE:
+                return _load_images_from_folder(dataset_path)
+            elif modality == Modalities.TEXT:
+                return _load_texts_from_folder(dataset_path)
+            elif modality == Modalities.MUSIC:
+                return _load_music_from_folder(dataset_path)
+            spinner.ok('🏭')
     else:
-        if custom_type == 'docarray':
-            print('⬇  pull docarray')
-            try:
-                da = DocumentArray.pull(token=secret, show_progress=True)
-                ds_type = 'docarray_pull'
-            except Exception:
-                print(
-                    '💔 oh no, the secret of your docarray is wrong, or it was deleted after 14 days'
-                )
-                exit(1)
-        elif custom_type == 'url':
-            print('⬇  Download data')
-            da = _fetch_da_from_url(url)
-            ds_type = 'url'
-        else:
-            if os.path.isfile(path):
-                try:
-                    da = DocumentArray.load_binary(path)
-                    ds_type = 'local_da'
-                except Exception as e:
-                    print('Failed to load the binary file provided')
-                    exit(1)
-            else:
-                with yaspin(
-                    sigmap=sigmap, text="Loading and pre-processing data", color="green"
-                ) as spinner:
-                    if output_modality == Modalities.IMAGE:
-                        da = _load_images_from_folder(path)
-                    elif output_modality == Modalities.TEXT:
-                        da = _load_texts_from_folder(path)
-                    spinner.ok('🏭')
-                ds_type = 'local_folder'
-
-                # for d in da:
-                #     d.tags['finetuner_label'] = os.path.dirname(d.uri).split('/')[-1]
-
-    da = da.shuffle(seed=42)
-    da = remove_duplicates(da)
-    return da, ds_type
+        raise ValueError(
+            f'The provided dataset path {dataset_path} does not'
+            f' appear to be a valid file or folder on your system.'
+        )
 
 
 def _load_images_from_folder(path: str) -> DocumentArray:
@@ -138,6 +121,23 @@ def _load_images_from_folder(path: str) -> DocumentArray:
             d.load_uri_to_image_tensor()
             return to_thumbnail_jpg(d)
         except:
+            return d
+
+    da = DocumentArray.from_files(path + '/**')
+    da.apply(convert_fn)
+    return DocumentArray(d for d in da if d.blob != b'')
+
+
+def _load_music_from_folder(path: str):
+    from pydub import AudioSegment
+
+    def convert_fn(d: Document):
+        try:
+            AudioSegment.from_file(d.uri)  # checks if file is valid
+            with open(d.uri, 'rb') as fh:
+                d.blob = fh.read()
+            return d
+        except Exception as e:
             return d
 
     da = DocumentArray.from_files(path + '/**')
@@ -238,48 +238,27 @@ def tokenize_sliding_window(
     return torch.stack(result)
 
 
-# def load_all_data(dataset):
-#     for k, v in dataset.items():
-#         if v is not None:
-#             dataset[k] = load_data(v)
+def get_dataset_url(
+    dataset: str, model_quality: Optional[Qualities], output_modality: Modalities
+) -> str:
+    data_folder = None
+    if output_modality == Modalities.IMAGE:
+        data_folder = 'jpeg'
+    elif output_modality == Modalities.TEXT:
+        data_folder = 'text'
+    elif output_modality == Modalities.MUSIC:
+        data_folder = 'music'
+
+    if model_quality is not None:
+        return f'{BASE_STORAGE_URL}/{data_folder}/{dataset}.{IMAGE_MODEL_QUALITY_MAP[model_quality][0]}.bin'
+    else:
+        return f'{BASE_STORAGE_URL}/{data_folder}/{dataset}.bin'
 
 
-def fill_missing(ds, train_val_split_ratio, num_default_val_queries, is_debug):
-    # ds['index'] = deepcopy(DocumentArray(d for d in ds['index'] if d.tensor is not None))
-    if ds['train'] is None:
-        ds['train'] = ds['index']
-    if ds['val'] is None:
-        # TODO makes split based on classes rather than instances
-        split_index = max(
-            int(len(ds['train']) * train_val_split_ratio),
-            len(ds['train']) - 5000,
-        )
-        train = ds['train']
-        ds['train'], ds['val'] = train[:split_index], train[split_index:]
-
-    if ds['val_index'] is None:
-        ds['val_index'] = deepcopy(ds['val'])
-    if ds['val_query'] is None:
-        if is_debug:
-            num_queries = 10
-        else:
-            num_queries = 100
-
-        ds['val_query'] = DocumentArray(
-            [deepcopy(doc) for doc in random.sample(ds['val_index'], num_queries)]
-        )
-        # for d in ds['val_query']:
-        #     ds['val_index'].remove(d)
-
-    if ds['val_index_image'] is None:
-        ds['val_index_image'] = deepcopy(
-            # DocumentArray(d for d in ds['val'] if d.blob is not None)
-            DocumentArray(d for d in ds['val'] if d.blob != b'')
-        )
-    if ds['val_query_image'] is None:
-        ds['val_query_image'] = DocumentArray(
-            [
-                deepcopy(doc)
-                for doc in random.sample(ds['val_index_image'], num_default_val_queries)
-            ]
-        )
+def _deep_copy_da(da: DocumentArray) -> DocumentArray:
+    new_da = DocumentArray()
+    for i, d in enumerate(da):
+        new_doc = deepcopy(d)
+        new_doc.id = str(uuid.uuid4())
+        new_da.append(new_doc)
+    return new_da

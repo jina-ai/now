@@ -11,3 +11,5 @@ prompt_toolkit==3.0.28
 protobuf==3.19.4
 docarray==0.10.2
 docker==5.0.3
+requests==2.27.1
+pydub==0.25.1

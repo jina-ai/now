@@ -1,13 +1,12 @@
 import io
-from typing import TYPE_CHECKING
 
 
 def upload_to_gcloud_bucket(project: str, bucket: str, location: str, fname: str):
     """
     Upload local file to Google Cloud bucket.
     """
-    if TYPE_CHECKING:
-        from google.cloud import storage
+    # if TYPE_CHECKING:
+    from google.cloud import storage
 
     client = storage.Client(project=project)
     bucket = client.get_bucket(bucket)

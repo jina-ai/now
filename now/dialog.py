@@ -22,6 +22,13 @@ from kubernetes import client, config
 from pyfiglet import Figlet
 from yaspin import yaspin
 
+from now.constants import (
+    AVAILABLE_DATASET,
+    IMAGE_MODEL_QUALITY_MAP,
+    DatasetTypes,
+    Modalities,
+    Qualities,
+)
 from now.deployment.deployment import cmd
 from now.thridparty.PyInquirer import Separator
 from now.thridparty.PyInquirer.prompt import prompt
@@ -30,34 +37,6 @@ from now.utils import sigmap
 cur_dir = pathlib.Path(__file__).parent.resolve()
 NEW_CLUSTER = {'name': '🐣 create new', 'value': 'new'}
 AVAILABLE_SOON = 'will be available in upcoming versions'
-QUALITY_MAP = {
-    'medium': ('ViT-B32', 'openai/clip-vit-base-patch32'),
-    'good': ('ViT-B16', 'openai/clip-vit-base-patch16'),
-    'excellent': ('ViT-L14', 'openai/clip-vit-large-patch14'),
-}
-AVAILABLE_DATASET = {
-    'image': [
-        'best-artworks',
-        'nft-monkey',
-        'tll',
-        'bird-species',
-        'stanford-cars',
-        'deepfashion',
-        'nih-chest-xrays',
-        'geolocation-geoguessr',
-    ],
-    'music': [
-        'music-genres-small',
-        'music-genres-large',
-    ],
-    'text': ['rock-lyrics', 'pop-lyrics', 'rap-lyrics', 'indie-lyrics', 'metal-lyrics'],
-}
-
-
-class Modalities:
-    IMAGE = 'image'
-    MUSIC = 'music'
-    TEXT = 'text'
 
 
 @dataclass
@@ -68,13 +47,13 @@ class UserInput:
     data: Optional[str] = None
     is_custom_dataset: Optional[bool] = None
 
-    custom_dataset_type: Optional[str] = None
+    custom_dataset_type: Optional[DatasetTypes] = None
     dataset_secret: Optional[str] = None
     dataset_url: Optional[str] = None
     dataset_path: Optional[str] = None
 
     # model related
-    quality: Optional[str] = None
+    quality: Optional[Qualities] = None
     sandbox: bool = False
     model_variant: Optional[str] = None
 
@@ -332,11 +311,11 @@ def _configure_quality(user_input: UserInput, **kwargs) -> None:
     user_input.quality = _prompt_value(
         name='quality',
         choices=[
-            {'name': '🦊 medium (≈3GB mem, 15q/s)', 'value': 'medium'},
-            {'name': '🐻 good (≈3GB mem, 2.5q/s)', 'value': 'good'},
+            {'name': '🦊 medium (≈3GB mem, 15q/s)', 'value': Qualities.MEDIUM},
+            {'name': '🐻 good (≈3GB mem, 2.5q/s)', 'value': Qualities.GOOD},
             {
                 'name': '🦄 excellent (≈4GB mem, 0.5q/s)',
-                'value': 'excellent',
+                'value': Qualities.EXCELLENT,
             },
         ],
         prompt_message='What quality do you expect?',
@@ -350,7 +329,7 @@ def _configure_quality(user_input: UserInput, **kwargs) -> None:
     elif user_input.quality == 'excellent':
         print('  ✨ you trade-off speed to having the best quality')
 
-    _, user_input.model_variant = QUALITY_MAP[user_input.quality]
+    _, user_input.model_variant = IMAGE_MODEL_QUALITY_MAP[user_input.quality]
 
 
 def _configure_sandbox(user_input: UserInput, **kwargs):
@@ -450,11 +429,11 @@ def _parse_custom_data_from_cli(user_input: UserInput):
     except Exception:
         pass
     if os.path.exists(data):
-        user_input.custom_dataset_type = 'path'
+        user_input.custom_dataset_type = DatasetTypes.PATH
         user_input.dataset_path = data
     elif 'http' in data:
-        user_input.custom_dataset_type = 'url'
+        user_input.custom_dataset_type = DatasetTypes.URL
         user_input.dataset_url = data
     else:
-        user_input.custom_dataset_type = 'docarray'
+        user_input.custom_dataset_type = DatasetTypes.DOCARRAY
         user_input.dataset_secret = data

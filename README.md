@@ -41,27 +41,45 @@ In case you need sudo for running Docker, install and use jina-now using sudo as
 #### Mac M1
 
 For the Mac M1 it is generally recommended using a conda environment as outlined in the [Jina documentation](https://docs.jina.ai/get-started/install/troubleshooting/#on-mac-m1).
+In a new conda environment first execute `conda install grpcio tokenizers protobuf`. Then run `pip install jina-now`.
 
 ### Usage
 ```bash
 jina now [start | stop] --data [<pushpullid> | <localpath> | <url>] --quality [medium | good | excellent] --cluster <k8s-cluster-name>
 ```
 
-### quick start
+### Quick Start
 ```bash
 jina now start
 ```
-### use cli parameters
+  
+### Use CLI Parameters
 ```bash
 jina now start --quality medium --data /local/img/folder
 ```
+  
+### Use API
+You can now send requests to the API using the jina client. This case shows a local deployment.
+```bash
+from jina import Client    
+client = Client(
+        host='localhost',
+        protocol="grpc",
+        port=31080,
+) 
+response = client.search(
+        Document(text=search_text), # or in case you send an image: Document(url=image_path),
+        parameters={"limit": 9, "filter": {}},
+)
+```
+  
 ### Cleanup
 ```bash
 jina now stop
 ```
 
 ### Requirements
-- `Python 3.7`, `3.8` or `3.9`
+- `Python 3.7`, `3.8`, `3.9` or `3.10`
 #### Local execution
 - `Docker` installation
 - 10 GB assigned to docker

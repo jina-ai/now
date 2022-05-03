@@ -58,7 +58,7 @@ def run_k8s(os_type: str = 'linux', arch: str = 'x86_64', **kwargs):
             **kwargs,
         )
         with tempfile.TemporaryDirectory() as tmpdir:
-            docker_frontend_tag = '0.0.4'
+            docker_frontend_tag = '0.0.7'
 
             setup_cluster(user_input.cluster, user_input.new_cluster_type, **kwargs)
             (
@@ -93,8 +93,9 @@ def run_k8s(os_type: str = 'linux', arch: str = 'x86_64', **kwargs):
 
 if __name__ == '__main__':
     run_k8s(
-        modality='music',
-        dataset='music-genres-small',
+        output_modality='music',
+        data='music-genres-small',
         cluster='new',
         new_cluster_type='local',
+        kubectl_path='/usr/local/bin/kubectl',
     )

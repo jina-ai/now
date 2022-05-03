@@ -67,6 +67,12 @@ def deploy_streamlit():
             data_dir = root_data_dir + output_modality_dir + '/'
             da_txt = load_data(data_dir + data + '.txt10.bin')
 
+    if output_modality == 'text':
+        # censor words in text incl. in custom data
+        from better_profanity import profanity
+
+        profanity.load_censor_words()
+
     class UI:
         about_block = """
         ### About
@@ -259,12 +265,25 @@ def deploy_streamlit():
             match.mime_type = output_modality
 
             if output_modality == 'text':
-                display_text = match.text
+                display_text = profanity.censor(match.text)
                 body = f"<!DOCTYPE html><html><body><blockquote>{display_text}</blockquote>"
                 if match.tags.get('additional_info'):
-                    body += (
-                        f"<figcaption>{match.tags.get('additional_info')}</figcaption>"
-                    )
+                    additional_info = match.tags.get('additional_info')
+                    if type(additional_info) == str:
+                        additional_info_text = additional_info
+                    elif type(additional_info) == list:
+                        if len(additional_info) == 1:
+                            # assumes just one line containing information on text name and creator, etc.
+                            additional_info_text = additional_info
+                        elif len(additional_info) == 2:
+                            # assumes first element is text name and second element is creator name
+                            additional_info_text = (
+                                f"<em>{additional_info[0]}</em> "
+                                f"<small>by {additional_info[1]}</small>"
+                            )
+                        else:
+                            additional_info_text = " ".join(additional_info)
+                    body += f"<figcaption>{additional_info_text}</figcaption>"
                 body += "</body></html>"
                 c.markdown(
                     body=body,
