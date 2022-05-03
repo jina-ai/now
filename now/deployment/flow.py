@@ -162,7 +162,7 @@ def deploy_flow(
     )
     print(f'▶ indexing {len(index)} documents')
     client = Client(host=gateway_host, port=gateway_port)
-    request_size = 128
+    request_size = 64
 
     progress_bar = (
         x
