@@ -162,8 +162,16 @@ def deploy_flow(
     )
     print(f'▶ indexing {len(index)} documents')
     client = Client(host=gateway_host, port=gateway_port)
-    for x in tqdm(batch(index, 16), total=math.ceil(len(index) / 16)):
-        client.post('/index', request_size=16, inputs=x)
+    request_size = 16
+
+    progress_bar = (
+        x for x in tqdm(batch(index, request_size), total=math.ceil(len(index) / 16))
+    )
+
+    def on_done(res):
+        next(progress_bar)
+
+    client.post('/index', request_size=request_size, inputs=index, on_done=on_done)
 
     print('⭐ Success - your data is indexed')
     return gateway_host, gateway_port, gateway_host_internal, gateway_port_internal
