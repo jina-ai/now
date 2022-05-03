@@ -47,12 +47,12 @@ def test_backend(
     # Perform end-to-end check via bff
     if output_modality == 'image':
         response = test_client.post(
-            f'/api/v1/image/search{search_text}',
+            f'/api/v1/image/search/{search_text}',
             params={'limit': 9},  # limit has no effect as of now
         )
     elif output_modality == 'text':
         response = test_client.post(
-            f'/api/v1/text/search{search_text}',
+            f'/api/v1/text/search/{search_text}',
             params={'limit': 9},  # limit has no effect as of now
         )
     else:
