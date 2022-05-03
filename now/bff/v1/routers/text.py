@@ -32,7 +32,7 @@ def index(data: List[str], host: str = 'localhost', port: int = 31080):
 @router.post(
     "/search",
     response_model=JinaResponseModel,
-    summary='Search text data via text as query',
+    summary='Search text data via text or image as query',
 )
 def search(
     query: str,
