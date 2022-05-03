@@ -12,6 +12,8 @@ from docarray import Document
 from PIL import Image, ImageDraw, ImageFont
 from rich.console import Console
 
+from now.deployment.deployment import which
+
 colors = [
     "navy",
     "turquoise",
@@ -30,94 +32,6 @@ colors = [
 def get_device():
     # return only cpu as we want all our processed to run on cpu
     return "cpu"  # "cuda" if torch.cuda.is_available() else "cpu"
-
-
-# TODO needs to be fixed
-# def multi_class_svm(embed, labels, title):
-#     # multi-label setting for ROC curve
-#     classes = np.arange(start=0, stop=len(set(labels)))
-#     Y = label_binarize(labels, classes=classes)
-#
-#     n_classes = Y.shape[1]
-#
-#     # split the dataset
-#     X_train, X_test, Y_train, Y_test = train_test_split(
-#         embed, Y, test_size=0.25, random_state=42
-#     )
-#
-#     # define the classifier
-#     clf = OneVsRestClassifier(
-#         make_pipeline(StandardScaler(), LinearSVC(max_iter=5000, random_state=42))
-#     )
-#
-#     clf.fit(X_train, Y_train)
-#     y_score = clf.decision_function(X_test)
-#
-#     # For each class
-#     precision = dict()
-#     recall = dict()
-#     average_precision = dict()
-#     for i in range(n_classes):
-#         precision[i], recall[i], _ = \
-#         precision_recall_curve(Y_test[:, i], y_score[:, i])
-#         average_precision[i] = average_precision_score(Y_test[:, i], y_score[:, i])
-#
-#     _, ax = plt.subplots()
-#
-#     for i, color in zip(range(n_classes), colors):
-#         display = PrecisionRecallDisplay(
-#             recall=recall[i],
-#             precision=precision[i],
-#             average_precision=average_precision[i],
-#         )
-#         display.plot(ax=ax, color=color)
-#
-#     # add the legend for the iso-f1 curves
-#     handles, labels = display.ax_.get_legend_handles_labels()
-#     # set the legend and the axes
-#     ax.set_xlim([0.0, 1.0])
-#     ax.set_ylim([0.0, 1.05])
-#     ax.legend(handles=handles, labels=labels, loc="best")
-#     ax.set_title("Precision-recall curve for top-10 class")
-#     plt.tight_layout()
-#     plt.savefig(title + '.png')
-#     plt.close()
-
-
-# TODO for now it does not add value since we don't use class labels
-# def binary_svm(embed, labels, title):
-#     # split the dataset
-#     X_train, X_test, Y_train, Y_test = train_test_split(
-#         embed, labels, test_size=1, random_state=42
-#     )
-#
-#     classifier = make_pipeline(StandardScaler(), LinearSVC(random_state=42))
-#     classifier.fit(X_train, Y_train)
-#
-#     y_score = classifier.decision_function(X_test)
-#
-#     display = PrecisionRecallDisplay.from_predictions(Y_test, y_score)
-#     ax = display.ax_.set_title("Binary Precision-Recall curve")
-#     _, ax = plt.subplots()
-#
-#     display.plot(ax=ax, name=f"LinearSVC")
-#     handles, labels = display.ax_.get_legend_handles_labels()
-#     # set the legend and the axes
-#     ax.set_xlim([0.0, 1.0])
-#     ax.set_ylim([0.0, 1.05])
-#     ax.legend(handles=handles, labels=labels, loc="best")
-#     plt.tight_layout()
-#     plt.savefig(title + '.png')
-#     plt.close()
-
-
-# def get_pr_curve(embed, labels, title='finetuned'):
-#     # check the number of class
-#     num_class = len(set(labels))
-#     if num_class <= 2:
-#         binary_svm(embed, labels, title)
-#     else:
-#         multi_class_svm(embed, labels, title)
 
 
 def save_before_after_image(path):
@@ -396,6 +310,14 @@ def my_handler(signum, frame, spinner):
         sys.stdout.write("Program terminated!\n")
     spinner.stop()
     exit(0)
+
+
+def ffmpeg_is_installed():
+    return which("ffmpeg")
+
+
+def gcloud_is_installed():
+    return which("gcloud")
 
 
 sigmap = {signal.SIGINT: my_handler, signal.SIGTERM: my_handler}

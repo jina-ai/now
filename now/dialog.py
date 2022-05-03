@@ -27,7 +27,7 @@ from now.deployment.deployment import cmd
 from now.log.log import yaspin_extended
 from now.thridparty.PyInquirer import Separator
 from now.thridparty.PyInquirer.prompt import prompt
-from now.utils import sigmap
+from now.utils import ffmpeg_is_installed, gcloud_is_installed, sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
 NEW_CLUSTER = {'name': '🐣 create new', 'value': 'new'}
@@ -139,6 +139,8 @@ def _configure_dataset(user_input: UserInput, **kwargs):
     elif user_input.output_modality == Modalities.TEXT:
         _configure_dataset_text(user_input, **kwargs)
     else:
+        if not ffmpeg_is_installed():
+            _handle_ffmpeg_install_required()
         _configure_dataset_music(user_input, **kwargs)
 
     dataset = user_input.data
@@ -401,8 +403,7 @@ def _cluster_running(cluster):
 
 
 def _maybe_install_gke(os_type: str, arch: str):
-    out, _ = cmd('which gcloud')
-    if not out:
+    if not gcloud_is_installed():
         if not os.path.exists(user('~/.cache/jina-now/google-cloud-sdk')):
             with yaspin_extended(
                 sigmap=sigmap, text='Setting up gcloud', color='green'
@@ -427,3 +428,22 @@ def _parse_custom_data_from_cli(data: str, user_input: UserInput):
     else:
         user_input.custom_dataset_type = DatasetTypes.DOCARRAY
         user_input.dataset_secret = data
+
+
+def _handle_ffmpeg_install_required():
+    bc_red = '\033[91m'
+    bc_end = '\033[0m'
+    print()
+    print(
+        f"{bc_red}Too use the audio modality you need the ffmpeg audio processing"
+        f" library installed on your system.{bc_end}"
+    )
+    print(
+        f"{bc_red}For MacOS please run 'brew install ffmpeg' and on"
+        f" Linux 'apt-get install ffmpeg libavcodec-extra'.{bc_end}"
+    )
+    print(
+        f"{bc_red}After the installation, restart Jina Now and have fun with music search 🎸!{bc_end}"
+    )
+    cowsay.cow('see you soon 👋')
+    exit(1)
