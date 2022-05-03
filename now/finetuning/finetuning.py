@@ -2,7 +2,6 @@ import math
 import os
 import random
 from copy import deepcopy
-from time import sleep
 
 import finetuner
 from docarray import DocumentArray
@@ -139,16 +138,11 @@ def add_clip_embeddings(dataset, vision_model, tmpdir, kubectl_path):
             client = Client(host=gateway_host, port=gateway_port)
             print(f'▶ create embeddings for {len(no_embedding_dataset)} documents')
             for x in tqdm(
-                batch(no_embedding_dataset, 512),
-                total=math.ceil(len(no_embedding_dataset) / 512),
+                batch(no_embedding_dataset, 16),
+                total=math.ceil(len(no_embedding_dataset) / 16),
             ):
-                while True:
-                    try:
-                        response = client.post('/index', request_size=16, inputs=x)
-                        results.extend(response)
-                        break
-                    except Exception as e:
-                        sleep(1)
+                response = client.post('/index', request_size=16, inputs=x)
+                results.extend(response)
 
             dataset[k] = (embedding_dataset + results).shuffle(42)
     cmd(f'{kubectl_path} delete ns {ns}')

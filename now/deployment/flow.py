@@ -160,19 +160,21 @@ def deploy_flow(
         tmpdir,
         kubectl_path=kubectl_path,
     )
-    print(
-        f'▶ indexing {len(index)} documents - if it stays at 0% for a while, it is all good - just wait :)'
+    print(f'▶ indexing {len(index)} documents')
+    client = Client(host=gateway_host, port=gateway_port)
+    request_size = 64
+
+    progress_bar = (
+        x
+        for x in tqdm(
+            batch(index, request_size), total=math.ceil(len(index) / request_size)
+        )
     )
 
-    client = Client(host=gateway_host, port=gateway_port)
-    for x in tqdm(batch(index, 1024), total=math.ceil(len(index) / 1024)):
-        # first request takes soooo long
-        while True:
-            try:
-                client.post('/index', request_size=64, inputs=x)
-                break
-            except Exception as e:
-                sleep(1)
+    def on_done(res):
+        next(progress_bar)
+
+    client.post('/index', request_size=request_size, inputs=index, on_done=on_done)
 
     print('⭐ Success - your data is indexed')
     return gateway_host, gateway_port, gateway_host_internal, gateway_port_internal
