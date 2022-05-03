@@ -4,13 +4,12 @@ from argparse import Namespace
 import pytest
 from fastapi.testclient import TestClient
 
-from now.cli import cli
 from now.dialog import NEW_CLUSTER
 
 
 @pytest.mark.parametrize(
     'output_modality, dataset',
-    [('image', 'best-artworks'), ('image', 'deepfashion'), ('text', 'rock-lyrics')],
+    [('text', 'rock-lyrics')],
 )  # art, rock-lyrics -> no finetuning, fashion -> finetuning
 @pytest.mark.parametrize('quality', ['medium'])
 @pytest.mark.parametrize('cluster', [NEW_CLUSTER['value']])
@@ -36,7 +35,7 @@ def test_backend(
         'proceed': True,
     }
     kwargs = Namespace(**kwargs)
-    cli(args=kwargs)
+    # cli(args=kwargs)
 
     if dataset == 'best-artworks':
         search_text = 'impressionism'
@@ -54,7 +53,7 @@ def test_backend(
         )
     elif output_modality == 'text':
         response = test_client.post(
-            f'/api/v1/text/search/',
+            f'/api/v1/text/search',
             params={'query': query, 'limit': 9},  # limit has no effect as of now
         )
     else:
