@@ -92,7 +92,7 @@ def configure_user_input(**kwargs) -> UserInput:
     if user_input.output_modality != Modalities.MUSIC:
         _configure_quality(user_input, **kwargs)
     _configure_cluster(user_input, **kwargs)
-    user_input = _configure_sandbox(user_input, **kwargs)
+    _configure_sandbox(user_input, **kwargs)
     return user_input
 
 
@@ -196,6 +196,11 @@ def _configure_dataset_text(user_input: UserInput, **kwargs) -> UserInput:
             {'name': '🎤 rap lyrics (200K docs)', 'value': 'rap-lyrics'},
             {'name': '🎤 indie lyrics (200K docs)', 'value': 'indie-lyrics'},
             {'name': '🎤 metal lyrics (200K docs)', 'value': 'metal-lyrics'},
+            Separator(),
+            {
+                'name': '✨ custom',
+                'value': 'custom',
+            },
         ],
         **kwargs,
     )
@@ -359,7 +364,6 @@ def _configure_sandbox(user_input: UserInput, **kwargs):
         **kwargs,
     )
     user_input.sandbox = sandbox
-    return user_input
 
 
 def _construct_cluster_choices(active_context, contexts):

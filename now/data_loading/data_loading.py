@@ -4,14 +4,18 @@ import random
 import uuid
 from copy import deepcopy
 from os.path import join as osp
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
-from docarray import DocumentArray
+import torch
+from clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
+from docarray import Document, DocumentArray
 from yaspin import yaspin
 
 from now.data_loading.convert_datasets_to_jpeg import to_thumbnail_jpg
 from now.dialog import QUALITY_MAP, Modalities
 from now.utils import download, sigmap
+
+_tokenizer = _Tokenizer()
 
 
 def _fetch_da_from_url(
@@ -109,20 +113,13 @@ def load_data(
                     print('Failed to load the binary file provided')
                     exit(1)
             else:
-                da = DocumentArray.from_files(path + '/**')
-
-                def convert_fn(d):
-                    try:
-                        d.load_uri_to_image_tensor()
-                        return to_thumbnail_jpg(d)
-                    except:
-                        return d
-
                 with yaspin(
-                    sigmap=sigmap, text="Pre-processing data", color="green"
+                    sigmap=sigmap, text="Loading and pre-processing data", color="green"
                 ) as spinner:
-                    da.apply(convert_fn)
-                    da = DocumentArray(d for d in da if d.blob != b'')
+                    if output_modality == Modalities.IMAGE:
+                        da = _load_images_from_folder(path)
+                    elif output_modality == Modalities.TEXT:
+                        da = _load_texts_from_folder(path)
                     spinner.ok('🏭')
                 ds_type = 'local_folder'
 
@@ -132,6 +129,111 @@ def load_data(
     da = da.shuffle(seed=42)
     da = remove_duplicates(da)
     return da, ds_type
+
+
+def _load_images_from_folder(path: str) -> DocumentArray:
+    def convert_fn(d):
+        try:
+            d.load_uri_to_image_tensor()
+            return to_thumbnail_jpg(d)
+        except:
+            return d
+
+    da = DocumentArray.from_files(path + '/**')
+    da.apply(convert_fn)
+    return DocumentArray(d for d in da if d.blob != b'')
+
+
+def _load_texts_from_folder(path: str) -> DocumentArray:
+    def convert_fn(d):
+        try:
+            d.load_uri_to_text()
+            return d
+        except:
+            return d
+
+    def split_by_tokens(d):
+        tokens = tokenize_sliding_window(d.text)
+        # remove start of text and end of text tokens
+        tokens = tokens[:, 1:]
+        tokens[tokens == _tokenizer.encoder["<|endoftext|>"]] = 0
+        return DocumentArray(
+            (
+                Document(
+                    mime_type=d.mime_type,
+                    uri=d.uri,
+                    text=_tokenizer.decode(token.tolist()),
+                )
+                for token in tokens
+            )
+        )
+
+    da = DocumentArray.from_files(path + '/*.txt')
+    da.apply(convert_fn)
+
+    ret = DocumentArray()
+    for d in da:
+        ret += split_by_tokens(d)
+    return ret
+
+
+def tokenize_sliding_window(
+    texts: Union[str, List[str]], context_length: int = 77, stride: int = 50
+) -> Union[torch.IntTensor, torch.LongTensor]:
+    """
+    Returns the tokenized representation of given input string(s)
+    Parameters
+    ----------
+    texts : Union[str, List[str]]
+        An input string or a list of input strings to tokenize
+    context_length : int
+        The context length to use; all CLIP models use 77 as the context length
+    stride: int
+        Determines the overlap between two parts of the context when splitting is needed.
+    Returns
+    -------
+    A two-dimensional tensor containing the resulting tokens, shape = [number of input strings plus number of overlaps, context_length].
+    """
+    if isinstance(texts, str):
+        texts = [texts]
+
+    sot_token = _tokenizer.encoder["<|startoftext|>"]
+    eot_token = _tokenizer.encoder["<|endoftext|>"]
+    context_length_tokens = context_length - 2
+    assert (
+        stride <= context_length_tokens
+    ), f"stride ({stride}) is longer than number of tokens ({context_length_tokens}) for embedding"
+    all_tokens = [_tokenizer.encode(text) for text in texts]
+
+    result = []
+    for tokens in all_tokens:
+        if len(tokens) > context_length - 2:
+            num_overlaps = (len(tokens) - context_length_tokens) // stride + 2
+            for k in range(num_overlaps):
+                start_idx = k * stride
+                additional_zeros = (
+                    0
+                    if k < num_overlaps - 1
+                    else context_length_tokens - len(tokens[start_idx:])
+                )
+                _tokens = (
+                    [sot_token]
+                    + tokens[start_idx : start_idx + context_length_tokens]
+                    + [eot_token]
+                    + [0 for _ in range(additional_zeros)]
+                )
+                result.append(torch.tensor(_tokens, dtype=torch.int))
+        else:
+            additional_zeros = context_length - 2 - len(tokens)
+            _tokens = (
+                [sot_token]
+                + tokens
+                + [eot_token]
+                + +[0 for _ in range(additional_zeros)]
+            )
+            result.append(torch.tensor(_tokens, dtype=torch.int))
+
+    return torch.stack(result)
 
 
 # def load_all_data(dataset):
