@@ -1,3 +1,4 @@
+import base64
 from argparse import Namespace
 
 import pytest
@@ -45,15 +46,16 @@ def test_backend(
         search_text = 'test'
 
     # Perform end-to-end check via bff
+    query = base64.b64encode(search_text.encode('utf-8')).decode('utf-8')
     if output_modality == 'image':
         response = test_client.post(
-            f'/api/v1/image/search/{search_text}',
-            params={'limit': 9},  # limit has no effect as of now
+            f'/api/v1/image/search',
+            params={'query': query, 'limit': 9},  # limit has no effect as of now
         )
     elif output_modality == 'text':
         response = test_client.post(
-            f'/api/v1/text/search/{search_text}',
-            params={'limit': 9},  # limit has no effect as of now
+            f'/api/v1/text/search/',
+            params={'query': query, 'limit': 9},  # limit has no effect as of now
         )
     else:
         # add more here when the new modality is added
