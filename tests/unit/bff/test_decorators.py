@@ -1,6 +1,9 @@
 import asyncio
 import time
 
+import pytest
+from fastapi import HTTPException
+
 from now.bff.decorators import api_method, async_timed, timed
 
 
@@ -29,3 +32,14 @@ def test_api_method():
         time.sleep(0.1)
 
     monty()
+
+
+def test_api_method_error():
+    @api_method
+    def monty():
+        """Monty Python!"""
+        time.sleep(0.1)
+        raise HTTPException(status_code=500, detail='Unknown error')
+
+    with pytest.raises(HTTPException):
+        monty()

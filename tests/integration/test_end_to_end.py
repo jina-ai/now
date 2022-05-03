@@ -10,7 +10,7 @@ from now.dialog import NEW_CLUSTER
 
 @pytest.mark.parametrize(
     'output_modality, dataset',
-    [('text', 'rock-lyrics')],
+    [('image', 'best-artworks'), ('image', 'deepfashion'), ('text', 'rock-lyrics')],
 )  # art, rock-lyrics -> no finetuning, fashion -> finetuning
 @pytest.mark.parametrize('quality', ['medium'])
 @pytest.mark.parametrize('cluster', [NEW_CLUSTER['value']])
@@ -65,3 +65,5 @@ def test_backend(
     # Therefore, once the limit is implemented in the CustomIndexer,
     # we should change the below value to 9
     assert len(response.json()['data'][0]['matches']) == 20
+    assert response.json()['data'][0]['embedding'] is None
+    assert response.json()['data'][0]['tensor'] is None

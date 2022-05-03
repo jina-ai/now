@@ -1,4 +1,3 @@
-import base64
 from typing import List
 
 from docarray import Document, DocumentArray
@@ -9,10 +8,6 @@ from jina.serve.runtimes.gateway.http.models import JinaResponseModel
 from now.bff.v1.routers.helper import process_query
 
 router = APIRouter()
-
-
-def from_base64(data: str):
-    return base64.b64decode(data)
 
 
 # Index

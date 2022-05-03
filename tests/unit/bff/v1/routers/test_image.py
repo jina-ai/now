@@ -30,3 +30,12 @@ def test_search_base64_image(test_client):
             f'/api/v1/image/search',
             params={'query': query, 'modality': 'image'},
         )
+
+
+def test_wrong_modality(test_client):
+    query = base64.b64encode('Hello'.encode('utf-8')).decode('utf-8')
+    response = test_client.post(
+        f'/api/v1/image/search',
+        params={'query': query, 'modality': 'audio'},
+    )
+    assert response.status_code == 404
