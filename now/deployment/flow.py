@@ -162,10 +162,13 @@ def deploy_flow(
     )
     print(f'▶ indexing {len(index)} documents')
     client = Client(host=gateway_host, port=gateway_port)
-    request_size = 16
+    request_size = 128
 
     progress_bar = (
-        x for x in tqdm(batch(index, request_size), total=math.ceil(len(index) / 16))
+        x
+        for x in tqdm(
+            batch(index, request_size), total=math.ceil(len(index) / request_size)
+        )
     )
 
     def on_done(res):
