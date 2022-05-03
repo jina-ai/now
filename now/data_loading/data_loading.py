@@ -4,6 +4,7 @@ import random
 import uuid
 from copy import deepcopy
 from os.path import join as osp
+from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
 import torch
@@ -148,6 +149,7 @@ def _load_texts_from_folder(path: str) -> DocumentArray:
     def convert_fn(d):
         try:
             d.load_uri_to_text()
+            d.tags['additional_info'] = str(Path(d.uri).relative_to(path))
             return d
         except:
             return d
@@ -160,9 +162,9 @@ def _load_texts_from_folder(path: str) -> DocumentArray:
         return DocumentArray(
             (
                 Document(
-                    mime_type=d.mime_type,
-                    uri=d.uri,
+                    mime_type='text',
                     text=_tokenizer.decode(token.tolist()),
+                    tags=d.tags,
                 )
                 for token in tokens
             )

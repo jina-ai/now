@@ -198,7 +198,7 @@ def _configure_dataset_text(user_input: UserInput, **kwargs) -> UserInput:
             {'name': '🎤 metal lyrics (200K docs)', 'value': 'metal-lyrics'},
             Separator(),
             {
-                'name': '✨ custom',
+                'name': '✨ custom .txt files',
                 'value': 'custom',
             },
         ],
