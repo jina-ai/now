@@ -163,7 +163,7 @@ def _load_texts_from_folder(path: str) -> DocumentArray:
                     text=sentence,
                     tags=d.tags,
                 )
-                for sentence in set(sent_tokenize(d.text))
+                for sentence in set(sent_tokenize(d.text.replace('\n', ' ')))
             )
         )
 

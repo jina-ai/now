@@ -266,7 +266,7 @@ def deploy_streamlit():
             match.mime_type = output_modality
 
             if output_modality == 'text':
-                display_text = profanity.censor(match.text)
+                display_text = profanity.censor(match.text).replace('\n', ' ')
                 body = f"<!DOCTYPE html><html><body><blockquote>{display_text}</blockquote>"
                 if match.tags.get('additional_info'):
                     additional_info = match.tags.get('additional_info')
