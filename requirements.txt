@@ -13,4 +13,4 @@ docarray==0.10.2
 docker==5.0.3
 requests==2.27.1
 pydub==0.25.1
-clip @ git+https://github.com/openai/CLIP.git
+nltk==3.7

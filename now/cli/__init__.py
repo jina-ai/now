@@ -2,9 +2,12 @@ import os
 import pathlib
 import platform
 import sys
+import warnings
 from os.path import expanduser as user
 
 import cpuinfo
+
+warnings.filterwarnings("ignore")
 
 if len(sys.argv) != 1 and not ('-h' in sys.argv[1:] or '--help' in sys.argv[1:]):
     print('Initialising Jina NOW...')

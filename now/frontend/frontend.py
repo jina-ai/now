@@ -9,6 +9,7 @@ import numpy as np
 import streamlit as st
 from docarray import DocumentArray
 from jina import Client, Document
+from PIL import Image
 from streamlit_webrtc import ClientSettings, webrtc_streamer
 
 WEBRTC_CLIENT_SETTINGS = ClientSettings(
@@ -43,6 +44,13 @@ def deploy_streamlit():
     Please deploy a streamlit frontend on k8s/local to access the api.
     You can get the starting point for the streamlit application from alex.
     """
+    # Header
+    # put this on the top so that it shows immediately, while the rest is loading
+    st.set_page_config(page_title="NOW", page_icon='https://jina.ai/favicon.ico')
+    _, mid, _ = st.columns([0.8, 1, 1])
+    img = Image.open('./logo.jpg')
+    with mid:
+        st.image(img)
     setup_session_state()
     print('Run Streamlit with:', sys.argv)
     _, host, port, output_modality, data = sys.argv
@@ -137,17 +145,10 @@ def deploy_streamlit():
         return doc
 
     # Layout
-    st.set_page_config(page_title="NOW", page_icon='https://jina.ai/favicon.ico')
-
     st.markdown(
         body=UI.css,
         unsafe_allow_html=True,
     )
-    col1, mid, col2 = st.columns([1, 1, 20])
-    with col1:
-        st.image('https://jina.ai/favicon.ico', width=60)
-    with col2:
-        st.header("NOW ")
 
     # design and create toggle button
     st.write(

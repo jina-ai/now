@@ -4,10 +4,8 @@ import uuid
 from copy import deepcopy
 from os.path import join as osp
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Optional
 
-import torch
-from clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
 from docarray import Document, DocumentArray
 from yaspin import yaspin
 
@@ -21,8 +19,6 @@ from now.constants import (
 from now.data_loading.convert_datasets_to_jpeg import to_thumbnail_jpg
 from now.dialog import UserInput
 from now.utils import download, sigmap
-
-_tokenizer = _Tokenizer()
 
 
 def load_data(user_input: UserInput) -> DocumentArray:
@@ -146,6 +142,11 @@ def _load_music_from_folder(path: str):
 
 
 def _load_texts_from_folder(path: str) -> DocumentArray:
+    import nltk
+
+    nltk.download('punkt', quiet=True)
+    from nltk.tokenize import sent_tokenize
+
     def convert_fn(d):
         try:
             d.load_uri_to_text()
@@ -155,18 +156,14 @@ def _load_texts_from_folder(path: str) -> DocumentArray:
             return d
 
     def split_by_tokens(d):
-        tokens = tokenize_sliding_window(d.text)
-        # remove start of text and end of text tokens
-        tokens = tokens[:, 1:]
-        tokens[tokens == _tokenizer.encoder["<|endoftext|>"]] = 0
         return DocumentArray(
             (
                 Document(
                     mime_type='text',
-                    text=_tokenizer.decode(token.tolist()),
+                    text=sentence,
                     tags=d.tags,
                 )
-                for token in tokens
+                for sentence in set(sent_tokenize(d.text))
             )
         )
 
@@ -177,65 +174,6 @@ def _load_texts_from_folder(path: str) -> DocumentArray:
     for d in da:
         ret += split_by_tokens(d)
     return ret
-
-
-def tokenize_sliding_window(
-    texts: Union[str, List[str]], context_length: int = 77, stride: int = 50
-) -> Union[torch.IntTensor, torch.LongTensor]:
-    """
-    Returns the tokenized representation of given input string(s)
-    Parameters
-    ----------
-    texts : Union[str, List[str]]
-        An input string or a list of input strings to tokenize
-    context_length : int
-        The context length to use; all CLIP models use 77 as the context length
-    stride: int
-        Determines the overlap between two parts of the context when splitting is needed.
-    Returns
-    -------
-    A two-dimensional tensor containing the resulting tokens, shape = [number of input strings plus number of overlaps, context_length].
-    """
-    if isinstance(texts, str):
-        texts = [texts]
-
-    sot_token = _tokenizer.encoder["<|startoftext|>"]
-    eot_token = _tokenizer.encoder["<|endoftext|>"]
-    context_length_tokens = context_length - 2
-    assert (
-        stride <= context_length_tokens
-    ), f"stride ({stride}) is longer than number of tokens ({context_length_tokens}) for embedding"
-    all_tokens = [_tokenizer.encode(text) for text in texts]
-
-    result = []
-    for tokens in all_tokens:
-        if len(tokens) > context_length - 2:
-            num_overlaps = (len(tokens) - context_length_tokens) // stride + 2
-            for k in range(num_overlaps):
-                start_idx = k * stride
-                additional_zeros = (
-                    0
-                    if k < num_overlaps - 1
-                    else context_length_tokens - len(tokens[start_idx:])
-                )
-                _tokens = (
-                    [sot_token]
-                    + tokens[start_idx : start_idx + context_length_tokens]
-                    + [eot_token]
-                    + [0 for _ in range(additional_zeros)]
-                )
-                result.append(torch.tensor(_tokens, dtype=torch.int))
-        else:
-            additional_zeros = context_length - 2 - len(tokens)
-            _tokens = (
-                [sot_token]
-                + tokens
-                + [eot_token]
-                + +[0 for _ in range(additional_zeros)]
-            )
-            result.append(torch.tensor(_tokens, dtype=torch.int))
-
-    return torch.stack(result)
 
 
 def get_dataset_url(
