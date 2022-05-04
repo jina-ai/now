@@ -1,14 +1,15 @@
 import base64
 
 import pytest
+from grpc.aio import AioRpcError
 
 
 def test_search(test_client):
-    response = test_client.post(
-        f'/api/v1/image/search',
-        params={'text': 'Hello'},
-    )
-    assert response.status_code == 200
+    with pytest.raises(AioRpcError):
+        test_client.post(
+            f'/api/v1/image/search',
+            params={'text': 'Hello'},
+        )
 
 
 def test_search_img_via_no_base64_image(test_client):
@@ -24,11 +25,11 @@ def test_search_img_via_base64_image(test_client):
     with open('./tests/image-data/kids2.jpg', 'rb') as f:
         binary = f.read()
         img_query = base64.b64encode(binary).decode('utf-8')
-    response = test_client.post(
-        f'/api/v1/image/search',
-        params={'image': img_query},
-    )
-    assert response.status_code == 200
+    with pytest.raises(AioRpcError):
+        response = test_client.post(
+            f'/api/v1/image/search',
+            params={'image': img_query},
+        )
 
 
 def test_no_query(test_client):
