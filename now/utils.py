@@ -13,6 +13,7 @@ from PIL import Image, ImageDraw, ImageFont
 from rich.console import Console
 
 from now.deployment.deployment import which
+from now.log.log import TEST
 
 colors = [
     "navy",
@@ -240,6 +241,11 @@ def custom_spinner():
     return json.loads(SPINNERS_DATA, object_hook=_hook)
 
 
+def download_file(path, r_raw):
+    with path.open("wb") as f:
+        shutil.copyfileobj(r_raw, f)
+
+
 def download(url, filename):
     import functools
     import pathlib
@@ -261,9 +267,12 @@ def download(url, filename):
     r.raw.read = functools.partial(
         r.raw.read, decode_content=True
     )  # Decompress if needed
-    with tqdm.wrapattr(r.raw, "read", total=file_size, desc=desc) as r_raw:
-        with path.open("wb") as f:
-            shutil.copyfileobj(r_raw, f)
+
+    if TEST:
+        download_file(path, r.raw)
+    else:
+        with tqdm.wrapattr(r.raw, "read", total=file_size, desc=desc) as r_raw:
+            download_file(path, r_raw)
 
     return path
 

@@ -10,7 +10,7 @@ from yaspin.spinners import Spinners
 
 from now.cloud_manager import is_local_cluster
 from now.deployment.deployment import apply_replace, cmd
-from now.log.log import yaspin_extended
+from now.log.log import TEST, yaspin_extended
 from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
@@ -172,7 +172,8 @@ def deploy_flow(
     )
 
     def on_done(res):
-        next(progress_bar)
+        if not TEST:
+            next(progress_bar)
 
     client.post('/index', request_size=request_size, inputs=index, on_done=on_done)
 
