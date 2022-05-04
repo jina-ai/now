@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException
 from jina import Client
 from jina.serve.runtimes.gateway.http.models import JinaResponseModel
 
+from now.bff.v1.models.image import NowImageResponseModel
 from now.bff.v1.routers.helper import process_query
 
 router = APIRouter()
@@ -31,7 +32,7 @@ def index(data: List[str], host: str = 'localhost', port: int = 31080):
 # Search
 @router.post(
     "/search",
-    response_model=JinaResponseModel,
+    response_model=List[NowImageResponseModel],
     summary='Search image data via text or image as query',
 )
 def search(
@@ -54,5 +55,4 @@ def search(
         )
     c = Client(host=host, port=port)
     docs = c.post('/search', query_doc, parameters={"limit": limit})
-    del docs[...][:, ('embedding', 'tensor')]
-    return {"data": docs.to_dict()}
+    return docs[0].matches.to_dict()

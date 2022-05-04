@@ -64,6 +64,4 @@ def test_backend(
     # Limit param is not respected and hence 20 matches are returned
     # Therefore, once the limit is implemented in the CustomIndexer,
     # we should change the below value to 9
-    assert len(response.json()['data'][0]['matches']) == 20
-    assert response.json()['data'][0]['embedding'] is None
-    assert response.json()['data'][0]['tensor'] is None
+    assert len(response.json()) == 20
