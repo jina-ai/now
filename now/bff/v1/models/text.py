@@ -1,10 +1,24 @@
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
-from now.bff.v1.models.helper import _NamedScore, _StructValueType
+from now.bff.v1.models.helper import BaseRequestModel, _NamedScore, _StructValueType
 
 
+# Request Model
+class NowTextIndexRequestModel(BaseRequestModel):
+    texts: List[str] = Field(default=..., description='List of Texts to index.')
+
+
+class NowTextSearchRequestModel(BaseRequestModel):
+    text: str = Field(default=None, description='Text query')
+    image: str = Field(
+        default=None,
+        description='Image query. Image should be base64encoded in `utf-8` format',
+    )
+
+
+# Response Model
 class NowTextResponseModel(BaseModel):
     id: str = Field(
         default=..., nullable=False, description='Id of the matching result.'

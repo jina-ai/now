@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 _ProtoValueType = Optional[Union[bool, float, str, list, dict]]
 _StructValueType = Union[
@@ -10,3 +10,16 @@ _StructValueType = Union[
 
 class _NamedScore(BaseModel):
     value: Optional[float] = None
+
+
+class BaseRequestModel(BaseModel):
+    host: str = Field(
+        default='localhost', description='Host address returned by the flow deployment.'
+    )
+    port: int = Field(default=31080, description='Port at which to connect.')
+    limit: int = Field(default=10, description='Number of matching results to return')
+
+    class Config:
+        allow_mutation = False
+        case_sensitive = False
+        arbitrary_types_allowed = True
