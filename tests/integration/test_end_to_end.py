@@ -24,7 +24,9 @@ def test_backend(
     new_cluster_type: str,
 ):
     log.TEST = True
-    sandbox = dataset == 'best-artworks'
+    # sandbox = dataset == 'best-artworks'
+    # deactivate sandbox since it is hanging from time to time
+    sandbox = False
     kwargs = {
         'output_modality': output_modality,
         'data': dataset,

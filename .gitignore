@@ -3,7 +3,13 @@ k8s
 now/hub/head_encoder/best_model_ndcg
 now/hub/head_encoder/mean.bin
 *.idea
+
+# png images
 *.png
+# but don't ignore them if it is inside docs / frontend
+!docs/*.png
+!docs/**/*.png
+!now/frontend/*.png
 
 data/
 jina-now/
@@ -17,4 +23,11 @@ __pycache__/
 build
 jina_now.egg-info
 dist
+
+# sphinx generated docs
 docs/_build
+docs/_build/*
+docs/_build/**/*
+docs/api
+docs/api/*
+docs/api/**/*
