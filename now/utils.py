@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw, ImageFont
 from rich.console import Console
 
 from now.deployment.deployment import which
-from now.log.log import TEST
+from now.log import log
 
 colors = [
     "navy",
@@ -249,7 +249,6 @@ def download_file(path, r_raw):
 def download(url, filename):
     import functools
     import pathlib
-    import shutil
 
     import requests
     from tqdm.auto import tqdm
@@ -268,7 +267,7 @@ def download(url, filename):
         r.raw.read, decode_content=True
     )  # Decompress if needed
 
-    if TEST:
+    if log.TEST:
         download_file(path, r.raw)
     else:
         with tqdm.wrapattr(r.raw, "read", total=file_size, desc=desc) as r_raw:
