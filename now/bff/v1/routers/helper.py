@@ -4,14 +4,19 @@ from docarray import Document
 from fastapi import HTTPException
 
 
-def process_query(query: str, modality: str = 'text'):
-    base64_bytes = query.encode('utf-8')
-    if modality == 'text':
-        message_bytes = base64.b64decode(base64_bytes).decode('utf-8')
-        query_doc = Document(text=message_bytes)
-    elif modality == 'image':
-        message_bytes = base64.decodebytes(base64_bytes)
-        query_doc = Document(blob=message_bytes)
-    else:
-        raise HTTPException(status_code=404, detail=f'Wrong modality selected.')
+def process_query(text: str, image: str):
+    if text is not None and image is not None:
+        raise ValueError('Please set either image or text not both!')
+    try:
+        if text is not None:
+            query_doc = Document(text=text)
+        else:
+            base64_bytes = image.encode('utf-8')
+            message_bytes = base64.decodebytes(base64_bytes)
+            query_doc = Document(blob=message_bytes)
+    except HTTPException as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f'Not a correct encoded query. Please see the error stack for more information. \n{e}',
+        )
     return query_doc
