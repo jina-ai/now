@@ -38,8 +38,8 @@ def index(data: List[str], host: str = 'localhost', port: int = 31080):
     summary='Search image data via text or image as query',
 )
 def search(
-    text: str,
-    image: str,
+    text: str = None,
+    image: str = None,
     host: str = 'localhost',
     port: int = 31080,
     limit: int = 10,
