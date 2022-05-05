@@ -5,7 +5,7 @@ import pytest
 
 @pytest.fixture
 def test_index_image():
-    with open('./tests/image-data/kids2.jpg', 'rb') as f:
+    with open('./tests/resources/image/5109112832.jpg', 'rb') as f:
         binary = f.read()
         img_query = base64.b64encode(binary).decode('utf-8')
     return {'images': [img_query]}
@@ -18,7 +18,7 @@ def test_index_text():
 
 @pytest.fixture
 def test_search_image():
-    with open('./tests/image-data/kids2.jpg', 'rb') as f:
+    with open('./tests/resources/image/5109112832.jpg', 'rb') as f:
         binary = f.read()
         img_query = base64.b64encode(binary).decode('utf-8')
     return {'image': img_query}
@@ -31,7 +31,7 @@ def test_search_text():
 
 @pytest.fixture
 def test_search_both():
-    with open('./tests/image-data/kids2.jpg', 'rb') as f:
+    with open('./tests/resources/image/5109112832.jpg', 'rb') as f:
         binary = f.read()
         img_query = base64.b64encode(binary).decode('utf-8')
     return {'image': img_query, 'text': 'Hello'}
