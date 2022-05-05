@@ -1,2 +1,2 @@
-pytest==0.75.2
+pytest
 pytest-mock==3.7.0
