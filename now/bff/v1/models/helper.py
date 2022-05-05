@@ -17,7 +17,6 @@ class BaseRequestModel(BaseModel):
         default='localhost', description='Host address returned by the flow deployment.'
     )
     port: int = Field(default=31080, description='Port at which to connect.')
-    limit: int = Field(default=10, description='Number of matching results to return')
 
     class Config:
         allow_mutation = False
