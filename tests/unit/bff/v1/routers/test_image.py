@@ -21,7 +21,7 @@ def test_search(test_client, test_search_text):
 def test_search_img_via_no_base64_image(test_client):
     response = test_client.post(
         f'/api/v1/image/search',
-        jsom={'image': 'hello'},
+        json={'image': 'hello'},
     )
     assert response.status_code == 500
     assert 'Not a correct encoded query' in response.text
