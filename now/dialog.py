@@ -15,7 +15,6 @@ from typing import Dict, List, Optional, Union
 import cowsay
 from kubernetes import client, config
 from pyfiglet import Figlet
-from yaspin import yaspin
 
 from now.constants import (
     AVAILABLE_DATASET,
@@ -25,6 +24,7 @@ from now.constants import (
     Qualities,
 )
 from now.deployment.deployment import cmd
+from now.log.log import yaspin_extended
 from now.thridparty.PyInquirer import Separator
 from now.thridparty.PyInquirer.prompt import prompt
 from now.utils import ffmpeg_is_installed, gcloud_is_installed, sigmap
@@ -408,7 +408,7 @@ def _cluster_running(cluster):
 def _maybe_install_gke(os_type: str, arch: str):
     if not gcloud_is_installed():
         if not os.path.exists(user('~/.cache/jina-now/google-cloud-sdk')):
-            with yaspin(
+            with yaspin_extended(
                 sigmap=sigmap, text='Setting up gcloud', color='green'
             ) as spinner:
                 cmd(

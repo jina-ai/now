@@ -6,11 +6,11 @@ from typing import Optional
 import cowsay
 import docker
 from kubernetes import client, config
-from yaspin import yaspin
 
 from now.deployment.deployment import cmd
 from now.dialog import maybe_prompt_user
 from now.gke_deploy import create_gke_cluster
+from now.log.log import yaspin_extended
 from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
@@ -38,7 +38,7 @@ def create_local_cluster(kind_path, **kwargs):
         ]
         recreate = maybe_prompt_user(questions, 'proceed', **kwargs)
         if recreate:
-            with yaspin(
+            with yaspin_extended(
                 sigmap=sigmap, text="Remove local cluster", color="green"
             ) as spinner:
                 cmd(f'{kind_path} delete clusters {cluster_name}')
@@ -46,7 +46,7 @@ def create_local_cluster(kind_path, **kwargs):
         else:
             cowsay.cow('see you soon 👋')
             exit(0)
-    with yaspin(
+    with yaspin_extended(
         sigmap=sigmap, text="Setting up local cluster", color="green"
     ) as spinner:
         kindest_images = docker.from_env().images.list('kindest/node')
@@ -113,7 +113,7 @@ def ask_existing(kubectl_path):
         ]
         remove = maybe_prompt_user(questions, 'proceed')
         if remove:
-            with yaspin(
+            with yaspin_extended(
                 sigmap=sigmap, text="Remove old deployment", color="green"
             ) as spinner:
                 cmd(f'{kubectl_path} delete ns nowapi')

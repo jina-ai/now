@@ -3,10 +3,10 @@ import pathlib
 from os.path import expanduser as user
 
 import cowsay
-from yaspin import yaspin
 
 from now.deployment.deployment import cmd
 from now.dialog import maybe_prompt_user
+from now.log.log import yaspin_extended
 from now.utils import custom_spinner, sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
@@ -133,12 +133,12 @@ def create_gke_cluster():
     out, _ = cmd(f'{gcloud_path} container clusters list')
     out = out.decode('utf-8')
     if application_name in out and zone in out:
-        with yaspin(
+        with yaspin_extended(
             sigmap=sigmap, text='Cluster exists already', color='green'
         ) as spinner:
             spinner.ok('✅')
     else:
-        with yaspin(
+        with yaspin_extended(
             custom_spinner().weather, sigmap=sigmap, text="Create cluster"
         ) as spinner:
             cmd(

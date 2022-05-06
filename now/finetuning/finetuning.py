@@ -15,11 +15,11 @@ from finetuner.tuner.pytorch.losses import TripletLoss
 from finetuner.tuner.pytorch.miner import TripletEasyHardMiner
 from jina import Client, Flow
 from tqdm import tqdm
-from yaspin import yaspin
 
 from now.deployment.deployment import cmd
 from now.deployment.flow import batch, deploy_k8s
 from now.hub.head_encoder.head_encoder import LinearHead
+from now.log.log import yaspin_extended
 from now.utils import get_device, sigmap
 
 epochs = 50  # use early stopping
@@ -97,7 +97,7 @@ def finetune_layer(ds, batch_size, final_layer_output_dim, embedding_size, tmpdi
 
 def add_clip_embeddings(dataset, vision_model, tmpdir, kubectl_path):
     need_to_add_embeddings = False
-    with yaspin(
+    with yaspin_extended(
         sigmap=sigmap, text="Check if embeddings already exist", color="green"
     ) as spinner:
         for k, da in dataset.items():

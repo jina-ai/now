@@ -1,11 +1,11 @@
 from argparse import Namespace
 
 import pytest
-from docarray import Document
-from jina import Client
+from fastapi.testclient import TestClient
 
 from now.cli import cli
 from now.dialog import NEW_CLUSTER
+from now.log import log
 
 
 @pytest.mark.parametrize(
@@ -21,7 +21,9 @@ def test_backend(
     quality: str,
     cluster: str,
     new_cluster_type: str,
+    test_client: TestClient,
 ):
+    log.TEST = True
     # sandbox = dataset == 'best-artworks'
     # deactivate sandbox since it is hanging from time to time
     sandbox = False
@@ -44,14 +46,22 @@ def test_backend(
     else:
         search_text = 'test'
 
-    client = Client(
-        host='localhost',
-        protocol="grpc",
-        port=31080,  # 30080 for frontend, 31080 for backend
-    )
-    response = client.search(
-        Document(text=search_text),
-        parameters={"limit": 9, "filter": {}},
-    )
-
-    assert response[0].matches
+    # Perform end-to-end check via bff
+    if output_modality == 'image':
+        response = test_client.post(
+            f'/api/v1/image/search',
+            json={'text': search_text, 'limit': 9},  # limit has no effect as of now
+        )
+    elif output_modality == 'text':
+        response = test_client.post(
+            f'/api/v1/text/search',
+            json={'text': search_text, 'limit': 9},  # limit has no effect as of now
+        )
+    else:
+        # add more here when the new modality is added
+        response = None
+    assert response.status_code == 200
+    # Limit param is not respected and hence 20 matches are returned
+    # Therefore, once the limit is implemented in the CustomIndexer,
+    # we should change the below value to 9
+    assert len(response.json()) == 20
