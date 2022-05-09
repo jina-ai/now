@@ -6,9 +6,13 @@ import signal
 import stat
 import sys
 from collections import namedtuple
+from typing import Dict
 
 import numpy as np
+import yaml
 from docarray import Document
+from jcloud.flow import CloudFlow
+from jina.helper import get_or_reuse_loop
 from PIL import Image, ImageDraw, ImageFont
 from rich.console import Console
 
@@ -326,6 +330,29 @@ def ffmpeg_is_installed():
 
 def gcloud_is_installed():
     return which("gcloud")
+
+
+def deploy_wolf(path: str, name: str):
+    loop = get_or_reuse_loop()
+    return loop.run_until_complete(CloudFlow(path=path, name=name).__aenter__())
+
+
+def terminate_wolf(flow_id: str):
+    loop = get_or_reuse_loop()
+    loop.run_until_complete(CloudFlow(flow_id=flow_id).__aexit__())
+
+
+def flow_definition(dirpath) -> Dict:
+    with open(dirpath) as f:
+        return yaml.safe_load(f.read())
+
+
+def update_uses_to_sandbox(flow):
+    for idx, executor_dict in enumerate(flow['executors']):
+        uses = executor_dict.get('uses', {})
+        first_part, second_part = uses.split('://')
+        uses = 'jinahub+sandbox://' + second_part
+        flow['executors'][idx]['uses'] = uses
 
 
 sigmap = {signal.SIGINT: my_handler, signal.SIGTERM: my_handler}

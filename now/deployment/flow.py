@@ -11,7 +11,7 @@ from yaspin.spinners import Spinners
 from now.cloud_manager import is_local_cluster
 from now.deployment.deployment import apply_replace, cmd
 from now.log.log import TEST, yaspin_extended
-from now.utils import sigmap
+from now.utils import deploy_wolf, sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
 
@@ -110,58 +110,42 @@ def deploy_flow(
     finetuning,
     sandbox,
     kubectl_path,
+    deployment_type,
 ):
     from jina import Flow
     from jina.clients import Client
 
     ns = 'nowapi'
-    f = Flow(
-        name=ns,
-        port_expose=8080,
-        cors=True,
-    )
-    f = f.add(
-        name='encoder_clip',
-        uses=f'jinahub{"+sandbox" if sandbox else "+docker"}://CLIPEncoder/v0.2.1',
-        uses_with={'pretrained_model_name_or_path': vision_model},
-        env={'JINA_LOG_LEVEL': 'DEBUG'},
-    )
-    if finetuning:
-        f = f.add(
-            name='linear_head',
-            uses=f'jinahub{"+sandbox" if sandbox else "+docker"}://{executor_name}',
-            uses_with={
-                'final_layer_output_dim': final_layer_output_dim,
-                'embedding_size': embedding_size,
-            },
-            env={'JINA_LOG_LEVEL': 'DEBUG'},
+    if deployment_type == 'remote':
+        # Deploy it on wolf
+        if not finetuning:
+            flow = deploy_wolf(os.path.join(cur_dir, 'flow', 'flow.yml'), name=ns)
+        else:
+            flow = deploy_wolf(os.path.join(cur_dir, 'flow', 'ft-flow.yml'), name=ns)
+        host = flow.gateway
+        client = Client(host=host)
+    else:
+        f = Flow.load_config(os.path.join(cur_dir, 'flow', 'flow.yml'))
+
+        (
+            gateway_host,
+            gateway_port,
+            gateway_host_internal,
+            gateway_port_internal,
+        ) = deploy_k8s(
+            f,
+            ns,
+            2 + (2 if finetuning else 1) * (0 if sandbox else 1),
+            tmpdir,
+            kubectl_path=kubectl_path,
         )
-    f = f.add(
-        name='indexer',
-        uses=f'jinahub+docker://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a',
-        env={'JINA_LOG_LEVEL': 'DEBUG'},
-    )
-    # f.plot('./flow.png', vertical_layout=True)
+        client = Client(host=gateway_host, port=gateway_port)
 
     if output_modality == 'image':
         index = [x for x in index if x.text == '']
     elif output_modality == 'text':
         index = [x for x in index if x.text != '']
-
-    (
-        gateway_host,
-        gateway_port,
-        gateway_host_internal,
-        gateway_port_internal,
-    ) = deploy_k8s(
-        f,
-        ns,
-        2 + (2 if finetuning else 1) * (0 if sandbox else 1),
-        tmpdir,
-        kubectl_path=kubectl_path,
-    )
     print(f'▶ indexing {len(index)} documents')
-    client = Client(host=gateway_host, port=gateway_port)
     request_size = 64
 
     progress_bar = (

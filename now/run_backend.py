@@ -149,6 +149,7 @@ def run(user_input: UserInput, is_debug, tmpdir, kubectl_path: str):
         finetuning=finetuning,
         sandbox=user_input.sandbox,
         kubectl_path=kubectl_path,
+        deployment_type=user_input.deployment_type,
     )
     return gateway_host, gateway_port, gateway_host_internal, gateway_port_internal
 
