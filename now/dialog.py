@@ -247,7 +247,7 @@ def _configure_cluster(user_input: UserInput, skip=False, **kwargs):
 
     def ask_deployment():
         user_input.deployment_type = _prompt_value(
-            name='new_cluster_type',
+            name='deployment_type',
             choices=[
                 {
                     'name': '📍 local (Kubernetes in Docker)',

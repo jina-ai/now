@@ -31,7 +31,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'data': 'music-genres-small',
             'cluster': 'new',
             'sandbox': False,
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
         },
         {},
         UserInput(
@@ -45,7 +45,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'data': 'music-genres-large',
             'cluster': 'new',
             'sandbox': False,
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
         },
         {},
         UserInput(
@@ -60,7 +60,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'cluster': 'new',
             'sandbox': False,
             'quality': 'good',
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
         },
         {},
         UserInput(
@@ -76,7 +76,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'cluster': 'new',
             'sandbox': False,
             'quality': 'medium',
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
         },
         {},
         UserInput(
@@ -94,7 +94,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'cluster': 'new',
             'sandbox': False,
             'quality': 'medium',
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
         },
         {},
         UserInput(
@@ -111,7 +111,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'dataset_secret': 'xxx',
             'cluster': 'new',
             'sandbox': False,
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
         },
         {},
         UserInput(
@@ -127,7 +127,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'dataset_path': 'xxx',
             'cluster': 'new',
             'sandbox': False,
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
         },
         {},
         UserInput(
@@ -143,7 +143,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'dataset_url': 'xxx',
             'cluster': 'new',
             'sandbox': False,
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
         },
         {},
         UserInput(
@@ -160,7 +160,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'quality': 'medium',
             'cluster': 'new',
             'sandbox': False,
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
         },
         {},
         UserInput(
@@ -176,7 +176,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'cluster': 'new',
             'sandbox': False,
             'quality': 'good',
-            'new_cluster_type': 'gke',
+            'deployment_type': 'gke',
         },
         {'os_type': 'darwin', 'arch': 'x86_64'},
         UserInput(
@@ -190,7 +190,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'data': 'music-genres-small',
             'cluster': 'new',
             'sandbox': False,
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
         },
         {'output_modality': Modalities.MUSIC},
         UserInput(
@@ -203,7 +203,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'data': 'tll',
             'cluster': 'new',
             'sandbox': False,
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
         },
         {'output_modality': Modalities.IMAGE, 'quality': 'good'},
         UserInput(
@@ -217,7 +217,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'data': 'pop-lyrics',
             'cluster': 'new',
             'sandbox': False,
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
         },
         {'output_modality': Modalities.TEXT, 'quality': 'good'},
         UserInput(
@@ -234,7 +234,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
             'data': 'pop-lyrics',
             'cluster': 'new',
             'sandbox': False,
-            'new_cluster_type': 'local',
+            'deployment_type': 'local',
             'quality': 'medium',
         },
         UserInput(

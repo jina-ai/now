@@ -96,6 +96,6 @@ if __name__ == '__main__':
         output_modality='music',
         data='music-genres-small',
         cluster='new',
-        new_cluster_type='local',
+        deployment_type='local',
         kubectl_path='/usr/local/bin/kubectl',
     )

@@ -14,13 +14,13 @@ from now.log import log
 )  # art, rock-lyrics -> no finetuning, fashion -> finetuning
 @pytest.mark.parametrize('quality', ['medium'])
 @pytest.mark.parametrize('cluster', [NEW_CLUSTER['value']])
-@pytest.mark.parametrize('new_cluster_type', ['local'])
+@pytest.mark.parametrize('deployment_type', ['local'])
 def test_backend(
     output_modality: str,
     dataset: str,
     quality: str,
     cluster: str,
-    new_cluster_type: str,
+    deployment_type: str,
     test_client: TestClient,
 ):
     log.TEST = True
@@ -33,7 +33,7 @@ def test_backend(
         'quality': quality,
         'sandbox': sandbox,
         'cluster': cluster,
-        'new_cluster_type': new_cluster_type,
+        'deployment_type': deployment_type,
         'proceed': True,
     }
     kwargs = Namespace(**kwargs)
