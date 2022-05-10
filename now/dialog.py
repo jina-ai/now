@@ -267,7 +267,7 @@ def _configure_cluster(user_input: UserInput, skip=False, **kwargs):
         if user_input.deployment_type == 'gke':
             _maybe_install_gke(**kwargs)
         elif user_input.deployment_type == 'remote':
-            _maybe_login_wolf(**kwargs)
+            _maybe_login_wolf()
 
     if not skip:
         ask_deployment()
@@ -433,6 +433,15 @@ def _maybe_install_gke(os_type: str, arch: str):
                     f'/bin/bash {cur_dir}/scripts/install_gcloud.sh {os_type} {arch}',
                 )
                 spinner.ok('🛠️')
+
+
+def _maybe_login_wolf():
+    if not os.path.exists(user('~/.jina/config.json')):
+        with yaspin_extended(
+            sigmap=sigmap, text='Log in to JCloud', color='green'
+        ) as spinner:
+            cmd('/bin/bash jc login')
+        spinner.ok('🛠️')
 
 
 def _parse_custom_data_from_cli(user_input: UserInput):
