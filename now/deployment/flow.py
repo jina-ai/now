@@ -1,6 +1,7 @@
 import math
 import os.path
 import pathlib
+from os.path import expanduser as user
 from time import sleep
 
 from kubernetes import client as k8s_client
@@ -99,6 +100,29 @@ def deploy_k8s(f, ns, num_pods, tmpdir, kubectl_path):
     return gateway_host, gateway_port, gateway_host_internal, gateway_port_internal
 
 
+def get_custom_env_file(
+    indexer_name,
+    encoder_name,
+    linear_head_name,
+    model,
+    output_dim,
+    embed_size,
+    tmpdir,
+):
+    env_file = os.path.join(tmpdir, user('~/.cache/jina-now/dot.env'))
+    with open(env_file, 'w+') as fp:
+        fp.write(
+            f'ENCODER_NAME={encoder_name}\n'
+            f'CLIP_MODEL_NAME={model}\n'
+            f'LINEAR_HEAD_NAME={linear_head_name}\n'
+            f'OUTPUT_DIM={output_dim}\n'
+            f'EMBED_DIM={embed_size}\n'
+            f'INDEXER_NAME={indexer_name}\n'
+        )
+
+    return env_file
+
+
 def deploy_flow(
     executor_name,
     output_modality,
@@ -115,17 +139,50 @@ def deploy_flow(
     from jina import Flow
     from jina.clients import Client
 
+    if deployment_type == 'remote':
+        indexer_name = (
+            'jinahub+docker://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a'
+        )
+        encoder_name = 'jinahub+docker://CLIPEncoder/v0.2.1'
+    else:
+        indexer_name = (
+            'jinahub+sandbox://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a'
+        )
+        encoder_name = 'jinahub+sandbox://CLIPEncoder/v0.2.1'
+
+    env_file = get_custom_env_file(
+        indexer_name,
+        encoder_name,
+        executor_name,
+        vision_model,
+        final_layer_output_dim,
+        embedding_size,
+        tmpdir,
+    )
+
     ns = 'nowapi'
     if deployment_type == 'remote':
         # Deploy it on wolf
-        if not finetuning:
-            flow = deploy_wolf(os.path.join(cur_dir, 'flow', 'flow.yml'), name=ns)
+        if finetuning:
+            flow = deploy_wolf(
+                os.path.join(cur_dir, 'flow', 'ft-flow.yml'), name=ns, env=env_file
+            )
         else:
-            flow = deploy_wolf(os.path.join(cur_dir, 'flow', 'ft-flow.yml'), name=ns)
+            flow = deploy_wolf(
+                os.path.join(cur_dir, 'flow', 'flow.yml'), name=ns, env=env_file
+            )
         host = flow.gateway
         client = Client(host=host)
+        with open(user('~/.cache/jina-now/wolf.json'), 'wb+') as fp:
+            json.dump({'flow_id': host}, fp)
     else:
-        f = Flow.load_config(os.path.join(cur_dir, 'flow', 'flow.yml'))
+        from dotenv import load_dotenv
+
+        load_dotenv(env_file)
+        if finetuning:
+            f = Flow.load_config(os.path.join(cur_dir, 'flow', 'ft-flow.yml'))
+        else:
+            f = Flow.load_config(os.path.join(cur_dir, 'flow', 'flow.yml'))
 
         (
             gateway_host,
@@ -151,7 +208,8 @@ def deploy_flow(
     progress_bar = (
         x
         for x in tqdm(
-            batch(index, request_size), total=math.ceil(len(index) / request_size)
+            batch(index, request_size),
+            total=math.ceil(len(index) / request_size),
         )
     )
 

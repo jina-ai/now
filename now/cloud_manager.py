@@ -1,6 +1,8 @@
 import json
+import os.path
 import pathlib
 import warnings
+from os.path import expanduser as user
 
 import cowsay
 import docker
@@ -75,6 +77,36 @@ def is_local_cluster(kubectl_path):
     return is_local
 
 
+def check_wolf_deployment(**kwargs):
+    if os.path.exists(user('~/.cache/jina-now/wolf.json')):
+        questions = [
+            {
+                'type': 'list',
+                'name': 'proceed',
+                'message': 'Remote flow already exists. Do you want to '
+                'delete it and create new?',
+                'choices': [
+                    {'name': '⛔ no', 'value': False},
+                    {'name': '✅ yes', 'value': True},
+                ],
+            },
+        ]
+        recreate = maybe_prompt_user(questions, 'proceed', **kwargs)
+        if recreate:
+            with yaspin_extended(
+                sigmap=sigmap, text="Removing existing remote flow", color="green"
+            ) as spinner:
+                with open(user('~/.cache/jina-now/wolf.json'), 'rb') as fp:
+                    flow_details = json.load(fp)
+                flow_id = flow_details['flow_id']
+                cmd(f'jcloud remove {flow_id}')
+                spinner.ok('💀')
+                os.remove(user('~/.cache/jina-now/wolf.json'))
+        else:
+            cowsay.cow('see you soon 👋')
+            exit(0)
+
+
 def setup_cluster(
     user_input: UserInput,
     kubectl_path='kubectl',
@@ -82,11 +114,17 @@ def setup_cluster(
     **kwargs,
 ):
     if user_input.create_new_cluster:
+        # There's no create new cluster for remote
+        # It will be directly deployed using the flow.yml
         if user_input.deployment_type == 'local':
             create_local_cluster(kind_path, **kwargs)
         elif user_input.deployment_type == 'gke':
             create_gke_cluster()
-    elif user_input.deployment_type != 'remote':
+    elif user_input.deployment_type == 'remote':
+        # If it is remote check if a flow is already deployed
+        # If it is then ask to re-create and delete the old one
+        check_wolf_deployment()
+    else:
         cmd(f'{kubectl_path} config use-context {user_input.cluster}')
         ask_existing(kubectl_path)
 

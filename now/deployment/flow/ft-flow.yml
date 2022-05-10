@@ -5,24 +5,24 @@ with:
   cors: True
 executors:
   - name: encoder_clip
-    uses: jinahub+docker://CLIPEncoder/v0.2.1
+    uses: $${{ ENV.ENCODER_NAME }}
     resources:
       memory: 8G
     uses_with:
-      pretrained_model_name_or_path: openai/clip-vit-base-patch32
+      pretrained_model_name_or_path: ${{ ENV.CLIP_MODEL_NAME }}
     env:
       JINA_LOG_LEVEL: DEBUG
   - name: linear_head
-    uses: jinahub+docker://FineTunedLinearHeadEncoder
+    uses: $${{ ENV.LINEAR_HEAD_NAME }}
     uses_with:
-      final_layer_output_dim: final_layer_output_dim
-      embedding_size: embedding_size
+      final_layer_output_dim: $${{ ENV.OUTPUT_DIM }}
+      embedding_size: $${{ ENV.EMBED_DIM }}
     env:
       JINA_LOG_LEVEL: DEBUG
   - name: indexer
-    uses: jinahub+docker://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a
+    uses: $${{ ENV.INDEXER_NAME }}
     uses_with:
-      dim: embedding_size
+      dim: $${{ ENV.EMBED_DIM }}
       metric: cosine
     uses_metas:
       workspace: pq_workspace

@@ -332,9 +332,11 @@ def gcloud_is_installed():
     return which("gcloud")
 
 
-def deploy_wolf(path: str, name: str):
+def deploy_wolf(path: str, name: str, env: str):
     loop = get_or_reuse_loop()
-    return loop.run_until_complete(CloudFlow(path=path, name=name).__aenter__())
+    return loop.run_until_complete(
+        CloudFlow(path=path, name=name, env_file=env).__aenter__()
+    )
 
 
 def terminate_wolf(flow_id: str):
