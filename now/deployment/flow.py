@@ -175,6 +175,12 @@ def deploy_flow(
         client = Client(host=host)
         with open(user('~/.cache/jina-now/wolf.json'), 'wb+') as fp:
             json.dump({'flow_id': host}, fp)
+
+        # host & port
+        gateway_host = 'remote'
+        gateway_port = None
+        gateway_host_internal = host
+        gateway_port_internal = 443  # Since we know it will be `grpcs` - default
     else:
         from dotenv import load_dotenv
 

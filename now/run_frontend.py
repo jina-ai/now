@@ -39,7 +39,7 @@ def run(
         )
 
         # remote signifies WOLF - Flow as a service
-        if gateway_host == 'localhost' or gateway_port == 'remote':
+        if gateway_host == 'localhost' or gateway_host == 'remote':
             cmd(
                 f'{kubectl_path} apply -f {cur_dir}/deployment/k8s_frontend-svc-node.yml'
             )
