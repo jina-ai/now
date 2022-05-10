@@ -144,11 +144,13 @@ def deploy_flow(
             'jinahub+sandbox://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a'
         )
         encoder_name = 'jinahub+sandbox://CLIPEncoder/v0.2.1'
+        executor_name = f'jinahub+sandbox://{executor_name}'
     else:
         indexer_name = (
             'jinahub+docker://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a'
         )
         encoder_name = 'jinahub+docker://CLIPEncoder/v0.2.1'
+        executor_name = f'jinahub+docker://{executor_name}'
 
     env_file = get_custom_env_file(
         indexer_name,
