@@ -60,7 +60,7 @@ def run_k8s(os_type: str = 'linux', arch: str = 'x86_64', **kwargs):
             **kwargs,
         )
         with tempfile.TemporaryDirectory() as tmpdir:
-            setup_cluster(user_input.cluster, user_input.deployment_type, **kwargs)
+            setup_cluster(user_input, **kwargs)
             (
                 gateway_host,
                 gateway_port,

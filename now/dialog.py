@@ -65,8 +65,8 @@ def configure_user_input(**kwargs) -> UserInput:
     _configure_output_modality(user_input, **kwargs)
     _configure_dataset(user_input, **kwargs)
     _configure_quality(user_input, **kwargs)
-    _configure_cluster(user_input, **kwargs)
     _configure_sandbox(user_input, **kwargs)
+    _configure_cluster(user_input, **kwargs)
 
     return user_input
 
@@ -266,11 +266,14 @@ def _configure_cluster(user_input: UserInput, skip=False, **kwargs):
         )
         if user_input.deployment_type == 'gke':
             _maybe_install_gke(**kwargs)
+        elif user_input.deployment_type == 'remote':
+            _maybe_login_wolf(**kwargs)
 
     if not skip:
         ask_deployment()
 
     choices = None
+    user_input.create_new_cluster = False
 
     if user_input.deployment_type == 'local':
         choices = _construct_local_cluster_choices(
@@ -299,6 +302,8 @@ def _configure_cluster(user_input: UserInput, skip=False, **kwargs):
                     f'Cluster {cluster} is not running. Please select a different one.'
                 )
                 _configure_cluster(user_input, skip=True, **kwargs)
+        else:
+            user_input.create_new_cluster = True
 
 
 def _configure_quality(user_input: UserInput, **kwargs) -> None:

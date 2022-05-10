@@ -1,14 +1,13 @@
 import json
 import pathlib
 import warnings
-from typing import Optional
 
 import cowsay
 import docker
 from kubernetes import client, config
 
 from now.deployment.deployment import cmd
-from now.dialog import maybe_prompt_user
+from now.dialog import UserInput, maybe_prompt_user
 from now.gke_deploy import create_gke_cluster
 from now.log.log import yaspin_extended
 from now.utils import sigmap
@@ -77,20 +76,19 @@ def is_local_cluster(kubectl_path):
 
 
 def setup_cluster(
-    cluster_name: Optional[str],
-    provider: str,
+    user_input: UserInput,
     kubectl_path='kubectl',
     kind_path='kind',
     **kwargs,
 ):
-    if cluster_name is not None and cluster_name != 'new':
-        cmd(f'{kubectl_path} config use-context {cluster_name}')
-        ask_existing(kubectl_path)
-    else:
-        if provider == 'local':
+    if user_input.create_new_cluster:
+        if user_input.deployment_type == 'local':
             create_local_cluster(kind_path, **kwargs)
-        elif provider == 'gke':
+        elif user_input.deployment_type == 'gke':
             create_gke_cluster()
+    elif user_input.deployment_type != 'remote':
+        cmd(f'{kubectl_path} config use-context {user_input.cluster}')
+        ask_existing(kubectl_path)
 
 
 def ask_existing(kubectl_path):
