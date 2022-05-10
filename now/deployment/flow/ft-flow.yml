@@ -5,20 +5,20 @@ with:
   cors: True
 executors:
   - name: encoder_clip
-    uses: $${{ ENV.ENCODER_NAME }}
+    uses: ${{ ENV.ENCODER_NAME }}
     resources:
       memory: 8G
     uses_with:
       pretrained_model_name_or_path: ${{ ENV.CLIP_MODEL_NAME }}
   - name: linear_head
-    uses: $${{ ENV.LINEAR_HEAD_NAME }}
+    uses: ${{ ENV.LINEAR_HEAD_NAME }}
     uses_with:
-      final_layer_output_dim: $${{ ENV.OUTPUT_DIM }}
-      embedding_size: $${{ ENV.EMBED_DIM }}
+      final_layer_output_dim: ${{ ENV.OUTPUT_DIM }}
+      embedding_size: ${{ ENV.EMBED_DIM }}
   - name: indexer
-    uses: $${{ ENV.INDEXER_NAME }}
+    uses: ${{ ENV.INDEXER_NAME }}
     uses_with:
-      dim: $${{ ENV.EMBED_DIM }}
+      dim: ${{ ENV.EMBED_DIM }}
       metric: cosine
     uses_metas:
       workspace: pq_workspace

@@ -5,7 +5,7 @@ with:
   cors: True
 executors:
   - name: encoder_clip
-    uses: $${{ ENV.ENCODER_NAME }}
+    uses: ${{ ENV.ENCODER_NAME }}
     resources:
       memory: 8G
     uses_with:
