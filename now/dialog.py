@@ -268,6 +268,7 @@ def _configure_cluster(user_input: UserInput, skip=False, **kwargs):
             _maybe_install_gke(**kwargs)
         elif user_input.deployment_type == 'remote':
             _maybe_login_wolf()
+            os.environ['JCLOUD_NO_SURVEY'] = '1'
 
     if not skip:
         ask_deployment()

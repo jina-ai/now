@@ -1,3 +1,4 @@
+import json
 import math
 import os.path
 import pathlib
@@ -109,7 +110,7 @@ def get_custom_env_file(
     embed_size,
     tmpdir,
 ):
-    env_file = os.path.join(tmpdir, user('~/.cache/jina-now/dot.env'))
+    env_file = os.path.join(tmpdir, 'dot.env')
     with open(env_file, 'w+') as fp:
         fp.write(
             f'ENCODER_NAME={encoder_name}\n'
@@ -141,10 +142,10 @@ def deploy_flow(
 
     if deployment_type == 'remote':
         indexer_name = (
-            'jinahub+sandbox://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a'
+            'jinahub+docker://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a'
         )
-        encoder_name = 'jinahub+sandbox://CLIPEncoder/v0.2.1'
-        executor_name = f'jinahub+sandbox://{executor_name}'
+        encoder_name = 'jinahub+docker://CLIPEncoder/v0.2.1'
+        executor_name = f'jinahub+docker://{executor_name}'
     else:
         indexer_name = (
             'jinahub+docker://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a'
