@@ -183,6 +183,7 @@ def deploy_flow(
         from dotenv import load_dotenv
 
         load_dotenv(env_file)
+        print('Finetuning: ', finetuning, os.environ['LINEAR_HEAD_NAME'])
         if finetuning:
             f = Flow.load_config(os.path.join(cur_dir, 'flow', 'ft-flow.yml'))
         else:

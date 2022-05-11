@@ -96,7 +96,7 @@ def check_wolf_deployment(**kwargs):
             with yaspin_extended(
                 sigmap=sigmap, text="Removing existing remote flow", color="green"
             ) as spinner:
-                with open(user('~/.cache/jina-now/wolf.json'), 'rb') as fp:
+                with open(user('~/.cache/jina-now/wolf.json'), 'r') as fp:
                     flow_details = json.load(fp)
                 flow_id = flow_details['flow_id']
                 cmd(f'jcloud remove {flow_id}')
