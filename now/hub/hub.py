@@ -33,5 +33,6 @@ def push_to_hub(tmpdir):
         with open(os.path.join(tmpdir, "NUL"), "w") as fh:
             process = subprocess.Popen(bashCommand.split(), stdout=fh)
         output, error = process.communicate()
+        print(output, error)
         spinner.ok('⏫ ')
     return f'FineTunedLinearHeadEncoder:{secret}/{name}'

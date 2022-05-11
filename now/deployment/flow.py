@@ -110,7 +110,7 @@ def get_custom_env_file(
     embed_size,
     tmpdir,
 ):
-    env_file = os.path.join(tmpdir, 'dot.env')
+    env_file = os.path.join(user('~/.jina'), 'dot.env')
     with open(env_file, 'w+') as fp:
         fp.write(
             f'ENCODER_NAME={encoder_name}\n'
