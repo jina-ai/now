@@ -110,7 +110,7 @@ def get_custom_env_file(
     embed_size,
     tmpdir,
 ):
-    env_file = os.path.join(user('~/.jina'), 'dot.env')
+    env_file = os.path.join(tmpdir, 'dot.env')
     with open(env_file, 'w+') as fp:
         fp.write(
             f'ENCODER_NAME={encoder_name}\n'
@@ -140,18 +140,13 @@ def deploy_flow(
     from jina import Flow
     from jina.clients import Client
 
-    if deployment_type == 'remote':
-        indexer_name = (
-            'jinahub+docker://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a'
-        )
-        encoder_name = 'jinahub+docker://CLIPEncoder/v0.2.1'
-        executor_name = f'jinahub+docker://{executor_name}'
-    else:
-        indexer_name = (
-            'jinahub+docker://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a'
-        )
-        encoder_name = 'jinahub+docker://CLIPEncoder/v0.2.1'
-        executor_name = f'jinahub+docker://{executor_name}'
+    suffix = 'docker' if deployment_type == 'remote' else 'docker'
+
+    indexer_name = (
+        f'jinahub+{suffix}://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a'
+    )
+    encoder_name = f'jinahub+{suffix}://CLIPEncoder/v0.2.1'
+    executor_name = f'jinahub+{suffix}://{executor_name}'
 
     env_file = get_custom_env_file(
         indexer_name,
@@ -206,6 +201,10 @@ def deploy_flow(
             kubectl_path=kubectl_path,
         )
         client = Client(host=gateway_host, port=gateway_port)
+
+    # delete the env file
+    if os.path.exists(env_file):
+        os.remove(env_file)
 
     if output_modality == 'image':
         index = [x for x in index if x.text == '']
