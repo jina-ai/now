@@ -130,6 +130,7 @@ jobs:
           pip install --no-cache-dir ".[test]"
       - name: Add JCloud auth token
         run: |
+          touch ~/.jina/config.json
           echo "{\"auth_token\": \"${WOLF_TOKEN}\"}" > ~/.jina/config.json
       - name: Test
         id: test
