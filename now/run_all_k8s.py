@@ -11,7 +11,7 @@ from now.deployment.deployment import cmd
 from now.dialog import _get_context_names, configure_user_input, maybe_prompt_user
 from now.log.log import yaspin_extended
 from now.system_information import get_system_state
-from now.utils import sigmap
+from now.utils import sigmap, terminate_wolf
 
 docker_frontend_tag = '0.0.11'
 
@@ -22,7 +22,8 @@ def stop_now(contexts, active_context, **kwargs):
     if os.path.exists(user('~/.cache/jina-now/wolf.json')):
         with open(user('~/.cache/jina-now/wolf.json'), 'r') as fp:
             flow_details = json.load(fp)
-            choices += flow_details['flow_id']
+            choices += [flow_details['gateway']]
+            flow_id = flow_details['flow_id']
     if len(choices) == 0:
         cowsay.cow('nothing to stop')
         return
@@ -47,9 +48,10 @@ def stop_now(contexts, active_context, **kwargs):
         with yaspin_extended(
             sigmap=sigmap, text=f"Remove remote Flow {cluster}", color="green"
         ) as spinner:
-            cmd(f'jc remove {cluster}')
+            terminate_wolf(flow_id)
+            os.remove(user('~/.cache/jina-now/wolf.json'))
             spinner.ok('💀')
-        cowsay.cow(f'remote Flow {cluster} removed')
+        cowsay.cow(f'remote Flow `{cluster}` removed')
     else:
         with yaspin_extended(
             sigmap=sigmap, text=f"Remove jina NOW from {cluster}", color="green"

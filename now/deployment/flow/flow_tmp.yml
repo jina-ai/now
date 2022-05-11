@@ -1,0 +1,19 @@
+jtype: Flow
+with:
+  name: nowapi
+  port_expose: 8080
+  cors: True
+executors:
+  - name: encoder_clip
+    uses: jinahub+docker://CLIPEncoder/v0.2.1
+    resources:
+      memory: 8G
+    uses_with:
+      pretrained_model_name_or_path: openai/clip-vit-base-patch32
+  - name: indexer
+    uses: jinahub+docker://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a
+    uses_with:
+      dim: 512
+      metric: cosine
+    uses_metas:
+      workspace: pq_workspace

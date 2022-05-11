@@ -14,7 +14,7 @@ from now.log import log
 )  # art, rock-lyrics -> no finetuning, fashion -> finetuning
 @pytest.mark.parametrize('quality', ['medium'])
 @pytest.mark.parametrize('cluster', [NEW_CLUSTER['value']])
-@pytest.mark.parametrize('deployment_type', ['local'])
+@pytest.mark.parametrize('deployment_type', ['remote', 'local'])
 def test_backend(
     output_modality: str,
     dataset: str,

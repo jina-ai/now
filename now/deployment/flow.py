@@ -12,6 +12,7 @@ from yaspin.spinners import Spinners
 
 from now.cloud_manager import is_local_cluster
 from now.deployment.deployment import apply_replace, cmd
+from now.log import log
 from now.log.log import TEST, yaspin_extended
 from now.utils import deploy_wolf, sigmap
 
@@ -161,18 +162,25 @@ def deploy_flow(
     ns = 'nowapi'
     if deployment_type == 'remote':
         # Deploy it on wolf
-        if finetuning:
+        if log.TEST:
             flow = deploy_wolf(
-                os.path.join(cur_dir, 'flow', 'ft-flow.yml'), name=ns, env=env_file
+                os.path.join(cur_dir, 'flow', 'flow_tmp.yml'), name=ns, env=env_file
             )
         else:
-            flow = deploy_wolf(
-                os.path.join(cur_dir, 'flow', 'flow.yml'), name=ns, env=env_file
-            )
+            if finetuning:
+                flow = deploy_wolf(
+                    os.path.join(cur_dir, 'flow', 'ft-flow.yml'), name=ns, env=env_file
+                )
+            else:
+                flow = deploy_wolf(
+                    os.path.join(cur_dir, 'flow', 'flow.yml'), name=ns, env=env_file
+                )
         host = flow.gateway
         client = Client(host=host)
+
+        # Dump the flow ID and gateway to keep track
         with open(user('~/.cache/jina-now/wolf.json'), 'w') as fp:
-            json.dump({'flow_id': host}, fp)
+            json.dump({'flow_id': flow.flow_id, 'gateway': host}, fp)
 
         # host & port
         gateway_host = 'remote'
