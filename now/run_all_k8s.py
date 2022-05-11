@@ -1,4 +1,7 @@
+import json
+import os
 import tempfile
+from os.path import expanduser as user
 
 import cowsay
 
@@ -15,6 +18,11 @@ docker_frontend_tag = '0.0.11'
 
 def stop_now(contexts, active_context, **kwargs):
     choices = _get_context_names(contexts, active_context)
+    # Add remote Flow if it exists
+    if os.path.exists(user('~/.cache/jina-now/wolf.json')):
+        with open(user('~/.cache/jina-now/wolf.json'), 'r') as fp:
+            flow_details = json.load(fp)
+            choices += flow_details['flow_id']
     if len(choices) == 0:
         cowsay.cow('nothing to stop')
         return
@@ -35,6 +43,13 @@ def stop_now(contexts, active_context, **kwargs):
             cmd(f'{kwargs["kind_path"]} delete clusters jina-now')
             spinner.ok('💀')
         cowsay.cow('local jina NOW cluster removed')
+    elif 'nowapi' in cluster:
+        with yaspin_extended(
+            sigmap=sigmap, text=f"Remove remote Flow {cluster}", color="green"
+        ) as spinner:
+            cmd(f'jc remove {cluster}')
+            spinner.ok('💀')
+        cowsay.cow(f'remote Flow {cluster} removed')
     else:
         with yaspin_extended(
             sigmap=sigmap, text=f"Remove jina NOW from {cluster}", color="green"

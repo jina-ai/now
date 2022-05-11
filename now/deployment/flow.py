@@ -171,7 +171,7 @@ def deploy_flow(
             )
         host = flow.gateway
         client = Client(host=host)
-        with open(user('~/.cache/jina-now/wolf.json'), 'wb+') as fp:
+        with open(user('~/.cache/jina-now/wolf.json'), 'w') as fp:
             json.dump({'flow_id': host}, fp)
 
         # host & port
