@@ -35,13 +35,21 @@ def which(executable: str) -> bool:
 
 def apply_replace(f_in, replace_dict, kubectl_path=None, ns=None):
     with open(f_in, "r") as fin:
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yml') as fout:
+        with tempfile.NamedTemporaryFile(mode='w') as fout:
             for line in fin.readlines():
                 for key, val in replace_dict.items():
                     line = line.replace('{' + key + '}', str(val))
                 fout.write(line)
             fout.flush()
-            if kubectl_path:
-                cmd(f'{kubectl_path} apply -f {fout.name}')
-            else:  # Assume it is replacing flow.yaml
-                return deploy_wolf(fout.name, name=ns)
+            cmd(f'{kubectl_path} apply -f {fout.name}')
+
+
+def apply_replace_for_flow(f_in, replace_dict, ns):
+    with open(f_in, "r") as fin:
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.yml') as fout:
+            for line in fin.readlines():
+                for key, val in replace_dict.items():
+                    line = line.replace('${{ ENV.' + key + ' }}', str(val))
+                fout.write(line)
+            fout.flush()
+            return deploy_wolf(fout.name, name=ns)

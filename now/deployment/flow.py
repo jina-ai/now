@@ -11,7 +11,7 @@ from tqdm import tqdm
 from yaspin.spinners import Spinners
 
 from now.cloud_manager import is_local_cluster
-from now.deployment.deployment import apply_replace, cmd
+from now.deployment.deployment import apply_replace, apply_replace_for_flow, cmd
 from now.log.log import yaspin_extended
 from now.utils import sigmap
 
@@ -175,7 +175,7 @@ def deploy_flow(
             flow_path = os.path.join(cur_dir, 'flow', 'ft-flow.yml')
         else:
             flow_path = os.path.join(cur_dir, 'flow', 'flow.yml')
-        flow = apply_replace(flow_path, env_dict, ns=ns)
+        flow = apply_replace_for_flow(flow_path, env_dict, ns=ns)
         host = flow.gateway
         client = Client(host=host)
 

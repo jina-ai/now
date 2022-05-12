@@ -5,15 +5,15 @@ with:
   cors: True
 executors:
   - name: encoder_clip
-    uses: {ENCODER_NAME}
+    uses: ${{ ENV.ENCODER_NAME }}
     resources:
       memory: 8G
     uses_with:
-      pretrained_model_name_or_path: {CLIP_MODEL_NAME}
+      pretrained_model_name_or_path: ${{ ENV.CLIP_MODEL_NAME }}
   - name: indexer
-    uses: {INDEXER_NAME}
+    uses: ${{ ENV.INDEXER_NAME }}
     uses_with:
-      dim: {EMBED_DIM}
+      dim: ${{ ENV.EMBED_DIM }}
       metric: cosine
     uses_metas:
       workspace: pq_workspace
