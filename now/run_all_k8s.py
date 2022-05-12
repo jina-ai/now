@@ -9,11 +9,12 @@ from now import run_backend, run_frontend
 from now.cloud_manager import setup_cluster
 from now.deployment.deployment import cmd, terminate_wolf
 from now.dialog import _get_context_names, configure_user_input, maybe_prompt_user
+from now.log import log
 from now.log.log import yaspin_extended
 from now.system_information import get_system_state
 from now.utils import sigmap
 
-docker_frontend_tag = '0.0.12-feat-add-wolf-3'
+docker_frontend_tag = '0.0.12-feat-add-wolf-4'
 
 
 def stop_now(contexts, active_context, **kwargs):
@@ -87,25 +88,27 @@ def run_k8s(os_type: str = 'linux', arch: str = 'x86_64', **kwargs):
                 user_input, is_debug, tmpdir, kubectl_path=kwargs['kubectl_path']
             )
 
-            frontend_host, frontend_port = run_frontend.run(
-                output_modality=user_input.output_modality,
-                dataset=user_input.data,
-                gateway_host=gateway_host,
-                gateway_port=gateway_port,
-                gateway_host_internal=gateway_host_internal,
-                gateway_port_internal=gateway_port_internal,
-                docker_frontend_tag=docker_frontend_tag,
-                tmpdir=tmpdir,
-                kubectl_path=kwargs['kubectl_path'],
-            )
-            url = f'{frontend_host}' + (
-                '' if str(frontend_port) == '80' else f':{frontend_port}'
-            )
-            print()
+            if not log.TEST:
+                # Do not deploy frontend when testing
+                frontend_host, frontend_port = run_frontend.run(
+                    output_modality=user_input.output_modality,
+                    dataset=user_input.data,
+                    gateway_host=gateway_host,
+                    gateway_port=gateway_port,
+                    gateway_host_internal=gateway_host_internal,
+                    gateway_port_internal=gateway_port_internal,
+                    docker_frontend_tag=docker_frontend_tag,
+                    tmpdir=tmpdir,
+                    kubectl_path=kwargs['kubectl_path'],
+                )
+                url = f'{frontend_host}' + (
+                    '' if str(frontend_port) == '80' else f':{frontend_port}'
+                )
+                print()
 
-            # print(f'✅ Your search case running.\nhost: {node_ip}:30080')
-            # print(f'host: {node_ip}:30080')
-            cowsay.cow(f'You made it:\n{url}')
+                # print(f'✅ Your search case running.\nhost: {node_ip}:30080')
+                # print(f'host: {node_ip}:30080')
+                cowsay.cow(f'You made it:\n{url}')
 
 
 if __name__ == '__main__':

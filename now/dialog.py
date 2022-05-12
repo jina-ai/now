@@ -441,7 +441,7 @@ def _maybe_login_wolf():
         with yaspin_extended(
             sigmap=sigmap, text='Log in to JCloud', color='green'
         ) as spinner:
-            cmd('/bin/bash jc login')
+            cmd('jcloud login')
         spinner.ok('🛠️')
 
 

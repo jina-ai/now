@@ -5,6 +5,7 @@ import pathlib
 from os.path import expanduser as user
 from time import sleep
 
+from grpc.aio import AioRpcError
 from kubernetes import client as k8s_client
 from kubernetes import config
 from tqdm import tqdm
@@ -235,7 +236,15 @@ def deploy_flow(
         # if not TEST:
         next(progress_bar)
 
-    client.post('/index', request_size=request_size, inputs=index, on_done=on_done)
+    # Keep trying until the services are up and running
+    while True:
+        try:
+            client.post(
+                '/index', request_size=request_size, inputs=index, on_done=on_done
+            )
+            break
+        except AioRpcError:
+            sleep(1)
 
     print('⭐ Success - your data is indexed')
     return gateway_host, gateway_port, gateway_host_internal, gateway_port_internal

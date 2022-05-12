@@ -1,4 +1,6 @@
+import json
 from argparse import Namespace
+from os.path import expanduser as user
 
 import pytest
 from fastapi.testclient import TestClient
@@ -50,15 +52,21 @@ def test_backend(
         search_text = 'test'
 
     # Perform end-to-end check via bff
+    request_body = {'text': search_text, 'limit': 9}
+    if deployment_type == 'remote':
+        with open(user('~/.cache/jina-now/wolf.json'), 'r') as fp:
+            flow_details = json.load(fp)
+        request_body['host'] = flow_details['gateway']
+
     if output_modality == 'image':
         response = test_client.post(
             f'/api/v1/image/search',
-            json={'text': search_text, 'limit': 9},  # limit has no effect as of now
+            json=request_body,  # limit has no effect as of now
         )
     elif output_modality == 'text':
         response = test_client.post(
             f'/api/v1/text/search',
-            json={'text': search_text, 'limit': 9},  # limit has no effect as of now
+            json=request_body,  # limit has no effect as of now
         )
     else:
         # add more here when the new modality is added
