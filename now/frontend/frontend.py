@@ -109,7 +109,10 @@ def deploy_streamlit():
 
     def search_by_t(input, server, port, limit=TOP_K):
         print('initialize client at', server, port)
-        client = Client(host=server, protocol="grpc", port=port)
+        if port is None:
+            client = Client(host=server)  # For WOLF deployment
+        else:
+            client = Client(host=server, protocol="grpc", port=port)
         print('search text', server, port)
         response = client.search(
             Document(text=input),
@@ -125,7 +128,10 @@ def deploy_streamlit():
         Wrap file in Jina Document for searching, and do all necessary conversion to make similar to indexed Docs
         """
         print('connect client to ', server, port)
-        client = Client(host=server, protocol="grpc", port=port)
+        if port is None:
+            client = Client(host=server)  # For WOLF deployment
+        else:
+            client = Client(host=server, protocol="grpc", port=port)
         query_doc = document
         if query_doc.blob != b'':
             query_doc.convert_blob_to_image_tensor()

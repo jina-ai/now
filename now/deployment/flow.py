@@ -12,9 +12,8 @@ from yaspin.spinners import Spinners
 
 from now.cloud_manager import is_local_cluster
 from now.deployment.deployment import apply_replace, cmd
-from now.log import log
-from now.log.log import TEST, yaspin_extended
-from now.utils import deploy_wolf, sigmap
+from now.log.log import yaspin_extended
+from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
 
@@ -159,22 +158,24 @@ def deploy_flow(
         tmpdir,
     )
 
+    # Workaround for WOLF
+    env_dict = {
+        'INDEXER_NAME': indexer_name,
+        'ENCODER_NAME': encoder_name,
+        'LINEAR_HEAD_NAME': executor_name,
+        'CLIP_MODEL_NAME': vision_model,
+        'OUTPUT_DIM': final_layer_output_dim,
+        'EMBED_DIM': embedding_size,
+    }
+
     ns = 'nowapi'
     if deployment_type == 'remote':
         # Deploy it on wolf
-        if log.TEST:
-            flow = deploy_wolf(
-                os.path.join(cur_dir, 'flow', 'flow_tmp.yml'), name=ns, env=env_file
-            )
+        if finetuning:
+            flow_path = os.path.join(cur_dir, 'flow', 'ft-flow.yml')
         else:
-            if finetuning:
-                flow = deploy_wolf(
-                    os.path.join(cur_dir, 'flow', 'ft-flow.yml'), name=ns, env=env_file
-                )
-            else:
-                flow = deploy_wolf(
-                    os.path.join(cur_dir, 'flow', 'flow.yml'), name=ns, env=env_file
-                )
+            flow_path = os.path.join(cur_dir, 'flow', 'flow.yml')
+        flow = apply_replace(flow_path, env_dict, ns=ns)
         host = flow.gateway
         client = Client(host=host)
 
@@ -186,7 +187,7 @@ def deploy_flow(
         gateway_host = 'remote'
         gateway_port = None
         gateway_host_internal = host
-        gateway_port_internal = 443  # Since we know it will be `grpcs` - default
+        gateway_port_internal = None  # Since host contains protocol
     else:
         from dotenv import load_dotenv
 
@@ -231,8 +232,8 @@ def deploy_flow(
     )
 
     def on_done(res):
-        if not TEST:
-            next(progress_bar)
+        # if not TEST:
+        next(progress_bar)
 
     client.post('/index', request_size=request_size, inputs=index, on_done=on_done)
 

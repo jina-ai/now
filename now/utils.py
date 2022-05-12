@@ -11,8 +11,6 @@ from typing import Dict
 import numpy as np
 import yaml
 from docarray import Document
-from jcloud.flow import CloudFlow
-from jina.helper import get_or_reuse_loop
 from PIL import Image, ImageDraw, ImageFont
 from rich.console import Console
 
@@ -330,18 +328,6 @@ def ffmpeg_is_installed():
 
 def gcloud_is_installed():
     return which("gcloud")
-
-
-def deploy_wolf(path: str, name: str, env: str):
-    loop = get_or_reuse_loop()
-    return loop.run_until_complete(
-        CloudFlow(path=path, name=name, env_file=env).__aenter__()
-    )
-
-
-def terminate_wolf(flow_id: str):
-    loop = get_or_reuse_loop()
-    loop.run_until_complete(CloudFlow(flow_id=flow_id).__aexit__())
 
 
 def flow_definition(dirpath) -> Dict:

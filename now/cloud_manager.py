@@ -94,14 +94,16 @@ def check_wolf_deployment(**kwargs):
         recreate = maybe_prompt_user(questions, 'proceed', **kwargs)
         if recreate:
             with yaspin_extended(
-                sigmap=sigmap, text="Removing existing remote flow", color="green"
+                sigmap=sigmap,
+                text="Removing existing remote flow - might take some time!",
+                color="green",
             ) as spinner:
                 with open(user('~/.cache/jina-now/wolf.json'), 'r') as fp:
                     flow_details = json.load(fp)
                 flow_id = flow_details['flow_id']
                 cmd(f'jcloud remove {flow_id}')
-                spinner.ok('💀')
                 os.remove(user('~/.cache/jina-now/wolf.json'))
+                spinner.ok('💀')
         else:
             cowsay.cow('see you soon 👋')
             exit(0)

@@ -7,13 +7,13 @@ import cowsay
 
 from now import run_backend, run_frontend
 from now.cloud_manager import setup_cluster
-from now.deployment.deployment import cmd
+from now.deployment.deployment import cmd, terminate_wolf
 from now.dialog import _get_context_names, configure_user_input, maybe_prompt_user
 from now.log.log import yaspin_extended
 from now.system_information import get_system_state
-from now.utils import sigmap, terminate_wolf
+from now.utils import sigmap
 
-docker_frontend_tag = '0.0.11'
+docker_frontend_tag = '0.0.12-feat-add-wolf'
 
 
 def stop_now(contexts, active_context, **kwargs):
