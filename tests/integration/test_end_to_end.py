@@ -14,7 +14,7 @@ from now.log import log
 )  # art, rock-lyrics -> no finetuning, fashion -> finetuning
 @pytest.mark.parametrize('quality', ['medium'])
 @pytest.mark.parametrize('cluster', [NEW_CLUSTER['value']])
-@pytest.mark.parametrize('deployment_type', ['remote', 'local'])
+@pytest.mark.parametrize('deployment_type', ['local', 'remote'])
 def test_backend(
     output_modality: str,
     dataset: str,
@@ -23,6 +23,9 @@ def test_backend(
     deployment_type: str,
     test_client: TestClient,
 ):
+    if deployment_type == 'remote' and dataset != 'best-artworks':
+        pytest.skip('Too time consuming, hence skipping!')
+
     log.TEST = True
     # sandbox = dataset == 'best-artworks'
     # deactivate sandbox since it is hanging from time to time
