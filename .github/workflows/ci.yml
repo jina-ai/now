@@ -133,6 +133,9 @@ jobs:
           mkdir -p ~/.jina
           touch ~/.jina/config.json
           echo "{\"auth_token\": \"${WOLF_TOKEN}\"}" > ~/.jina/config.json
+          echo ~/.jina/config.json
+        env:
+          WOLF_TOKEN: ${{ secrets.WOLF_TOKEN }}
       - name: Test
         id: test
         run: |
@@ -140,8 +143,6 @@ jobs:
             -v -s -m "not gpu" ${{ matrix.test-path }}
           echo "::set-output name=codecov_flag::now"
         timeout-minutes: 45
-        env:
-          WOLF_TOKEN: ${{ secrets.WOLF_TOKEN }}
       - name: Check codecov file
         id: check_files
         uses: andstor/file-existence-action@v1
