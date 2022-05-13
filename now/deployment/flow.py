@@ -141,7 +141,7 @@ def deploy_flow(
     from jina import Flow
     from jina.clients import Client
 
-    suffix = 'sandbox' if deployment_type == 'remote' else 'docker'
+    suffix = 'docker' if deployment_type == 'remote' else 'docker'
 
     indexer_name = f'jinahub+{suffix}://SimpleIndexer'
     encoder_name = f'jinahub+{suffix}://CLIPEncoder/v0.2.1'
@@ -227,10 +227,12 @@ def deploy_flow(
     while True:
         try:
             client.post(
-                '/index', request_size=request_size, inputs=index, on_done=on_done
+                '/index', request_size=request_size, inputs=index[10], on_done=on_done
             )
             break
-        except AioRpcError:
+        except AioRpcError as e:
+            sleep(1)
+        except Exception as e:
             sleep(1)
 
     print('⭐ Success - your data is indexed')

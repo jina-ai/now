@@ -17,8 +17,5 @@ executors:
       embedding_size: ${{ ENV.EMBED_DIM }}
   - name: indexer
     uses: ${{ ENV.INDEXER_NAME }}
-    uses_with:
-      dim: ${{ ENV.EMBED_DIM }}
-      metric: cosine
     uses_metas:
       workspace: pq_workspace

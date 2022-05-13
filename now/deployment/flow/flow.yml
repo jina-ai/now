@@ -1,6 +1,7 @@
 jtype: Flow
 with:
   name: nowapi
+  protocol: http
   port_expose: 8080
   cors: True
 executors:
@@ -12,8 +13,5 @@ executors:
       pretrained_model_name_or_path: ${{ ENV.CLIP_MODEL_NAME }}
   - name: indexer
     uses: ${{ ENV.INDEXER_NAME }}
-    uses_with:
-      dim: ${{ ENV.EMBED_DIM }}
-      metric: cosine
     uses_metas:
       workspace: pq_workspace
