@@ -250,14 +250,14 @@ def _configure_cluster(user_input: UserInput, skip=False, **kwargs):
             name='deployment_type',
             choices=[
                 {
-                    'name': '📍 local (Kubernetes in Docker)',
-                    'value': 'local',
+                    'name': '⛅️ Jina Cloud',
+                    'value': 'remote',
+                    # 'disabled': AVAILABLE_SOON, # Uncomment this before merging
                 },
                 {
-                    'name': '⛅️ Jina - Flow as a Service',
-                    'value': 'remote',
+                    'name': '📍 Local (Kubernetes in Docker)',
+                    'value': 'local',
                 },
-                Separator(),
                 {'name': '⛅️ Google Kubernetes Engine', 'value': 'gke'},
             ],
             prompt_message='Where do you want to deploy your search engine?',
