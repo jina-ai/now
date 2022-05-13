@@ -12,7 +12,7 @@ from tqdm import tqdm
 from yaspin.spinners import Spinners
 
 from now.cloud_manager import is_local_cluster
-from now.deployment.deployment import apply_replace, apply_replace_for_flow, cmd
+from now.deployment.deployment import apply_replace, cmd, deploy_wolf
 from now.log.log import TEST, yaspin_extended
 from now.utils import sigmap
 
@@ -141,11 +141,9 @@ def deploy_flow(
     from jina import Flow
     from jina.clients import Client
 
-    suffix = 'docker' if deployment_type == 'remote' else 'docker'
+    suffix = 'sandbox' if deployment_type == 'remote' else 'docker'
 
-    indexer_name = (
-        f'jinahub+{suffix}://MostSimpleIndexer:346e8475359e13d621717ceff7f48c2a'
-    )
+    indexer_name = f'jinahub+{suffix}://SimpleIndexer'
     encoder_name = f'jinahub+{suffix}://CLIPEncoder/v0.2.1'
     executor_name = f'jinahub+{suffix}://{executor_name}'
 
@@ -159,16 +157,6 @@ def deploy_flow(
         tmpdir,
     )
 
-    # Workaround for WOLF
-    env_dict = {
-        'INDEXER_NAME': indexer_name,
-        'ENCODER_NAME': encoder_name,
-        'LINEAR_HEAD_NAME': executor_name,
-        'CLIP_MODEL_NAME': vision_model,
-        'OUTPUT_DIM': final_layer_output_dim,
-        'EMBED_DIM': embedding_size,
-    }
-
     ns = 'nowapi'
     if deployment_type == 'remote':
         # Deploy it on wolf
@@ -176,8 +164,7 @@ def deploy_flow(
             flow_path = os.path.join(cur_dir, 'flow', 'ft-flow.yml')
         else:
             flow_path = os.path.join(cur_dir, 'flow', 'flow.yml')
-        flow = apply_replace_for_flow(flow_path, env_dict, ns=ns)
-        # flow = deploy_wolf(path=flow_path, env_file=env_file, name=ns)
+        flow = deploy_wolf(path=flow_path, env_file=env_file, name=ns)
         host = flow.gateway
         client = Client(host=host)
 

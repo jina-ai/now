@@ -1,4 +1,0 @@
-jtype: MostSimpleIndexer
-metas:
-  py_modules:
-    - most_simple_indexer.py
