@@ -253,11 +253,11 @@ def _configure_cluster(user_input: UserInput, skip=False, **kwargs):
                     'name': '📍 Local (Kubernetes in Docker)',
                     'value': 'local',
                 },
-                {'name': '⛅️ Google Kubernetes Engine', 'value': 'gke'},
+                # {'name': '⛅️ Google Kubernetes Engine', 'value': 'gke'},
                 {
                     'name': '⛅️ Jina Cloud',
                     'value': 'remote',
-                    'disabled': AVAILABLE_SOON,  # Uncomment this before merging
+                    # 'disabled': AVAILABLE_SOON,  # Uncomment this before merging
                     # Please move this option to the top once it is enabled
                 },
             ],

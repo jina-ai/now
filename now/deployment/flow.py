@@ -13,7 +13,7 @@ from yaspin.spinners import Spinners
 
 from now.cloud_manager import is_local_cluster
 from now.deployment.deployment import apply_replace, cmd, deploy_wolf
-from now.log.log import TEST, yaspin_extended
+from now.log.log import yaspin_extended
 from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
@@ -220,14 +220,14 @@ def deploy_flow(
     )
 
     def on_done(res):
-        if not TEST:
+        if 'NOW_CI_RUN' not in os.environ:
             next(progress_bar)
 
     # Keep trying until the services are up and running
     while True:
         try:
             client.post(
-                '/index', request_size=request_size, inputs=index[10], on_done=on_done
+                '/index', request_size=request_size, inputs=index, on_done=on_done
             )
             break
         except AioRpcError as e:

@@ -15,7 +15,6 @@ from PIL import Image, ImageDraw, ImageFont
 from rich.console import Console
 
 from now.deployment.deployment import which
-from now.log import log
 
 colors = [
     "navy",
@@ -269,7 +268,7 @@ def download(url, filename):
         r.raw.read, decode_content=True
     )  # Decompress if needed
 
-    if log.TEST:
+    if 'NOW_CI_RUN' in os.environ:
         download_file(path, r.raw)
     else:
         with tqdm.wrapattr(r.raw, "read", total=file_size, desc=desc) as r_raw:

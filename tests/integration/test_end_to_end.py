@@ -1,4 +1,5 @@
 import json
+import os
 from argparse import Namespace
 from os.path import expanduser as user
 
@@ -7,7 +8,6 @@ from fastapi.testclient import TestClient
 
 from now.cli import cli
 from now.dialog import NEW_CLUSTER
-from now.log import log
 
 
 @pytest.mark.parametrize(
@@ -28,7 +28,7 @@ def test_backend(
     if deployment_type == 'remote' and dataset != 'best-artworks':
         pytest.skip('Too time consuming, hence skipping!')
 
-    log.TEST = True
+    os.environ['NOW_CI_RUN'] = 'True'
     # sandbox = dataset == 'best-artworks'
     # deactivate sandbox since it is hanging from time to time
     sandbox = False
