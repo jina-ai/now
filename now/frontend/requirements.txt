@@ -1,5 +1,5 @@
 streamlit==1.8.1
-jina==3.3.25
+jina[perf]==3.3.25
 av==9.1.1
 click==8.0.0
 streamlit-webrtc==0.36.1
