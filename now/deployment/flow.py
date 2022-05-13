@@ -13,7 +13,7 @@ from yaspin.spinners import Spinners
 
 from now.cloud_manager import is_local_cluster
 from now.deployment.deployment import apply_replace, apply_replace_for_flow, cmd
-from now.log.log import yaspin_extended
+from now.log.log import TEST, yaspin_extended
 from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
@@ -194,7 +194,6 @@ def deploy_flow(
         from dotenv import load_dotenv
 
         load_dotenv(env_file)
-        print('Finetuning: ', finetuning, os.environ['LINEAR_HEAD_NAME'])
         if finetuning:
             f = Flow.load_config(os.path.join(cur_dir, 'flow', 'ft-flow.yml'))
         else:
@@ -234,8 +233,8 @@ def deploy_flow(
     )
 
     def on_done(res):
-        # if not TEST:
-        next(progress_bar)
+        if not TEST:
+            next(progress_bar)
 
     # Keep trying until the services are up and running
     while True:
