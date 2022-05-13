@@ -13,5 +13,7 @@ executors:
       pretrained_model_name_or_path: ${{ ENV.CLIP_MODEL_NAME }}
   - name: indexer
     uses: ${{ ENV.INDEXER_NAME }}
+    resources:
+      memory: 4G
     uses_metas:
       workspace: pq_workspace
