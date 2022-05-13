@@ -2,17 +2,14 @@ import subprocess
 import tempfile
 
 from jcloud.flow import CloudFlow
-from jina.helper import get_or_reuse_loop
 
 
-def deploy_wolf(path: str, name: str):
-    loop = get_or_reuse_loop()
-    return loop.run_until_complete(CloudFlow(path=path, name=name).__aenter__())
+def deploy_wolf(path: str, name: str, env_file: str = None):
+    return CloudFlow(path=path, name=name, env_file=env_file).__enter__()
 
 
 def terminate_wolf(flow_id: str):
-    loop = get_or_reuse_loop()
-    loop.run_until_complete(CloudFlow(flow_id=flow_id).__aexit__())
+    CloudFlow(flow_id=flow_id).__exit__()
 
 
 def cmd(command, std_output=False, wait=True):

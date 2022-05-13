@@ -109,7 +109,7 @@ def deploy_streamlit():
 
     def search_by_t(input, server, port, limit=TOP_K):
         print('initialize client at', server, port)
-        if port is None:
+        if 'wolf.jina.ai' in server:
             client = Client(host=server)  # For WOLF deployment
         else:
             client = Client(host=server, protocol="grpc", port=port)
@@ -128,7 +128,7 @@ def deploy_streamlit():
         Wrap file in Jina Document for searching, and do all necessary conversion to make similar to indexed Docs
         """
         print('connect client to ', server, port)
-        if port is None:
+        if 'wolf.jina.ai' in server:
             client = Client(host=server)  # For WOLF deployment
         else:
             client = Client(host=server, protocol="grpc", port=port)

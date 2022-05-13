@@ -177,6 +177,7 @@ def deploy_flow(
         else:
             flow_path = os.path.join(cur_dir, 'flow', 'flow.yml')
         flow = apply_replace_for_flow(flow_path, env_dict, ns=ns)
+        # flow = deploy_wolf(path=flow_path, env_file=env_file, name=ns)
         host = flow.gateway
         client = Client(host=host)
 
