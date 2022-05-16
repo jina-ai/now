@@ -235,11 +235,7 @@ def deploy_flow(
                     on_done=on_done,
                 )
                 break
-            except ConnectionError as e:
-                print(e)
-                sleep(1)
             except Exception as e:
-                print(e)
                 sleep(1)
 
     print('⭐ Success - your data is indexed')
