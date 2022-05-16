@@ -19,10 +19,10 @@ from now.utils import sigmap
 cur_dir = pathlib.Path(__file__).parent.resolve()
 
 
-def batch(iterable, n=1):
-    l = len(iterable)
+def batch(data_list, n=1):
+    l = len(data_list)
     for ndx in range(0, l, n):
-        yield iterable[ndx : min(ndx + n, l)]
+        yield data_list[ndx : min(ndx + n, l)]
 
 
 def wait_for_lb(lb_name, ns):
@@ -224,16 +224,21 @@ def deploy_flow(
             next(progress_bar)
 
     # Keep trying until the services are up and running
-    while True:
-        try:
-            client.post(
-                '/index', request_size=request_size, inputs=index, on_done=on_done
-            )
-            break
-        except AioRpcError as e:
-            sleep(1)
-        except Exception as e:
-            sleep(1)
+    batches = batch(index, request_size * 5)
+    for b in batches:
+        while True:
+            try:
+                client.post(
+                    '/index',
+                    request_size=request_size,
+                    inputs=b,
+                    on_done=on_done,
+                )
+                break
+            except AioRpcError as e:
+                sleep(1)
+            except Exception as e:
+                sleep(1)
 
     print('⭐ Success - your data is indexed')
     return gateway_host, gateway_port, gateway_host_internal, gateway_port_internal
