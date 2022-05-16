@@ -5,7 +5,6 @@ import pathlib
 from os.path import expanduser as user
 from time import sleep
 
-from grpc.aio import AioRpcError
 from kubernetes import client as k8s_client
 from kubernetes import config
 from tqdm import tqdm
@@ -235,9 +234,11 @@ def deploy_flow(
                     on_done=on_done,
                 )
                 break
-            except AioRpcError as e:
+            except ConnectionError as e:
+                print(e)
                 sleep(1)
             except Exception as e:
+                print(e)
                 sleep(1)
 
     print('⭐ Success - your data is indexed')
