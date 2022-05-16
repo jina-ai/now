@@ -8,6 +8,7 @@ import cowsay
 import docker
 from kubernetes import client, config
 
+from now.constants import JC_SECRET
 from now.deployment.deployment import cmd
 from now.dialog import UserInput, maybe_prompt_user
 from now.gke_deploy import create_gke_cluster
@@ -78,7 +79,7 @@ def is_local_cluster(kubectl_path):
 
 
 def check_wolf_deployment(**kwargs):
-    if os.path.exists(user('~/.cache/jina-now/wolf.json')):
+    if os.path.exists(user(JC_SECRET)):
         questions = [
             {
                 'type': 'list',
@@ -95,14 +96,13 @@ def check_wolf_deployment(**kwargs):
         if recreate:
             with yaspin_extended(
                 sigmap=sigmap,
-                text="Removing existing remote flow - might take some time!",
+                text="Removing existing remote flow",
                 color="green",
             ) as spinner:
-                with open(user('~/.cache/jina-now/wolf.json'), 'r') as fp:
+                with open(user(JC_SECRET), 'r') as fp:
                     flow_details = json.load(fp)
                 flow_id = flow_details['flow_id']
-                cmd(f'jcloud remove {flow_id}')
-                os.remove(user('~/.cache/jina-now/wolf.json'))
+                cmd(f'jcloud remove {flow_id}', wait=False)
                 spinner.ok('💀')
         else:
             cowsay.cow('see you soon 👋')

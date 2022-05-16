@@ -66,3 +66,5 @@ AVAILABLE_DATASET = {
         'metal-lyrics',
     ],
 }
+
+JC_SECRET = '~/.cache/jina-now/wolf.json'

@@ -54,7 +54,7 @@ def test_backend(
     # Perform end-to-end check via bff
     request_body = {'text': search_text, 'limit': 9}
     if deployment_type == 'remote':
-        with open(user('~/.cache/jina-now/wolf.json'), 'r') as fp:
+        with open(user(JC_SECRET), 'r') as fp:
             flow_details = json.load(fp)
         request_body['host'] = flow_details['gateway']
 

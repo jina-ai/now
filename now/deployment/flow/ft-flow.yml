@@ -1,6 +1,7 @@
-jtype: Flow
+  jtype: Flow
 with:
   name: nowapi
+  protocol: grpc
   port_expose: 8080
   cors: True
 executors:
@@ -10,12 +11,18 @@ executors:
       memory: 8G
     uses_with:
       pretrained_model_name_or_path: ${{ ENV.CLIP_MODEL_NAME }}
+    env:
+      JINA_LOG_LEVEL: DEBUG
   - name: linear_head
     uses: ${{ ENV.LINEAR_HEAD_NAME }}
     uses_with:
       final_layer_output_dim: ${{ ENV.OUTPUT_DIM }}
       embedding_size: ${{ ENV.EMBED_DIM }}
+    env:
+      JINA_LOG_LEVEL: DEBUG
   - name: indexer
     uses: ${{ ENV.INDEXER_NAME }}
     uses_metas:
       workspace: pq_workspace
+    env:
+      JINA_LOG_LEVEL: DEBUG

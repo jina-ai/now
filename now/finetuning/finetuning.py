@@ -135,7 +135,7 @@ def add_clip_embeddings(dataset, vision_model, tmpdir, kubectl_path):
                     no_embedding_dataset.append(d)
                 else:
                     embedding_dataset.append(d)
-            client = Client(host=gateway_host, port=gateway_port)
+            client = Client(host=gateway_host, protocol='grpc', port=gateway_port)
             print(f'▶ create embeddings for {len(no_embedding_dataset)} documents')
             for x in tqdm(
                 batch(no_embedding_dataset, 16),

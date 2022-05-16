@@ -11,6 +11,7 @@ from tqdm import tqdm
 from yaspin.spinners import Spinners
 
 from now.cloud_manager import is_local_cluster
+from now.constants import JC_SECRET
 from now.deployment.deployment import apply_replace, cmd, deploy_wolf
 from now.log.log import yaspin_extended
 from now.utils import sigmap
@@ -168,7 +169,7 @@ def deploy_flow(
         client = Client(host=host)
 
         # Dump the flow ID and gateway to keep track
-        with open(user('~/.cache/jina-now/wolf.json'), 'w') as fp:
+        with open(user(JC_SECRET), 'w') as fp:
             json.dump({'flow_id': flow.flow_id, 'gateway': host}, fp)
 
         # host & port
@@ -197,7 +198,7 @@ def deploy_flow(
             tmpdir,
             kubectl_path=kubectl_path,
         )
-        client = Client(host=gateway_host, port=gateway_port)
+        client = Client(host=gateway_host, protocol='grpc', port=gateway_port)
 
     # delete the env file
     if os.path.exists(env_file):
