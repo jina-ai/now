@@ -7,12 +7,25 @@ import pytest
 from fastapi.testclient import TestClient
 
 from now.cli import cli
+from now.constants import JC_SECRET
 from now.dialog import NEW_CLUSTER
+
+
+@pytest.fixture()
+def cleanup(deployment_type):
+    yield
+    kwargs = {
+        'deployment_type': deployment_type,
+        'now': 'stop',
+        'cluster': 'kind-jina-now',
+    }
+    kwargs = Namespace(**kwargs)
+    cli(args=kwargs)
 
 
 @pytest.mark.parametrize(
     'output_modality, dataset',
-    [('image', 'bird-species'), ('image', 'best-artworks'), ('text', 'rock-lyrics')],
+    [('image', 'best-artworks'), ('image', 'bird-species'), ('text', 'rock-lyrics')],
 )  # art, rock-lyrics -> no finetuning, fashion -> finetuning
 @pytest.mark.parametrize('quality', ['medium'])
 @pytest.mark.parametrize('cluster', [NEW_CLUSTER['value']])
@@ -24,6 +37,7 @@ def test_backend(
     cluster: str,
     deployment_type: str,
     test_client: TestClient,
+    cleanup,
 ):
     if deployment_type == 'remote' and dataset != 'best-artworks':
         pytest.skip('Too time consuming, hence skipping!')

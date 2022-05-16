@@ -37,7 +37,7 @@ def stop_now(contexts, active_context, **kwargs):
                 'choices': choices,
             }
         ]
-        cluster = maybe_prompt_user(questions, 'cluster')
+        cluster = maybe_prompt_user(questions, 'cluster', **kwargs)
     if cluster == 'kind-jina-now':
         with yaspin_extended(
             sigmap=sigmap, text=f"Remove local cluster {cluster}", color="green"
@@ -63,7 +63,6 @@ def stop_now(contexts, active_context, **kwargs):
 
 
 def run_k8s(os_type: str = 'linux', arch: str = 'x86_64', **kwargs):
-
     contexts, active_context, is_debug = get_system_state(**kwargs)
     if ('cli' in kwargs and kwargs['cli'] == 'stop') or (
         'now' in kwargs and kwargs['now'] == 'stop'
