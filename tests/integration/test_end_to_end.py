@@ -86,7 +86,4 @@ def test_backend(
         # add more here when the new modality is added
         response = None
     assert response.status_code == 200
-    # Limit param is not respected and hence 20 matches are returned
-    # Therefore, once the limit is implemented in the CustomIndexer,
-    # we should change the below value to 9
-    assert len(response.json()) == 20
+    assert len(response.json()) == 9
