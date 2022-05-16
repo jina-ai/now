@@ -143,7 +143,7 @@ def deploy_flow(
 
     suffix = 'docker' if deployment_type == 'remote' else 'docker'
 
-    indexer_name = f'jinahub+{suffix}://SimpleIndexer'
+    indexer_name = f'jinahub+{suffix}://DocarrayIndexer'
     encoder_name = f'jinahub+{suffix}://CLIPEncoder/v0.2.1'
     executor_name = f'jinahub+{suffix}://{executor_name}'
 

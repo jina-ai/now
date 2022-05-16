@@ -22,7 +22,5 @@ executors:
       JINA_LOG_LEVEL: DEBUG
   - name: indexer
     uses: ${{ ENV.INDEXER_NAME }}
-    uses_metas:
-      workspace: pq_workspace
     env:
       JINA_LOG_LEVEL: DEBUG

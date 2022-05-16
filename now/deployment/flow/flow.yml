@@ -17,7 +17,5 @@ executors:
     uses: ${{ ENV.INDEXER_NAME }}
     resources:
       memory: 4G
-    uses_metas:
-      workspace: pq_workspace
     env:
       JINA_LOG_LEVEL: DEBUG
