@@ -1,7 +1,6 @@
 jtype: Flow
 with:
   name: nowapi
-  protocol: http
   port_expose: 8080
   cors: True
 executors:
