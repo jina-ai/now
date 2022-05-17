@@ -8,7 +8,26 @@ from fastapi.testclient import TestClient
 
 from now.cli import cli
 from now.constants import JC_SECRET
+from now.deployment.deployment import terminate_wolf
 from now.dialog import NEW_CLUSTER
+from now.run_all_k8s import get_remote_flow_details
+
+
+@pytest.fixture()
+def cleanup(deployment_type, dataset):
+    yield
+    if deployment_type == 'remote':
+        if dataset == 'best-artworks':
+            flow_id = get_remote_flow_details()['flow_id']
+            terminate_wolf(flow_id)
+    else:
+        kwargs = {
+            'deployment_type': deployment_type,
+            'now': 'stop',
+            'cluster': 'kind-jina-now',
+        }
+        kwargs = Namespace(**kwargs)
+        cli(args=kwargs)
 
 
 @pytest.mark.parametrize(
