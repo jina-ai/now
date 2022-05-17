@@ -9,7 +9,6 @@ import numpy as np
 import streamlit as st
 from docarray import DocumentArray
 from jina import Client, Document
-from PIL import Image
 from streamlit_webrtc import ClientSettings, webrtc_streamer
 
 WEBRTC_CLIENT_SETTINGS = ClientSettings(
@@ -48,9 +47,12 @@ def deploy_streamlit():
     # put this on the top so that it shows immediately, while the rest is loading
     st.set_page_config(page_title="NOW", page_icon='https://jina.ai/favicon.ico')
     _, mid, _ = st.columns([0.8, 1, 1])
-    img = Image.open('./logo.jpg')
+    with open('./logo.svg', 'r') as f:
+        svg = f.read()
     with mid:
-        st.image(img)
+        b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
+        html = r'<img width="250" src="data:image/svg+xml;base64,%s"/>' % b64
+        st.write(html, unsafe_allow_html=True)
     setup_session_state()
     print('Run Streamlit with:', sys.argv)
     _, host, port, output_modality, data = sys.argv
