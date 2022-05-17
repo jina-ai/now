@@ -17,14 +17,19 @@ from now.utils import sigmap
 docker_frontend_tag = '0.0.16'
 
 
+def get_remote_flow_details():
+    with open(user(JC_SECRET), 'r') as fp:
+        flow_details = json.load(fp)
+    return flow_details
+
+
 def stop_now(contexts, active_context, **kwargs):
     choices = _get_context_names(contexts, active_context)
     # Add remote Flow if it exists
     if os.path.exists(user(JC_SECRET)):
-        with open(user(JC_SECRET), 'r') as fp:
-            flow_details = json.load(fp)
-            choices += [flow_details['gateway']]
-            flow_id = flow_details['flow_id']
+        flow_details = get_remote_flow_details()
+        choices += [flow_details['gateway']]
+        flow_id = flow_details['flow_id']
     if len(choices) == 0:
         cowsay.cow('nothing to stop')
         return
