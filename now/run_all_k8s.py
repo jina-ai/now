@@ -14,7 +14,7 @@ from now.log.log import yaspin_extended
 from now.system_information import get_system_state
 from now.utils import sigmap
 
-docker_frontend_tag = '0.0.15'
+docker_frontend_tag = '0.0.16'
 
 
 def stop_now(contexts, active_context, **kwargs):

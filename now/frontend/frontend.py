@@ -114,7 +114,7 @@ def deploy_streamlit():
         if 'wolf.jina.ai' in server:
             client = Client(host=server)  # For WOLF deployment
         else:
-            client = Client(host=server, protocol="grpc", port=port)
+            client = Client(host=server, port=port)
         print('search text', server, port)
         response = client.search(
             Document(text=input),
@@ -133,7 +133,7 @@ def deploy_streamlit():
         if 'wolf.jina.ai' in server:
             client = Client(host=server)  # For WOLF deployment
         else:
-            client = Client(host=server, protocol="grpc", port=port)
+            client = Client(host=server, port=port)
         query_doc = document
         if query_doc.blob != b'':
             query_doc.convert_blob_to_image_tensor()

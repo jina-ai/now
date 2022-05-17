@@ -64,7 +64,6 @@ You can now send requests to the API using the jina client. This case shows a lo
 from jina import Client    
 client = Client(
         host='localhost',
-        protocol="grpc",
         port=31080,
 ) 
 response = client.search(

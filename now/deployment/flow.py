@@ -198,7 +198,7 @@ def deploy_flow(
             tmpdir,
             kubectl_path=kubectl_path,
         )
-        client = Client(host=gateway_host, protocol='grpc', port=gateway_port)
+        client = Client(host=gateway_host, port=gateway_port)
 
     # delete the env file
     if os.path.exists(env_file):
