@@ -200,7 +200,7 @@ jobs:
         run: |
           pytest --suppress-no-test-exit-code --cov=now \
             -v -s -m "not gpu" --splits 4 --group ${{ matrix.group }} tests/unit
-        timeout-minutes: 25
+        timeout-minutes: 20
       - name: Setup tmate session for debugging
         if: ${{ failure() || (github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled) }}
         uses: mxschmitt/action-tmate@v3
@@ -211,11 +211,17 @@ jobs:
           name: coverage${{ matrix.group }}
           path: .coverage
 
-  coverage0:
+  # just for blocking the merge until all parallel core-test are successful
+  success-all-test-coverage:
     runs-on: ubuntu-latest
     needs: core-test
+    if: always()
     steps:
       - uses: actions/checkout@v2
+      - uses: technote-space/workflow-conclusion-action@v2
+      - name: Check Failure
+        if: env.WORKFLOW_CONCLUSION == 'failure'
+        run: exit 1
       - name: Set up Python 3.7
         uses: actions/setup-python@v2
         with:
@@ -230,97 +236,10 @@ jobs:
         run: |
           coverage combine coverage*/.coverage*
           coverage xml
-
-  coverage1:
-    runs-on: ubuntu-latest
-    needs: core-test
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2
+      - name: Upload coverage from test to Codecov
+        uses: codecov/codecov-action@v2
         with:
-          python-version: 3.7
-      - name: Prepare environment
-        run: |
-          python -m pip install --upgrade pip
-          pip install pytest-cov
-      - name: Download all coverage artifacts
-        uses: actions/download-artifact@v2
-      - name: Run coverage
-        run: |
-          coverage combine coverage*/.coverage*
-          coverage report
-          coverage xml
-
-  coverage2:
-    runs-on: ubuntu-latest
-    needs: core-test
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.7
-      - name: Prepare environment
-        run: |
-          python -m pip install --upgrade pip
-          pip install pytest-cov
-      - name: Download all coverage artifacts
-        uses: actions/download-artifact@v2
-      - name: Run coverage
-        run: |
-          coverage combine coverage*/.coverage*
-          coverage xml -i
-
-  coverage3:
-    runs-on: ubuntu-latest
-    needs: core-test
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.7
-      - name: Prepare environment
-        run: |
-          python -m pip install --upgrade pip
-          pip install pytest-cov attrs==21.2.0
-      - name: Download all coverage artifacts
-        uses: actions/download-artifact@v2
-      - name: Run coverage
-        run: |
-          coverage combine coverage*/.coverage*
-          coverage xml
-
-#  # just for blocking the merge until all parallel core-test are successful
-#  success-all-test-coverage:
-#    runs-on: ubuntu-latest
-#    needs: core-test
-#    if: always()
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: technote-space/workflow-conclusion-action@v2
-#      - name: Check Failure
-#        if: env.WORKFLOW_CONCLUSION == 'failure'
-#        run: exit 1
-#      - name: Set up Python 3.7
-#        uses: actions/setup-python@v2
-#        with:
-#          python-version: 3.7
-#      - name: Prepare environment
-#        run: |
-#          python -m pip install --upgrade pip
-#          pip install pytest-cov
-#      - name: Download all coverage artifacts
-#        uses: actions/download-artifact@v2
-#      - name: Run coverage
-#        run: |
-#          coverage combine coverage*/.coverage*
-#          coverage xml
-#      - name: Upload coverage from test to Codecov
-#        uses: codecov/codecov-action@v2
-#        with:
-#          fail_ci_if_error: false
-#      - name: Success
-#        if: ${{ success() }}
-#        run: echo "All Done"
+          fail_ci_if_error: false
+      - name: Success
+        if: ${{ success() }}
+        run: echo "All Done"
