@@ -199,7 +199,7 @@ jobs:
         id: test
         run: |
           pytest --suppress-no-test-exit-code --cov=now \
-            -v -s -m "not gpu" --splits 4 --group ${{ matrix.group }} tests/unit
+            -v -s -m "not gpu" --splits 4 --group ${{ matrix.group }} tests/
         timeout-minutes: 20
       - name: Setup tmate session for debugging
         if: ${{ failure() || (github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled) }}
