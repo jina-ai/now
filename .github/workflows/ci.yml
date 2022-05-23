@@ -211,30 +211,36 @@ jobs:
       - name: Test
         id: test
         run: |
-          pytest --suppress-no-test-exit-code --cov=now --cov-report=xml \
+#          pytest --suppress-no-test-exit-code --cov=now --cov-report=xml \
+          pytest --suppress-no-test-exit-code --cov=now \
             -v -s -m "not gpu" ${{ matrix.test-path }} --splits 4 --group ${{ matrix.group }}
-          echo "::set-output name=codecov_flag::now"
+#          echo "::set-output name=codecov_flag::now"
         timeout-minutes: 25
       - name: Setup tmate session for debugging
         if: ${{ failure() || (github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled) }}
         uses: mxschmitt/action-tmate@v3
         timeout-minutes: 120
-      - name: Check codecov file
-        id: check_files
-        uses: andstor/file-existence-action@v1
+      - name: Upload coverage
+        uses: actions/upload-artifact@v2
         with:
-          files: "coverage.xml"
-      - name: Upload coverage from test to Codecov
-        uses: codecov/codecov-action@v2
-        if: steps.check_files.outputs.files_exists == 'true' && ${{ matrix.python-version }} == '3.7'
-        with:
-          file: coverage.xml
-          flags: ${{ steps.test.outputs.codecov_flag }}
-          fail_ci_if_error: false
-#          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          name: coverage${{ matrix.group }}
+          path: .coverage
+#      - name: Check codecov file
+#        id: check_files
+#        uses: andstor/file-existence-action@v1
+#        with:
+#          files: "coverage.xml"
+#      - name: Upload coverage from test to Codecov
+#        uses: codecov/codecov-action@v2
+#        if: steps.check_files.outputs.files_exists == 'true' && ${{ matrix.python-version }} == '3.7'
+#        with:
+#          file: coverage.xml
+#          flags: ${{ steps.test.outputs.codecov_flag }}
+#          fail_ci_if_error: false
+##          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
 
   # just for blocking the merge until all parallel core-test are successful
-  success-all-test:
+  success-all-test-coverage:
     needs: core-test
     if: always()
     runs-on: ubuntu-latest
@@ -243,6 +249,29 @@ jobs:
       - name: Check Failure
         if: env.WORKFLOW_CONCLUSION == 'failure'
         run: exit 1
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Prepare environment
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest-cov
+      - name: Download all coverage artifacts
+        uses: actions/download-artifact@v2
+      - name: Run coverage
+        run: |
+          coverage combine coverage*/.coverage*
+          coverage xml
+      - name: Run ls
+        run: ls
+      - name: Upload coverage from test to Codecov
+        uses: codecov/codecov-action@v2
+#        if: steps.check_files.outputs.files_exists == 'true' && ${{ matrix.python-version }} == '3.7'
+        with:
+#          file: coverage.xml
+#          flags: ${{ steps.test.outputs.codecov_flag }}
+          fail_ci_if_error: false
       - name: Success
         if: ${{ success() }}
         run: echo "All Done"
