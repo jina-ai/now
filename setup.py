@@ -72,6 +72,7 @@ setup(
             'mock',
             'pytest-custom_exit_code',
             'black==22.3.0',
+            'pytest-split==0.8.0',
         ]
     },
     classifiers=[
