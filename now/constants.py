@@ -55,7 +55,7 @@ AVAILABLE_DATASET = {
         'geolocation-geoguessr',
     ],
     Modalities.MUSIC: [
-        'music-genres-small',
+        'music-genres-mid',
         'music-genres-large',
     ],
     Modalities.TEXT: [
