@@ -238,8 +238,6 @@ jobs:
           coverage xml
       - name: Upload coverage from test to Codecov
         uses: codecov/codecov-action@v2
-        with:
-          fail_ci_if_error: false
       - name: Success
         if: ${{ success() }}
         run: echo "All Done"
