@@ -3,10 +3,12 @@ import sys
 
 import uvicorn
 from fastapi import FastAPI
+from starlette.applications import Starlette
+from starlette.routing import Mount
 
 import deployment.bff.app.settings as api_settings
 from deployment.bff.app.decorators import api_method, timed
-from deployment.bff.app.v1.api import v1_router
+from deployment.bff.app.v1.routers import image, text
 
 logging.config.dictConfig(api_settings.DEFAULT_LOGGING_CONFIG)
 logger = logging.getLogger('bff.app')
@@ -19,7 +21,7 @@ EMAIL = 'hello@jina.ai'
 __version__ = "latest"
 
 
-def build_app():
+def get_app_instance():
     """Build FastAPI app."""
     app = FastAPI(
         title=TITLE,
@@ -58,7 +60,20 @@ def build_app():
             f'Jina NOW started! ' f'Listening to [::]:{api_settings.DEFAULT_PORT}'
         )
 
-    app.include_router(v1_router, prefix='/api/v1')
+    return app
+
+
+def build_app():
+    # Image router
+    image_app = get_app_instance()
+    image_app.include_router(image.router, tags=['Image'])
+
+    # Text router
+    text_app = get_app_instance()
+    text_app.include_router(text.router, tags=['Text'])
+
+    # Mount them - for other modalities just add an app instance
+    app = Starlette(routes=[Mount("/image", image_app), Mount("/text", text_app)])
 
     return app
 
