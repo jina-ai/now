@@ -73,7 +73,9 @@ def build_app():
     text_app.include_router(text.router, tags=['Text'])
 
     # Mount them - for other modalities just add an app instance
-    app = Starlette(routes=[Mount("/image", image_app), Mount("/text", text_app)])
+    app = Starlette(
+        routes=[Mount("/api/v1/image", image_app), Mount("/api/v1/text", text_app)]
+    )
 
     return app
 
