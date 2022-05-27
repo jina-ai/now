@@ -43,13 +43,13 @@ def run(
             cmd(
                 f'{kubectl_path} apply -f {cur_dir}/deployment/k8s_playground-svc-node.yml'
             )
-            playground_host = 'http://localhost'
+            bff_playground_host = 'http://localhost'
             playground_port = '30080'
             bff_port = '30090'
             while True:
                 try:
-                    requests.get(f"{playground_host}:{playground_port}")
-                    requests.get(f"{playground_host}:{bff_port}")
+                    requests.get(f"{bff_playground_host}:{playground_port}")
+                    requests.get(f"{bff_playground_host}:{bff_port}")
                     break
                 except Exception:
                     sleep(1)
@@ -59,7 +59,7 @@ def run(
         #     playground_port = '80'
 
         spinner.ok('🚀')
-        return playground_host, playground_port
+        return bff_playground_host, bff_port, playground_port
 
 
 if __name__ == '__main__':

@@ -10,10 +10,10 @@ def test_read_root(test_client):
 
 
 def test_get_docs(test_client):
-    response = test_client.get('/docs')
+    response = test_client.get('/api/docs')
     assert response.status_code == 200
 
 
 def test_get_redoc(test_client):
-    response = test_client.get('/redoc')
+    response = test_client.get('/api/redoc')
     assert response.status_code == 200

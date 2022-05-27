@@ -18,7 +18,7 @@ def run(user_input: UserInput, tmpdir, kubectl_path: str):
 
     finetune_settings = parse_finetune_settings(user_input, dataset)
     if finetune_settings.perform_finetuning:
-        print(f'Performing fine-tuning!')
+        print(f'🔧 Perform finetuning!')
         finetune_settings.finetuned_model_name = finetune_now(
             user_input, dataset, finetune_settings, kubectl_path
         )

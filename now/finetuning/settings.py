@@ -16,6 +16,7 @@ TUNEABLE_DEMO_DATASETS = {
     ],
 }
 
+
 DEFAULT_EPOCHS = 50
 DEFAULT_NUM_VAL_QUERIES = 50
 DEFAULT_FINETUNED_EMBEDDING_SIZE = 128
@@ -89,10 +90,13 @@ def _is_finetuning(user_input: UserInput, dataset: DocumentArray) -> bool:
         return False
 
 
-def _is_bi_modal(dataset: DocumentArray) -> bool:
-    has_blob = any([d.blob != b'' for d in dataset])
-    has_text = any([d.text != '' for d in dataset])
-    return has_text and has_blob
+def _is_bi_modal(user_input: UserInput, dataset: DocumentArray) -> bool:
+    if user_input.is_custom_dataset:
+        has_blob = any([d.blob != b'' for d in dataset])
+        has_text = any([d.text != '' for d in dataset])
+        return has_text and has_blob
+    else:
+        return True  # right now all demo cases are bi-modal
 
 
 def parse_finetune_settings(
@@ -102,5 +106,5 @@ def parse_finetune_settings(
     return FinetuneSettings(
         pre_trained_embedding_size=_get_pre_trained_embedding_size(user_input),
         perform_finetuning=_is_finetuning(user_input, dataset),
-        bi_modal=_is_bi_modal(dataset),
+        bi_modal=_is_bi_modal(user_input, dataset),
     )

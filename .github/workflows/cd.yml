@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.7]
-        group: [1, 2, 3, 4]     # set to the number of end-to-end tests
+        group: [1, 2, 3, 4, 5]     # set to the number of end-to-end tests
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -39,7 +39,7 @@ jobs:
           WOLF_TOKEN: ${{ secrets.WOLF_TOKEN }}
       - name: Test
         id: test
-        run: pytest --suppress-no-test-exit-code -v -s -m "not gpu" --splits 4 --group ${{ matrix.group }} tests/
+        run: pytest --suppress-no-test-exit-code -v -s -m "not gpu" --splits 5 --group ${{ matrix.group }} tests/
         timeout-minutes: 20
       - name: Setup tmate session for debugging
         if: ${{ failure() }}
@@ -84,8 +84,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: now-bff-frontend
-          environment_name: Nowbfffrontend-env
+          application_name: now-bff-playground
+          environment_name: Nowbffplayground-env
           version_label: ${{ github.sha }}
           region: "eu-west-1"
           deployment_package: deploy.zip

@@ -18,7 +18,7 @@ from finetuner.tuner.pytorch.losses import TripletLoss
 from finetuner.tuner.pytorch.miner import TripletEasyHardMiner
 from yaspin import yaspin
 
-from now.constants import Modalities
+from now.constants import PRE_TRAINED_LINEAR_HEADS_MUSIC, Modalities
 from now.dialog import UserInput
 from now.finetuning.dataset import FinetuneDataset, build_finetuning_dataset
 from now.finetuning.embeddings import embed_now
@@ -38,14 +38,24 @@ def finetune_now(
     kubectl_path: str,
 ):
     """
-    TODO: Write docs at the end
+    Performs the finetuning procedure:
+     1. If embeddings are not present -> compute them using a k8s deployed flow
+     2. If bi-modal, prepare the embeddings by concatenating zeros for the opposing modality
+     3. Create model and run finetuning, get path to the tuned model and return
 
-    :param user_input:
-    :param dataset:
-    :param finetune_settings:
-    :param kubectl_path:
-    :return:
+    Note, for music we use cached models because the datasets are too large and consume too much time
+
+    :param user_input: The configured user input object
+    :param dataset: The dataset with the finetuning labels on all documents. Embeddings are optional and can
+        be computed on the fly
+    :param finetune_settings: Mainly parameter configuration for the finetuner.fit
+    :param kubectl_path: Path to the kubectl binary on the system
+
+    :return: Path to the tuned model.
     """
+    if user_input.output_modality == Modalities.MUSIC:
+        print(f'⚡️ Using cached hub model for speed')
+        return PRE_TRAINED_LINEAR_HEADS_MUSIC[user_input.data]
     dataset = _maybe_add_embeddings(user_input, dataset, kubectl_path)
 
     dataset = dataset.shuffle(42)

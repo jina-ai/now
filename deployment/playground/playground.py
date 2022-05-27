@@ -64,11 +64,11 @@ def deploy_streamlit():
         query_parameters.get('data')[0] if 'data' in query_parameters.keys() else None
     )
     # TODO: fix such that can call 'localhost' instead of 'jinanowtesting'
-    # TODO: change Nginx such that api/api isn't required anymore
     if HOST == 'gateway':  # need to call now-bff as we communicate between pods
         URL_HOST = f"http://now-bff/api/v1/{OUTPUT_MODALITY}/search"
     else:
-        URL_HOST = f"https://jinanowtesting.com/api/api/v1/{OUTPUT_MODALITY}/search"
+        URL_HOST = f"https://nowrun.jina.ai/api/v1/{OUTPUT_MODALITY}/search"
+        # URL_HOST = f"localhost/api/v1/{OUTPUT_MODALITY}/search"
 
     da_img = None
     da_txt = None
@@ -142,6 +142,7 @@ def deploy_streamlit():
                 query_doc.load_uri_to_blob()
             elif query_doc.tensor is not None:
                 query_doc.convert_tensor_to_blob()
+
             query_doc.convert_blob_to_image_tensor()
 
         data = {
