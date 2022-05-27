@@ -39,7 +39,8 @@ jobs:
           WOLF_TOKEN: ${{ secrets.WOLF_TOKEN }}
       - name: Test
         id: test
-        run: pytest --suppress-no-test-exit-code -v -s -m "not gpu" --splits 5 --group ${{ matrix.group }} tests/
+        run: pytest --suppress-no-test-exit-code -v -s -m "not gpu" --splits 5 --group ${{ matrix.group }} \
+          --splitting-algorithm=least_duration tests/
         timeout-minutes: 20
       - name: Setup tmate session for debugging
         if: ${{ failure() }}
