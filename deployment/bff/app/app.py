@@ -30,6 +30,9 @@ def get_app_instance():
             'author': AUTHOR,
             'email': EMAIL,
         },
+        docs_url='/docs',
+        redoc_url='/redoc',
+        openapi_url='/openapi.json',
     )
 
     @app.get('/ping')
@@ -65,17 +68,17 @@ def get_app_instance():
 
 def build_app():
     # Image router
+    image_mount = "/api/v1/image"
     image_app = get_app_instance()
     image_app.include_router(image.router, tags=['Image'])
 
     # Text router
+    text_mount = "/api/v1/text"
     text_app = get_app_instance()
     text_app.include_router(text.router, tags=['Text'])
 
     # Mount them - for other modalities just add an app instance
-    app = Starlette(
-        routes=[Mount("/api/v1/image", image_app), Mount("/api/v1/text", text_app)]
-    )
+    app = Starlette(routes=[Mount(image_mount, image_app), Mount(text_mount, text_app)])
 
     return app
 
