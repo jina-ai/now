@@ -14,7 +14,7 @@ from now.log.log import yaspin_extended
 from now.system_information import get_system_state
 from now.utils import sigmap
 
-docker_bff_playground_tag = '0.0.42-feat-bff-4'
+docker_api_playground_tag = '0.0.42-feat-api-4'
 
 
 def get_remote_flow_details():
@@ -91,27 +91,26 @@ def start_now(os_type, arch, contexts, active_context, is_debug, **kwargs):
 
         if gateway_host == 'localhost' or 'NOW_CI_RUN' in os.environ:
             # only deploy playground when running locally or when testing
-            bff_playground_host, bff_port, playground_port = run_bff_playground.run(
+            api_playground_host, api_port, playground_port = run_bff_playground.run(
                 output_modality=user_input.output_modality,
                 dataset=user_input.data,
                 gateway_host=gateway_host,
                 gateway_host_internal=gateway_host_internal,
                 gateway_port_internal=gateway_port_internal,
-                docker_bff_playground_tag=docker_bff_playground_tag,
+                docker_bff_playground_tag=docker_api_playground_tag,
                 kubectl_path=kwargs['kubectl_path'],
             )
         else:
-            bff_playground_host = 'https://nowrun.jina.ai'
-            bff_port = '80'
+            api_playground_host = 'https://nowrun.jina.ai'
+            api_port = '80'
             playground_port = '80'
-        # TODO: add separate BFF endpoints in print output
-        bff_url = (
-            bff_playground_host
-            + ('' if str(bff_port) == '80' else f':{bff_port}')
-            + f'/api/docs'
+        api_url = (
+            api_playground_host
+            + ('' if str(api_port) == '80' else f':{api_port}')
+            + f'api/v1/{user_input.output_modality}/docs'
         )
         playground_url = (
-            bff_playground_host
+            api_playground_host
             + ('' if str(playground_port) == '80' else f':{playground_port}')
             + (
                 f'/?host='
@@ -121,7 +120,7 @@ def start_now(os_type, arch, contexts, active_context, is_debug, **kwargs):
             + (f'&port={gateway_port_internal}' if gateway_port_internal else '')
         )
         print()
-        print(f'BFF docs are accessible at:\n{bff_url}')
+        print(f'API docs are accessible at:\n{api_url}')
         print(f'Playground is accessible at:\n{playground_url}')
 
 
