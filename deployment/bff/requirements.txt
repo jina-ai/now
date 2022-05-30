@@ -3,3 +3,4 @@ uvicorn
 uvloop
 pydantic
 jina[perf]==3.4.4
+protobuf~=3.19
