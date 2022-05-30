@@ -30,9 +30,6 @@ def get_app_instance():
             'author': AUTHOR,
             'email': EMAIL,
         },
-        docs_url='/docs',
-        redoc_url='/redoc',
-        openapi_url='/openapi.json',
     )
 
     @app.get('/ping')
