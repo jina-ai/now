@@ -1,26 +1,25 @@
 import pytest
 
-
-@pytest.mark.parametrize('modality', ['image', 'text'])
-def test_check_liveness(test_client, modality):
-    response = test_client.get(f'/api/v1/{modality}/ping')
-    assert response.status_code == 200
-    assert response.json() == 'pong!'
+from now.constants import Apps
 
 
-@pytest.mark.parametrize('modality', ['image', 'text'])
-def test_read_root(test_client, modality):
-    response = test_client.get(f'/api/v1/{modality}')
-    assert response.status_code == 200
+@pytest.mark.parametrize(
+    'app', [Apps.TEXT_TO_IMAGE, Apps.IMAGE_TO_TEXT, Apps.IMAGE_TO_IMAGE]
+)
+class TestParametrized:
+    def test_check_liveness(self, test_client, app):
+        response = test_client.get(f'/api/v1/{app}/ping')
+        assert response.status_code == 200
+        assert response.json() == 'pong!'
 
+    def test_read_root(self, test_client, app):
+        response = test_client.get(f'/api/v1/{app}')
+        assert response.status_code == 200
 
-@pytest.mark.parametrize('modality', ['image', 'text'])
-def test_get_docs(test_client, modality):
-    response = test_client.get(f'/api/v1/{modality}/docs')
-    assert response.status_code == 200
+    def test_get_docs(self, test_client, app):
+        response = test_client.get(f'/api/v1/{app}/docs')
+        assert response.status_code == 200
 
-
-@pytest.mark.parametrize('modality', ['image', 'text'])
-def test_get_redoc(test_client, modality):
-    response = test_client.get(f'/api/v1/{modality}/redoc')
-    assert response.status_code == 200
+    def test_get_redoc(self, test_client, app):
+        response = test_client.get(f'/api/v1/{app}/redoc')
+        assert response.status_code == 200
