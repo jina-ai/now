@@ -48,7 +48,7 @@ def search(data: NowTextSearchRequestModel):
     """
     Retrieve matching images for a given text as query.
     """
-    query_doc = process_query(data.text)
+    query_doc = process_query(text=data.text)
     if 'wolf.jina.ai' in data.host:
         c = Client(host=data.host)
     else:

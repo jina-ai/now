@@ -49,7 +49,7 @@ def search(data: NowImageSearchRequestModel):
     Retrieve matching images for a given image query. Image query should be
     `base64` encoded using human-readable characters - `utf-8`.
     """
-    query_doc = process_query(data.image)
+    query_doc = process_query(image=data.image)
     if 'wolf.jina.ai' in data.host:
         c = Client(host=data.host)
     else:
