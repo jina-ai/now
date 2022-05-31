@@ -1,9 +1,20 @@
+import platform
 import sys
 from os import path
-import platform
+
+import pkg_resources
 from setuptools import find_packages
 from setuptools import setup
-import pkg_resources
+
+
+def get_requirements_list(f):
+    with pathlib.Path(f).open() as requirements_txt:
+        requirements_list = [
+            str(requirement)
+            for requirement in pkg_resources.parse_requirements(requirements_txt)
+        ]
+        return requirements_list
+
 
 if sys.version_info < (3, 7, 0):
     raise OSError(f'Jina NOW requires Python >=3.7, but yours is {sys.version}')
@@ -27,12 +38,9 @@ except FileNotFoundError:
 
 import pathlib
 
+install_requires = get_requirements_list('requirements.txt')
+extra_require = get_requirements_list('requirements-test.txt')
 
-with pathlib.Path('requirements.txt').open() as requirements_txt:
-    install_requires = [
-        str(requirement)
-        for requirement in pkg_resources.parse_requirements(requirements_txt)
-    ]
 sys_platform = platform.system().lower()
 # if sys_platform == 'darwin':
 torch_requirement = ['torch==1.10.2']
@@ -61,20 +69,7 @@ setup(
     setup_requires=['setuptools>=18.0', 'wheel'],
     install_requires=install_requires,
     entry_points={"console_scripts": ["jina-now = now.cli:cli"]},
-    extras_require={
-        'test': [
-            'pytest',
-            'pytest-timeout',
-            'pytest-mock',
-            'pytest-cov',
-            'pytest-repeat',
-            'pytest-reraise',
-            'mock',
-            'pytest-custom_exit_code',
-            'black==22.3.0',
-            'pytest-split==0.8.0',
-        ]
-    },
+    extras_require={'test': extra_require},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',

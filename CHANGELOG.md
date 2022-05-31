@@ -1,6 +1,7 @@
 
 
 
+
 <a name=release-note-0-0-7></a>
 ## Release Note (`0.0.7`)
 
@@ -114,4 +115,58 @@
  - [[```1278aa7b```](https://github.com/jina-ai/now/commit/1278aa7b7504cb0a18c8abd6da8a3b8998481f95)] __-__ Delete CNAME (*Mohammad Kalim Akram*)
  - [[```2c35eab1```](https://github.com/jina-ai/now/commit/2c35eab13a43ff77b56cc90c3a4fc82d12e9545e)] __-__ find text via images (#114) (*joschkabraun*)
  - [[```73221b88```](https://github.com/jina-ai/now/commit/73221b885e663d91c056469e47f8a03cbc766c2f)] __-__ Feedback if kind image needs to be downloaded (#51) (*joschkabraun*)
+
+<a name=release-note-0-0-8></a>
+## Release Note (`0.0.8`)
+
+> Release time: 2022-05-31 12:47:20
+
+
+
+🙇 We'd like to thank all contributors for this new release! In particular,
+ Florian Hönicke,  Florian Hönicke,  Mohammad Kalim Akram,  Leon Wolf,  joschkabraun,  Sebastian Lettner,  Joschka Braun,  slettner,  Jina Dev Bot,  🙇
+
+
+### 🆕 New Features
+
+ - [[```561b970c```](https://github.com/jina-ai/now/commit/561b970c3f60aa8e539f312396328af6e6e68cfc)] __-__ add router for modalities (#206) (*Mohammad Kalim Akram*)
+ - [[```abf0b9c3```](https://github.com/jina-ai/now/commit/abf0b9c37f09b4ab39ebc33249a78cf55d52441e)] __-__ use prepared linear heads for music (#204) (*Sebastian Lettner*)
+ - [[```b2878c14```](https://github.com/jina-ai/now/commit/b2878c14b55d46363e7b2cff8f62b9f76546ff26)] __-__ finetune music (#154) (*Sebastian Lettner*)
+ - [[```820cd49b```](https://github.com/jina-ai/now/commit/820cd49bbe7b343f6a592032365eac978df62498)] __-__ deploy bff and frontend on AWS (#161) (*joschkabraun*)
+
+### 🐞 Bug fixes
+
+ - [[```93f17bf7```](https://github.com/jina-ai/now/commit/93f17bf76974921ae826b786c2a15476cc02b695)] __-__ convert tensor first (#220) (*Mohammad Kalim Akram*)
+ - [[```bed631a9```](https://github.com/jina-ai/now/commit/bed631a9f191c0c4d43feaee2e19e2452e2af8d3)] __-__ add missing logo (*Florian Hönicke*)
+ - [[```81260161```](https://github.com/jina-ai/now/commit/8126016132481a5c834be9e9df4d8a117367f18c)] __-__ add logo (*slettner*)
+ - [[```734f0abe```](https://github.com/jina-ai/now/commit/734f0abecc4d2a60153a55fe6440464cdd81dc72)] __-__ fix the cd deployment (*Mohammad Kalim Akram*)
+ - [[```258879db```](https://github.com/jina-ai/now/commit/258879db678726ad17ff06de0f62d4cd60313920)] __-__ update the cli args (#179) (*Mohammad Kalim Akram*)
+ - [[```b823c0b0```](https://github.com/jina-ai/now/commit/b823c0b07df10dbbd0be1f1e2daca972f60dd076)] __-__ logging issue (#184) (*Florian Hönicke*)
+
+### 🧼 Code Refactoring
+
+ - [[```493b4b13```](https://github.com/jina-ai/now/commit/493b4b13230fe614de91806ebad9497793241a50)] __-__ test requirements (#221) (*Florian Hönicke*)
+ - [[```1e39d773```](https://github.com/jina-ai/now/commit/1e39d77347da3fcab39558e9730dba0db9e473ee)] __-__ separated apps (#188) (*Florian Hönicke*)
+ - [[```5c42249d```](https://github.com/jina-ai/now/commit/5c42249de440c9b9ab0d4a01e8fdf2f7b6d50f78)] __-__ remove gke occurrences (#178) (*Mohammad Kalim Akram*)
+ - [[```859973bd```](https://github.com/jina-ai/now/commit/859973bd0544887796d54f9a676f49a42ad10546)] __-__ rename frontend to playground (#185) (*Florian Hönicke*)
+ - [[```35289677```](https://github.com/jina-ai/now/commit/352896778011b558fa47602d84c1821336f86970)] __-__ cleanup (#186) (*Florian Hönicke*)
+
+### 📗 Documentation
+
+ - [[```b637d380```](https://github.com/jina-ai/now/commit/b637d3803b7695676d955c68c1b7bf7b51b9a656)] __-__ update readme (*Florian Hönicke*)
+ - [[```c1dae041```](https://github.com/jina-ai/now/commit/c1dae041db1914a6687b1fbf0c9c4d7e0e545f6d)] __-__ update app question (*Florian Hönicke*)
+ - [[```b6c5900f```](https://github.com/jina-ai/now/commit/b6c5900f1b50614eec598da118334ea7d8bb9f57)] __-__ update readme remote (#202) (*Florian Hönicke*)
+ - [[```1c4938e1```](https://github.com/jina-ai/now/commit/1c4938e1cf6aee5d8b406b18ed535600b6f1df88)] __-__ survey (*Florian Hönicke*)
+
+### 🏁 Unit Test and CICD
+
+ - [[```11a33419```](https://github.com/jina-ai/now/commit/11a334196e5ca35c1777a3e1e324b7e633f65bd7)] __-__ __parallel-cd__: parallel tests on cd no coverage (#201) (*joschkabraun*)
+ - [[```dac7a217```](https://github.com/jina-ai/now/commit/dac7a2176651e997f162757514a9107186367f0e)] __-__ __parallel-ci__: fix failing music data loading (*Joschka Braun*)
+
+### 🍹 Other Improvements
+
+ - [[```ae609dc2```](https://github.com/jina-ai/now/commit/ae609dc27959839db927e5ed68dcc57b6cdae32f)] __-__ changed wording to reduce ambiguity between DocArray and datasets (#200) (*Leon Wolf*)
+ - [[```d57b21ac```](https://github.com/jina-ai/now/commit/d57b21ac9f1bc5fcde1e5f2502c5e00cb0b172cd)] __-__ Fix protobuf version (#217) (*joschkabraun*)
+ - [[```b2ddf330```](https://github.com/jina-ai/now/commit/b2ddf330193297e6dac83cc23d906a5762d958ed)] __-__ Deploy to new domain and small fixes (#207) (*joschkabraun*)
+ - [[```6a9cd469```](https://github.com/jina-ai/now/commit/6a9cd469f75901792ac442ceda4a704951ceccca)] __-__ __version__: the next version will be 0.0.8 (*Jina Dev Bot*)
 
