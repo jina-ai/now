@@ -16,7 +16,6 @@ from finetuner.tuner.callback import (
 )
 from finetuner.tuner.pytorch.losses import TripletLoss
 from finetuner.tuner.pytorch.miner import TripletEasyHardMiner
-from yaspin import yaspin
 
 from now.constants import Apps
 from now.dataclasses import UserInput
@@ -26,6 +25,7 @@ from now.finetuning.settings import FinetuneSettings
 from now.hub.head_encoder.head_encoder import LinearHead, get_bi_modal_embedding
 from now.hub.hub import push_to_hub
 from now.improvements.improvements import show_improvement
+from now.log.log import yaspin_extended
 from now.utils import sigmap
 
 _BASE_SAVE_DIR = 'now/hub/head_encoder'
@@ -148,7 +148,7 @@ def _finetune_dir() -> str:
 def _maybe_add_embeddings(
     user_input: UserInput, dataset: DocumentArray, kubectl_path: str
 ):
-    with yaspin(
+    with yaspin_extended(
         sigmap=sigmap, text="Check if embeddings already exist", color="green"
     ) as spinner:
         if all([d.embedding is not None for d in dataset]):
@@ -188,7 +188,9 @@ def _show_finetune_improvements(
     val_query_image = deepcopy(
         val_index_image.sample(k=finetune_settings.num_val_queries, seed=42)
     )
-    with yaspin(sigmap=sigmap, text="Create overview", color="green") as spinner:
+    with yaspin_extended(
+        sigmap=sigmap, text="Create overview", color="green"
+    ) as spinner:
         try:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
