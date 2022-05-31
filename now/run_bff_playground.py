@@ -5,12 +5,13 @@ from time import sleep
 import requests
 
 from now.deployment.deployment import apply_replace, cmd
-from now.log.log import yaspin_extended
+from now.log.log import time_profiler, yaspin_extended
 from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
 
 
+@time_profiler
 def run(
     output_modality,
     dataset,

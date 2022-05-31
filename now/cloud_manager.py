@@ -12,7 +12,7 @@ from now.constants import JC_SECRET
 from now.dataclasses import UserInput
 from now.deployment.deployment import cmd
 from now.dialog import maybe_prompt_user
-from now.log.log import yaspin_extended
+from now.log.log import time_profiler, yaspin_extended
 from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
@@ -109,6 +109,7 @@ def check_wolf_deployment(**kwargs):
             exit(0)
 
 
+@time_profiler
 def setup_cluster(
     user_input: UserInput,
     kubectl_path='kubectl',

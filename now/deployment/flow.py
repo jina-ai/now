@@ -16,7 +16,7 @@ from now.cloud_manager import is_local_cluster
 from now.constants import JC_SECRET
 from now.dataclasses import UserInput
 from now.deployment.deployment import apply_replace, cmd, deploy_wolf
-from now.log.log import yaspin_extended
+from now.log.log import time_profiler, yaspin_extended
 from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
@@ -106,6 +106,7 @@ def deploy_k8s(f, ns, tmpdir, kubectl_path):
     return gateway_host, gateway_port, gateway_host_internal, gateway_port_internal
 
 
+@time_profiler
 def deploy_flow(
     user_input: UserInput,
     app_instance: JinaNOWApp,
