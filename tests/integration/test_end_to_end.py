@@ -9,7 +9,7 @@ import requests
 
 from now.cli import _get_kind_path, _get_kubectl_path, cli
 from now.cloud_manager import create_local_cluster
-from now.constants import JC_SECRET, Apps, DemoDatasets, Modalities
+from now.constants import JC_SECRET, Apps, DemoDatasets
 from now.deployment.deployment import cmd, terminate_wolf
 from now.dialog import NEW_CLUSTER
 from now.run_all_k8s import get_remote_flow_details
@@ -42,11 +42,11 @@ def cleanup(deployment_type, dataset):
 
 
 @pytest.mark.parametrize(
-    'app, output_modality, dataset',
+    'app, dataset',
     [
-        (Apps.TEXT_TO_IMAGE, Modalities.IMAGE, DemoDatasets.BIRD_SPECIES),
-        (Apps.IMAGE_TO_IMAGE, Modalities.IMAGE, DemoDatasets.BEST_ARTWORKS),
-        (Apps.IMAGE_TO_TEXT, Modalities.TEXT, DemoDatasets.ROCK_LYRICS),
+        (Apps.TEXT_TO_IMAGE, DemoDatasets.BIRD_SPECIES),
+        (Apps.IMAGE_TO_IMAGE, DemoDatasets.BEST_ARTWORKS),
+        (Apps.IMAGE_TO_TEXT, DemoDatasets.ROCK_LYRICS),
     ],
 )  # art, rock-lyrics -> no finetuning, fashion -> finetuning
 @pytest.mark.parametrize('quality', ['medium'])
@@ -54,7 +54,6 @@ def cleanup(deployment_type, dataset):
 @pytest.mark.parametrize('deployment_type', ['local', 'remote'])
 def test_backend(
     app: str,
-    output_modality: str,
     dataset: str,
     quality: str,
     cluster: str,
@@ -103,7 +102,7 @@ def test_backend(
         request_body['host'] = flow_details['gateway']
 
     response = requests.post(
-        f'http://localhost:30090/api/v1/{output_modality}/search', json=request_body
+        f'http://localhost:30090/api/v1/{app}/search', json=request_body
     )
 
     assert response.status_code == 200
