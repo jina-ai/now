@@ -4,11 +4,9 @@ from docarray import Document
 from fastapi import HTTPException
 
 
-def process_query(text: str, image: str) -> Document:
+def process_query(text: str = None, image: str = None) -> Document:
     if text is None and image is None:
-        raise ValueError('Please set one of the value - `image` or `text`')
-    if text is not None and image is not None:
-        raise ValueError('Please set either image or text not both!')
+        raise ValueError('Please pass the query to make a search')
     try:
         if text is not None:
             query_doc = Document(text=text)

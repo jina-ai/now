@@ -16,10 +16,6 @@ class NowTextIndexRequestModel(BaseRequestModel):
 
 class NowTextSearchRequestModel(BaseRequestModel):
     text: str = Field(default=None, description='Text query')
-    image: str = Field(
-        default=None,
-        description='Image query. Image should be base64encoded in `utf-8` format',
-    )
     limit: int = Field(default=10, description='Number of matching results to return')
 
 

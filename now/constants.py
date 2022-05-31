@@ -8,10 +8,10 @@ class Modalities(BetterEnum):
 
 
 class Apps(BetterEnum):
-    TEXT_TO_IMAGE = 'text_to_image'
-    IMAGE_TO_TEXT = 'image_to_text'
-    IMAGE_TO_IMAGE = 'image_to_image'
-    MUSIC_TO_MUSIC = 'music_to_music'
+    TEXT_TO_IMAGE = 'text-to-image'
+    IMAGE_TO_TEXT = 'image-to-text'
+    IMAGE_TO_IMAGE = 'image-to-image'
+    MUSIC_TO_MUSIC = 'music-to-music'
 
 
 class DatasetTypes(BetterEnum):

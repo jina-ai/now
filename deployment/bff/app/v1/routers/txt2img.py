@@ -1,14 +1,15 @@
+import base64
 from typing import List
 
 from docarray import Document, DocumentArray
 from fastapi import APIRouter
 from jina import Client
 
-from deployment.bff.app.v1.models.text import (
-    NowTextIndexRequestModel,
-    NowTextResponseModel,
-    NowTextSearchRequestModel,
+from deployment.bff.app.v1.models.image import (
+    NowImageIndexRequestModel,
+    NowImageResponseModel,
 )
+from deployment.bff.app.v1.models.text import NowTextSearchRequestModel
 from deployment.bff.app.v1.routers.helper import process_query
 
 router = APIRouter()
@@ -17,15 +18,18 @@ router = APIRouter()
 # Index
 @router.post(
     "/index",
-    summary='Add more data to the indexer',
+    summary='Add more image data to the indexer',
 )
-def index(data: NowTextIndexRequestModel):
+def index(data: NowImageIndexRequestModel):
     """
-    Append the list of texts to the indexer.
+    Append the list of image data to the indexer. Each image data should be
+    `base64` encoded using human-readable characters - `utf-8`.
     """
     index_docs = DocumentArray()
-    for text in data.texts:
-        index_docs.append(Document(text=text))
+    for image in data.images:
+        base64_bytes = image.encode('utf-8')
+        message = base64.decodebytes(base64_bytes)
+        index_docs.append(Document(blob=message))
 
     if 'wolf.jina.ai' in data.host:
         c = Client(host=data.host)
@@ -37,15 +41,14 @@ def index(data: NowTextIndexRequestModel):
 # Search
 @router.post(
     "/search",
-    response_model=List[NowTextResponseModel],
-    summary='Search text data via text or image as query',
+    response_model=List[NowImageResponseModel],
+    summary='Search image data via text as query',
 )
 def search(data: NowTextSearchRequestModel):
     """
-    Retrieve matching texts for a given text as query. Query should be `base64` encoded
-    using human-readable characters - `utf-8`.
+    Retrieve matching images for a given text as query.
     """
-    query_doc = process_query(data.text, data.image)
+    query_doc = process_query(data.text)
     if 'wolf.jina.ai' in data.host:
         c = Client(host=data.host)
     else:
