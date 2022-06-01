@@ -9,7 +9,7 @@ from now.cloud_manager import setup_cluster
 from now.constants import JC_SECRET, SURVEY_LINK
 from now.deployment.deployment import cmd, status_wolf, terminate_wolf
 from now.dialog import _get_context_names, configure_user_input, maybe_prompt_user
-from now.log.log import yaspin_extended
+from now.log import yaspin_extended
 from now.system_information import get_system_state
 from now.utils import sigmap
 

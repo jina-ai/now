@@ -13,7 +13,7 @@ from now.deployment.flow import deploy_flow
 from now.finetuning.embeddings import get_encoder_config
 from now.finetuning.run_finetuning import finetune_now
 from now.finetuning.settings import FinetuneSettings, parse_finetune_settings
-from now.log.log import time_profiler
+from now.log import time_profiler
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
 

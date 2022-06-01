@@ -25,7 +25,7 @@ from now.finetuning.settings import FinetuneSettings
 from now.hub.head_encoder.head_encoder import LinearHead, get_bi_modal_embedding
 from now.hub.hub import push_to_hub
 from now.improvements.improvements import show_improvement
-from now.log.log import yaspin_extended
+from now.log import yaspin_extended
 from now.utils import sigmap
 
 _BASE_SAVE_DIR = 'now/hub/head_encoder'
