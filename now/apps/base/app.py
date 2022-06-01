@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 
 from docarray import DocumentArray
 
-from now.constants import Modalities
+from now.constants import Modalities, Qualities
 from now.dataclasses import UserInput
 from now.datasource.datasource import Datasource
 
@@ -53,12 +53,12 @@ class JinaNOWApp:
         """
         return self._flow_yaml
 
-    @flow_yaml.setter
-    def flow_yaml(self, value: str):
+    def set_flow_yaml(self, finetuning: bool):
         """
         Set the flow yaml. Either the path to the yaml or the yaml content.
+        :param finetuning: whether flow for finetuning should be used
         """
-        self._flow_yaml = value
+        pass
 
     @property
     def bff(self) -> Optional[str]:
@@ -99,6 +99,13 @@ class JinaNOWApp:
         :return:
         """
         return []
+
+    @property
+    def pre_trained_embedding_size(self) -> Dict[Qualities, int]:
+        """
+        Returns a dictionary which maps given quality to embedding size of pretrained model.
+        """
+        return {}
 
     @property
     def example_datasource(self) -> List[Datasource]:

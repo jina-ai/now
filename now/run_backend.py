@@ -6,7 +6,6 @@ from typing import Dict, Optional, Tuple
 from docarray import DocumentArray
 
 from now.apps.base.app import JinaNOWApp
-from now.constants import Apps
 from now.data_loading.data_loading import load_data
 from now.dataclasses import UserInput
 from now.deployment.flow import deploy_flow
@@ -30,7 +29,9 @@ def finetune_flow_setup(
     """
     Apply finetuning if possible, pushes the executor to hub and generated the related yaml file
     """
-    finetune_settings = parse_finetune_settings(user_input, dataset, finetune_datasets)
+    finetune_settings = parse_finetune_settings(
+        app_instance, user_input, dataset, finetune_datasets
+    )
     if finetune_settings.perform_finetuning:
         print(f'🔧 Perform finetuning!')
         finetune_settings.finetuned_model_name = finetune_now(
@@ -39,8 +40,7 @@ def finetune_flow_setup(
 
     finetuning = finetune_settings.perform_finetuning
 
-    yaml_name = get_flow_yaml_name(user_input.app, finetuning)
-    app_instance.flow_yaml = os.path.join(cur_dir, 'deployment', 'flow', yaml_name)
+    app_instance.set_flow_yaml(finetuning)
 
     env = get_custom_env_file(user_input, finetune_settings, encoder_uses, artifact)
     return env
@@ -111,13 +111,3 @@ def get_custom_env_file(
         config['LINEAR_HEAD_NAME'] = linear_head_name
 
     return config
-
-
-def get_flow_yaml_name(app: str, finetuning: bool) -> str:
-    options = {
-        Apps.TEXT_TO_IMAGE: {False: 'flow-clip.yml', True: 'ft-flow-clip.yml'},
-        Apps.IMAGE_TO_IMAGE: {False: 'flow-clip.yml', True: 'ft-flow-clip.yml'},
-        Apps.IMAGE_TO_TEXT: {False: 'flow-clip.yml'},
-        Apps.MUSIC_TO_MUSIC: {True: 'ft-flow-music.yml'},
-    }
-    return options[app][finetuning]

@@ -10,7 +10,7 @@ from now.dataclasses import UserInput
 from now.run_backend import finetune_flow_setup
 
 
-class ImageToText(JinaNOWApp):
+class TextToText(JinaNOWApp):
     def __init__(self):
         now_package_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
         flow_dir = os.path.join(now_package_dir, 'deployment', 'flow')
@@ -18,11 +18,11 @@ class ImageToText(JinaNOWApp):
 
     @property
     def description(self) -> str:
-        return 'Image to text search'
+        return 'Text to text search'
 
     @property
     def input_modality(self) -> Modalities:
-        return Modalities.IMAGE
+        return Modalities.TEXT
 
     @property
     def output_modality(self) -> Modalities:
@@ -32,6 +32,14 @@ class ImageToText(JinaNOWApp):
     def options(self) -> List[Dict]:
         return [options.QUALITY_CLIP]
 
+    def set_flow_yaml(self, finetuning: bool = False):
+        now_package_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
+        flow_dir = os.path.join(now_package_dir, 'deployment', 'flow')
+        if finetuning:
+            self._flow_yaml = os.path.join(flow_dir, 'ft-flow-clip.yml')
+        else:
+            self._flow_yaml = os.path.join(flow_dir, 'flow-clip.yml')
+
     @property
     def pre_trained_embedding_size(self) -> Dict[Qualities, int]:
         return {
@@ -40,7 +48,9 @@ class ImageToText(JinaNOWApp):
             Qualities.EXCELLENT: 768,
         }
 
-    def setup(self, da: DocumentArray, user_config: UserInput, kubectl_path) -> Dict:
+    def setup(
+        self, da: DocumentArray, user_config: UserInput, kubectl_path: str
+    ) -> Dict:
         return finetune_flow_setup(
             self,
             da,
