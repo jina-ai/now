@@ -13,7 +13,7 @@ from now.log.log import yaspin_extended
 from now.system_information import get_system_state
 from now.utils import sigmap
 
-docker_bff_playground_tag = '0.0.46-update-endpoints-8'
+docker_bff_playground_tag = '0.0.46-update-endpoints-9'
 
 
 def get_remote_flow_details():

@@ -23,7 +23,7 @@ def test_search_image(resources_folder_path: str):
     ) as f:
         binary = f.read()
         img_query = base64.b64encode(binary).decode('utf-8')
-    return {'image': img_query}
+    return img_query
 
 
 @pytest.fixture()
@@ -104,7 +104,7 @@ def test_backend(
 
     # Perform end-to-end check via bff
     if app == Apps.IMAGE_TO_IMAGE or app == Apps.IMAGE_TO_TEXT:
-        request_body = {'image': test_search_image}
+        request_body = {'image': test_search_image, 'limit': 9}
     elif app == Apps.TEXT_TO_IMAGE:
         request_body = {'text': search_text, 'limit': 9}
     else:  # Add different request body if app changes
