@@ -1,5 +1,6 @@
 from docarray import DocumentArray
 
+from now.apps.music_to_music.app import MusicToMusic
 from now.constants import Apps
 from now.dataclasses import UserInput
 from now.finetuning.run_finetuning import finetune_now
@@ -13,7 +14,7 @@ def test_music_access_lookup_dict():
     cached = finetune_now(
         user_input,
         dataset,
-        parse_finetune_settings(user_input, dataset, ()),
+        parse_finetune_settings(MusicToMusic(), user_input, dataset, ()),
         pre_trained_head_map,
         '',
     )
