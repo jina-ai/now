@@ -2,6 +2,7 @@
 
 
 
+
 <a name=release-note-0-0-7></a>
 ## Release Note (`0.0.7`)
 
@@ -169,4 +170,20 @@
  - [[```d57b21ac```](https://github.com/jina-ai/now/commit/d57b21ac9f1bc5fcde1e5f2502c5e00cb0b172cd)] __-__ Fix protobuf version (#217) (*joschkabraun*)
  - [[```b2ddf330```](https://github.com/jina-ai/now/commit/b2ddf330193297e6dac83cc23d906a5762d958ed)] __-__ Deploy to new domain and small fixes (#207) (*joschkabraun*)
  - [[```6a9cd469```](https://github.com/jina-ai/now/commit/6a9cd469f75901792ac442ceda4a704951ceccca)] __-__ __version__: the next version will be 0.0.8 (*Jina Dev Bot*)
+
+<a name=release-note-0-0-9></a>
+## Release Note (`0.0.9`)
+
+> Release time: 2022-06-02 10:24:42
+
+
+
+🙇 We'd like to thank all contributors for this new release! In particular,
+ Leon Wolf,  Jina Dev Bot,  🙇
+
+
+### 🍹 Other Improvements
+
+ - [[```7e5efd28```](https://github.com/jina-ai/now/commit/7e5efd28600850fc2388c663253afd14a9902532)] __-__ add playground survey (#216) (*Leon Wolf*)
+ - [[```22048ce4```](https://github.com/jina-ai/now/commit/22048ce40ef411d54a375a51ee35d186cc547a0c)] __-__ __version__: the next version will be 0.0.9 (*Jina Dev Bot*)
 
