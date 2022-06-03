@@ -3,6 +3,7 @@
 
 
 
+
 <a name=release-note-0-0-7></a>
 ## Release Note (`0.0.7`)
 
@@ -186,4 +187,23 @@
 
  - [[```7e5efd28```](https://github.com/jina-ai/now/commit/7e5efd28600850fc2388c663253afd14a9902532)] __-__ add playground survey (#216) (*Leon Wolf*)
  - [[```22048ce4```](https://github.com/jina-ai/now/commit/22048ce40ef411d54a375a51ee35d186cc547a0c)] __-__ __version__: the next version will be 0.0.9 (*Jina Dev Bot*)
+
+<a name=release-note-0-0-10></a>
+## Release Note (`0.0.10`)
+
+> Release time: 2022-06-02 12:31:02
+
+
+
+🙇 We'd like to thank all contributors for this new release! In particular,
+ Mohammad Kalim Akram,  Jina Dev Bot,  🙇
+
+
+### 🐞 Bug fixes
+
+ - [[```7d9cbc49```](https://github.com/jina-ai/now/commit/7d9cbc49def8d1928aaa385b845da8ea37f0ade2)] __-__ update the survey link (#238) (*Mohammad Kalim Akram*)
+
+### 🍹 Other Improvements
+
+ - [[```8e31f83a```](https://github.com/jina-ai/now/commit/8e31f83a1feaeac93d465166997823108d29223f)] __-__ __version__: the next version will be 0.0.10 (*Jina Dev Bot*)
 

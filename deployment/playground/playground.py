@@ -10,8 +10,6 @@ import streamlit as st
 from docarray import Document, DocumentArray
 from streamlit_webrtc import ClientSettings, webrtc_streamer
 
-from now.constants import SURVEY_LINK
-
 WEBRTC_CLIENT_SETTINGS = ClientSettings(
     rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
     media_stream_constraints={"video": True, "audio": False},
@@ -36,6 +34,8 @@ ds_set = [
     'indie-lyrics',
     'metal-lyrics',
 ]
+
+SURVEY_LINK = 'https://10sw1tcpld4.typeform.com/to/VTAyYRpR?utm_source=cli'
 
 
 def deploy_streamlit():
