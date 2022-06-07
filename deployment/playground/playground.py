@@ -63,15 +63,14 @@ def deploy_streamlit():
     )
     OUTPUT_MODALITY = query_parameters.get('output_modality')[0]
     INPUT_MODALITY = query_parameters.get('input_modality')[0]
-    APP = query_parameters.get('app')[0]
     DATA = (
         query_parameters.get('data')[0] if 'data' in query_parameters.keys() else None
     )
     # TODO: fix such that can call 'localhost' instead of 'jinanowtesting'
     if HOST == 'gateway':  # need to call now-bff as we communicate between pods
-        URL_HOST = f"http://now-bff/api/v1/{APP}/search"
+        URL_HOST = f"http://now-bff/api/v1/{INPUT_MODALITY}-to-{OUTPUT_MODALITY}/search"
     else:
-        URL_HOST = f"https://nowrun.jina.ai/api/v1/{APP}/search"
+        URL_HOST = f"https://nowrun.jina.ai/api/v1/{INPUT_MODALITY}-to-{OUTPUT_MODALITY}/search"
         # URL_HOST = f"localhost/api/v1/{OUTPUT_MODALITY}/search"
 
     da_img = None

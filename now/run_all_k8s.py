@@ -13,7 +13,7 @@ from now.log import yaspin_extended
 from now.system_information import get_system_state
 from now.utils import sigmap
 
-docker_bff_playground_tag = '0.0.49-1'
+docker_bff_playground_tag = '0.0.49-2'
 
 
 def get_remote_flow_details():
@@ -107,7 +107,7 @@ def start_now(os_type, arch, contexts, active_context, **kwargs):
     bff_url = (
         bff_playground_host
         + ('' if str(bff_port) == '80' else f':{bff_port}')
-        + f'/api/v1/{app_instance.input_modality}/redoc'
+        + f'/api/v1/{app_instance.input_modality}-to-{app_instance.output_modality}/redoc'
     )
     playground_url = (
         bff_playground_host
