@@ -3,7 +3,7 @@ import pathlib
 import subprocess
 from datetime import datetime
 
-from now.log.log import yaspin_extended
+from now.log import yaspin_extended
 from now.utils import copytree, sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
