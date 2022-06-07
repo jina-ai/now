@@ -53,11 +53,26 @@ def cleanup(deployment_type, dataset):
 
 
 @pytest.mark.parametrize(
-    'app, output_modality, dataset',
+    'app, input_modality, output_modality, dataset',
     [
-        (Apps.TEXT_TO_IMAGE, Modalities.IMAGE, DemoDatasets.BIRD_SPECIES),
-        (Apps.IMAGE_TO_IMAGE, Modalities.IMAGE, DemoDatasets.BEST_ARTWORKS),
-        (Apps.IMAGE_TO_TEXT, Modalities.TEXT, DemoDatasets.ROCK_LYRICS),
+        (
+            Apps.TEXT_TO_IMAGE,
+            Modalities.TEXT,
+            Modalities.IMAGE,
+            DemoDatasets.BIRD_SPECIES,
+        ),
+        (
+            Apps.IMAGE_TO_IMAGE,
+            Modalities.IMAGE,
+            Modalities.IMAGE,
+            DemoDatasets.BEST_ARTWORKS,
+        ),
+        (
+            Apps.IMAGE_TO_TEXT,
+            Modalities.IMAGE,
+            Modalities.TEXT,
+            DemoDatasets.ROCK_LYRICS,
+        ),
     ],
 )  # art, rock-lyrics -> no finetuning, fashion -> finetuning
 @pytest.mark.parametrize('quality', ['medium'])
@@ -71,6 +86,7 @@ def test_backend(
     deployment_type: str,
     test_search_image,
     cleanup,
+    input_modality,
     output_modality,
 ):
     if deployment_type == 'remote' and dataset != 'best-artworks':
@@ -121,7 +137,8 @@ def test_backend(
         request_body['host'] = flow_details['gateway']
 
     response = requests.post(
-        f'http://localhost:30090/api/v1/{app}/search', json=request_body
+        f'http://localhost:30090/api/v1/{input_modality}-to-{output_modality}/search',
+        json=request_body,
     )
 
     assert response.status_code == 200
