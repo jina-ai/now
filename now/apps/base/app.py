@@ -19,7 +19,7 @@ class JinaNOWApp:
     """
 
     def __init__(self):
-        self.set_flow_yaml(finetuning=False)
+        self.set_flow_yaml(False)
 
     @property
     def description(self) -> str:
