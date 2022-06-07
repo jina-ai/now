@@ -12,9 +12,7 @@ from now.run_backend import finetune_flow_setup
 
 class ImageToText(JinaNOWApp):
     def __init__(self):
-        now_package_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
-        flow_dir = os.path.join(now_package_dir, 'deployment', 'flow')
-        self._flow_yaml = os.path.join(flow_dir, 'flow-clip.yml')
+        super().__init__()
 
     @property
     def description(self) -> str:
@@ -27,6 +25,12 @@ class ImageToText(JinaNOWApp):
     @property
     def output_modality(self) -> Modalities:
         return Modalities.TEXT
+
+    @property
+    def set_flow_yaml(self, finetuning: bool):
+        now_package_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
+        flow_dir = os.path.join(now_package_dir, 'deployment', 'flow')
+        self._flow_yaml = os.path.join(flow_dir, 'flow-clip.yml')
 
     @property
     def options(self) -> List[Dict]:

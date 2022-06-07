@@ -19,8 +19,7 @@ class JinaNOWApp:
     """
 
     def __init__(self):
-        curdir = os.path.realpath(__file__)
-        self._flow_yaml = os.path.join(curdir, 'flow.yml')
+        self.set_flow_yaml(finetuning=False)
 
     @property
     def description(self) -> str:
@@ -58,7 +57,8 @@ class JinaNOWApp:
         Set the flow yaml. Either the path to the yaml or the yaml content.
         :param finetuning: whether flow for finetuning should be used
         """
-        pass
+        curdir = os.path.realpath(__file__)
+        self._flow_yaml = os.path.join(curdir, 'flow.yml')
 
     @property
     def bff(self) -> Optional[str]:
