@@ -3,6 +3,7 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel, Field
 
 from deployment.bff.app.v1.models.helper import (
+    BaseIndexRequestModel,
     BaseRequestModel,
     _NamedScore,
     _StructValueType,
@@ -10,7 +11,7 @@ from deployment.bff.app.v1.models.helper import (
 
 
 # Request Model
-class NowImageIndexRequestModel(BaseRequestModel):
+class NowImageIndexRequestModel(BaseIndexRequestModel):
     images: List[str] = Field(
         default=...,
         description='List of Images to index. Images should be base64encoded in `utf-8` format',

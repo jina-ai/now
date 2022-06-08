@@ -19,7 +19,7 @@ class JinaNOWApp:
     """
 
     def __init__(self):
-        self.set_flow_yaml(False)
+        self.flow_yaml = False
 
     @property
     def description(self) -> str:
@@ -52,7 +52,8 @@ class JinaNOWApp:
         """
         return self._flow_yaml
 
-    def set_flow_yaml(self, finetuning: bool):
+    @flow_yaml.setter
+    def flow_yaml(self, finetuning: bool):
         """
         Set the flow yaml. Either the path to the yaml or the yaml content.
         :param finetuning: whether flow for finetuning should be used

@@ -1,11 +1,10 @@
 import os
-from typing import Dict, List
+from typing import Dict
 
 from docarray import DocumentArray
-from now_common import options
 
 from now.apps.base.app import JinaNOWApp
-from now.constants import CLIP_USES, IMAGE_MODEL_QUALITY_MAP, Modalities, Qualities
+from now.constants import Modalities, Qualities
 from now.dataclasses import UserInput
 from now.run_backend import finetune_flow_setup
 
@@ -28,24 +27,20 @@ class TextToText(JinaNOWApp):
     def output_modality(self) -> Modalities:
         return Modalities.TEXT
 
-    @property
-    def options(self) -> List[Dict]:
-        return [options.QUALITY_CLIP]
-
-    def set_flow_yaml(self, finetuning: bool = False):
+    @JinaNOWApp.flow_yaml.setter
+    def flow_yaml(self, finetuning: bool):
         now_package_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
         flow_dir = os.path.join(now_package_dir, 'deployment', 'flow')
-        if finetuning:
-            self._flow_yaml = os.path.join(flow_dir, 'ft-flow-clip.yml')
-        else:
-            self._flow_yaml = os.path.join(flow_dir, 'flow-clip.yml')
+        self._flow_yaml = os.path.join(flow_dir, 'flow-text.yml')
+        # if finetuning:
+        #     self._flow_yaml = os.path.join(flow_dir, 'ft-flow-clip.yml')
+        # else:
+        #     self._flow_yaml = os.path.join(flow_dir, 'flow-clip.yml')
 
     @property
     def pre_trained_embedding_size(self) -> Dict[Qualities, int]:
         return {
-            Qualities.MEDIUM: 512,
-            Qualities.GOOD: 512,
-            Qualities.EXCELLENT: 768,
+            Qualities.MEDIUM: 384,
         }
 
     def setup(
@@ -56,6 +51,6 @@ class TextToText(JinaNOWApp):
             da,
             user_config,
             kubectl_path,
-            encoder_uses=CLIP_USES,
-            artifact=IMAGE_MODEL_QUALITY_MAP[user_config.quality][1],
+            encoder_uses='TransformerTorchEncoder/v0.4',
+            artifact='sentence-transformers/all-MiniLM-L6-v2',
         )

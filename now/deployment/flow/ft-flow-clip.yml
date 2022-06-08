@@ -9,7 +9,7 @@ executors:
     resources:
       memory: 8G
     uses_with:
-      pretrained_model_name_or_path: ${{ ENV.CLIP_MODEL_NAME }}
+      pretrained_model_name_or_path: ${{ ENV.PRE_TRAINED_MODEL_NAME }}
     env:
       JINA_LOG_LEVEL: DEBUG
   - name: linear_head

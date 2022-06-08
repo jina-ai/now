@@ -36,7 +36,8 @@ class TextToImage(JinaNOWApp):
     def options(self) -> List[Dict]:
         return [options.QUALITY_CLIP]
 
-    def set_flow_yaml(self, finetuning: bool = False):
+    @JinaNOWApp.flow_yaml.setter
+    def flow_yaml(self, finetuning: bool):
         now_package_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
         flow_dir = os.path.join(now_package_dir, 'deployment', 'flow')
         if finetuning:

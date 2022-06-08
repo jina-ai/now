@@ -26,8 +26,8 @@ class ImageToText(JinaNOWApp):
     def output_modality(self) -> Modalities:
         return Modalities.TEXT
 
-    @property
-    def set_flow_yaml(self, finetuning: bool):
+    @JinaNOWApp.flow_yaml.setter
+    def flow_yaml(self, finetuning: bool):
         now_package_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
         flow_dir = os.path.join(now_package_dir, 'deployment', 'flow')
         self._flow_yaml = os.path.join(flow_dir, 'flow-clip.yml')

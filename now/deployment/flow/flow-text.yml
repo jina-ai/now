@@ -4,7 +4,7 @@ with:
   port_expose: 8080
   cors: True
 executors:
-  - name: encoder_clip
+  - name: encoder_text
     uses: ${{ ENV.ENCODER_NAME }}
     resources:
       memory: 8G

@@ -32,7 +32,8 @@ class ImageToImage(JinaNOWApp):
     def output_modality(self) -> Modalities:
         return Modalities.IMAGE
 
-    def set_flow_yaml(self, finetuning: bool = False):
+    @JinaNOWApp.flow_yaml.setter
+    def flow_yaml(self, finetuning: bool):
         now_package_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
         flow_dir = os.path.join(now_package_dir, 'deployment', 'flow')
         if finetuning:

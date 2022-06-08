@@ -40,7 +40,7 @@ def finetune_flow_setup(
 
     finetuning = finetune_settings.perform_finetuning
 
-    app_instance.set_flow_yaml(finetuning)
+    app_instance.flow_yaml = finetuning
 
     env = get_custom_env_file(user_input, finetune_settings, encoder_uses, artifact)
     return env
@@ -104,7 +104,7 @@ def get_custom_env_file(
         'INDEXER_NAME': indexer_name,
     }
     if encoder_config.uses_with.get('pretrained_model_name_or_path'):
-        config['CLIP_MODEL_NAME'] = encoder_config.uses_with[
+        config['PRE_TRAINED_MODEL_NAME'] = encoder_config.uses_with[
             "pretrained_model_name_or_path"
         ]
     if finetune_settings.perform_finetuning:

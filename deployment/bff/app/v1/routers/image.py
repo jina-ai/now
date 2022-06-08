@@ -26,10 +26,10 @@ def index(data: NowImageIndexRequestModel):
     `base64` encoded using human-readable characters - `utf-8`.
     """
     index_docs = DocumentArray()
-    for image in data.images:
+    for image, tags in zip(data.images, data.tags):
         base64_bytes = image.encode('utf-8')
         message = base64.decodebytes(base64_bytes)
-        index_docs.append(Document(blob=message))
+        index_docs.append(Document(blob=message, tags=tags))
 
     if 'wolf.jina.ai' in data.host:
         c = Client(host=data.host)
