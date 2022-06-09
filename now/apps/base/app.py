@@ -19,7 +19,9 @@ class JinaNOWApp:
     """
 
     def __init__(self):
-        self.flow_yaml = False
+        self.flow_yaml = ''
+
+        self.set_flow_yaml()
 
     @property
     def app(self) -> str:
@@ -58,23 +60,10 @@ class JinaNOWApp:
         """
         raise NotImplementedError()
 
-    @property
-    def flow_yaml(self) -> str:
-        """
-        Used to configure the flow yaml in the Jina NOW app.
-        :return: either the path, to the yaml or the yaml content.
-        """
-        return self._flow_yaml
-
-    @flow_yaml.setter
-    def flow_yaml(self, finetuning: bool):
-        """
-        Set the flow yaml. Either the path to the yaml or the yaml content.
-        :param finetuning: whether flow for finetuning should be used
-        """
-        now_package_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
-        flow_dir = os.path.join(now_package_dir, 'deployment', 'flow')
-        self._flow_yaml = os.path.join(flow_dir, 'flow.yml')
+    def set_flow_yaml(self, **kwargs):
+        """Used to configure the flow yaml in the Jina NOW app."""
+        flow_dir = os.path.realpath(__file__)
+        self.flow_yaml = os.path.join(flow_dir, 'flow.yml')
 
     @property
     def bff(self) -> Optional[str]:

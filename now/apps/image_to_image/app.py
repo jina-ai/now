@@ -11,6 +11,7 @@ from now.constants import (
     Apps,
     DemoDatasets,
     Modalities,
+    Qualities,
 )
 from now.dataclasses import UserInput
 from now.run_backend import finetune_flow_setup
@@ -40,14 +41,16 @@ class ImageToImage(JinaNOWApp):
     def output_modality(self) -> Modalities:
         return Modalities.IMAGE
 
-    @JinaNOWApp.flow_yaml.setter
-    def flow_yaml(self, finetuning: bool):
-        now_package_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
-        flow_dir = os.path.join(now_package_dir, 'deployment', 'flow')
+    def set_flow_yaml(self, **kwargs):
+        now_package_dir = os.path.abspath(
+            os.path.join(__file__, '..', '..', '..', '..')
+        )
+        flow_dir = os.path.join(now_package_dir, 'now_common', 'flow')
+        finetuning = kwargs.get('finetuning', False)
         if finetuning:
-            self._flow_yaml = os.path.join(flow_dir, 'ft-flow-clip.yml')
+            self.flow_yaml = os.path.join(flow_dir, 'ft-flow-clip.yml')
         else:
-            self._flow_yaml = os.path.join(flow_dir, 'flow-clip.yml')
+            self.flow_yaml = os.path.join(flow_dir, 'flow-clip.yml')
 
     @property
     def options(self) -> List[Dict]:

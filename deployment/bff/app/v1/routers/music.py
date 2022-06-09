@@ -24,10 +24,10 @@ def index(data: NowMusicIndexRequestModel):
     `base64` encoded using human-readable characters - `utf-8`.
     """
     index_docs = DocumentArray()
-    for audio in data.songs:
+    for audio, tags in zip(data.songs, data.tags):
         base64_bytes = audio.encode('utf-8')
         message = base64.decodebytes(base64_bytes)
-        index_docs.append(Document(blob=message))
+        index_docs.append(Document(blob=message, tags=tags))
 
     get_jina_client(data.host, data.port).post('/index', index_docs)
 

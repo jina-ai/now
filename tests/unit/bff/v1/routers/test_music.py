@@ -71,7 +71,8 @@ def test_music_index(
     base64_audio_string: str,
 ):
     response = client_with_mocked_jina_client(DocumentArray()).post(
-        '/api/v1/music/index', json={'songs': [base64_audio_string]}
+        '/api/v1/music/index',
+        json={'songs': [base64_audio_string], 'tags': [{'tag': 'val'}]},
     )
     assert response.status_code == status.HTTP_200_OK
 

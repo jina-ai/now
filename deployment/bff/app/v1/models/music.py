@@ -3,13 +3,14 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel, Field
 
 from deployment.bff.app.v1.models.helper import (
+    BaseIndexRequestModel,
     BaseRequestModel,
     _NamedScore,
     _StructValueType,
 )
 
 
-class NowMusicIndexRequestModel(BaseRequestModel):
+class NowMusicIndexRequestModel(BaseIndexRequestModel):
     songs: List[str] = Field(
         default=..., description='List of base64 encoded ' 'binary audio data to index.'
     )

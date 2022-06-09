@@ -23,7 +23,7 @@ def index(data: NowTextIndexRequestModel):
     Append the list of texts to the indexer.
     """
     index_docs = DocumentArray()
-    for text in data.texts:
+    for text, tags in zip(data.texts, data.tags):
         index_docs.append(Document(text=text, tags=tags))
     get_jina_client(data.host, data.port).post('/index', index_docs)
 
