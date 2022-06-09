@@ -44,9 +44,9 @@ def cleanup(deployment_type, dataset):
 @pytest.mark.parametrize(
     'app, output_modality, dataset',
     [
-        # (Apps.TEXT_TO_IMAGE, Modalities.IMAGE, DemoDatasets.BIRD_SPECIES),
-        # (Apps.IMAGE_TO_IMAGE, Modalities.IMAGE, DemoDatasets.BEST_ARTWORKS),
-        # (Apps.IMAGE_TO_TEXT, Modalities.TEXT, DemoDatasets.ROCK_LYRICS),
+        (Apps.TEXT_TO_IMAGE, Modalities.IMAGE, DemoDatasets.BIRD_SPECIES),
+        (Apps.IMAGE_TO_IMAGE, Modalities.IMAGE, DemoDatasets.BEST_ARTWORKS),
+        (Apps.IMAGE_TO_TEXT, Modalities.TEXT, DemoDatasets.ROCK_LYRICS),
         (Apps.TEXT_TO_TEXT, Modalities.TEXT, DemoDatasets.POP_LYRICS),
     ],
 )  # art, rock-lyrics -> no finetuning, fashion -> finetuning

@@ -62,7 +62,7 @@ class JinaNOWApp:
 
     def set_flow_yaml(self, **kwargs):
         """Used to configure the flow yaml in the Jina NOW app."""
-        flow_dir = os.path.realpath(__file__)
+        flow_dir = os.path.abspath(os.path.join(__file__, '..'))
         self.flow_yaml = os.path.join(flow_dir, 'flow.yml')
 
     @property

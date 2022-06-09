@@ -45,7 +45,7 @@ class MusicToMusic(JinaNOWApp):
         return Modalities.MUSIC
 
     def set_flow_yaml(self, **kwargs):
-        flow_dir = os.path.realpath(__file__)
+        flow_dir = os.path.abspath(os.path.join(__file__, '..'))
         self.flow_yaml = os.path.join(flow_dir, 'ft-flow-music.yml')
 
     @property

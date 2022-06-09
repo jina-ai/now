@@ -4,7 +4,7 @@ from typing import Dict
 from docarray import DocumentArray
 
 from now.apps.base.app import JinaNOWApp
-from now.constants import Modalities, Qualities
+from now.constants import Apps, Modalities, Qualities
 from now.dataclasses import UserInput
 from now.run_backend import finetune_flow_setup
 
@@ -14,8 +14,16 @@ class TextToText(JinaNOWApp):
         super().__init__()
 
     @property
+    def app(self) -> str:
+        return Apps.TEXT_TO_TEXT
+
+    @property
+    def is_enabled(self) -> bool:
+        return True
+
+    @property
     def description(self) -> str:
-        return 'Text to text search'
+        return 'Text to text search app'
 
     @property
     def input_modality(self) -> Modalities:
@@ -26,7 +34,7 @@ class TextToText(JinaNOWApp):
         return Modalities.TEXT
 
     def set_flow_yaml(self, **kwargs):
-        flow_dir = os.path.realpath(__file__)
+        flow_dir = os.path.abspath(os.path.join(__file__, '..'))
         self.flow_yaml = os.path.join(flow_dir, 'flow-sbert.yml')
 
     @property
