@@ -8,6 +8,7 @@ from now.apps.base.app import JinaNOWApp
 from now.constants import (
     CLIP_USES,
     IMAGE_MODEL_QUALITY_MAP,
+    Apps,
     DemoDatasets,
     Modalities,
     Qualities,
@@ -21,8 +22,16 @@ class TextToImage(JinaNOWApp):
         super().__init__()
 
     @property
+    def app(self) -> str:
+        return Apps.TEXT_TO_IMAGE
+
+    @property
+    def is_enabled(self) -> bool:
+        return True
+
+    @property
     def description(self) -> str:
-        return 'Text to image search'
+        return 'Text to image search app'
 
     @property
     def input_modality(self) -> Modalities:

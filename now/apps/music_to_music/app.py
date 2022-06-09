@@ -5,7 +5,7 @@ import cowsay
 from docarray import DocumentArray
 
 from now.apps.base.app import JinaNOWApp
-from now.constants import DemoDatasets, Modalities, Qualities
+from now.constants import Apps, DemoDatasets, Modalities, Qualities
 from now.dataclasses import UserInput
 from now.deployment.deployment import which
 from now.run_backend import finetune_flow_setup
@@ -25,8 +25,16 @@ class MusicToMusic(JinaNOWApp):
         super().__init__()
 
     @property
+    def app(self) -> str:
+        return Apps.MUSIC_TO_MUSIC
+
+    @property
+    def is_enabled(self) -> bool:
+        return False
+
+    @property
     def description(self) -> str:
-        return 'Music to music search'
+        return 'Music to music search app'
 
     @property
     def input_modality(self) -> Modalities:

@@ -1,5 +1,7 @@
 from now.constants import Qualities
 
+# make sure for all options to have `name` and `description` attribute as this
+# will also show up on the terminal as arguments to Jina NOW CLI
 QUALITY_CLIP = {
     'name': 'quality',
     'choices': [
@@ -12,6 +14,7 @@ QUALITY_CLIP = {
     ],
     'prompt_message': 'What quality do you expect?',
     'prompt_type': 'list',
+    'description': 'Choose the quality of the model that you would like to finetune',
 }
 
 # DATASET_DESCRIPTION = [

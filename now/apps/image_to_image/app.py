@@ -8,9 +8,9 @@ from now.apps.base.app import JinaNOWApp
 from now.constants import (
     CLIP_USES,
     IMAGE_MODEL_QUALITY_MAP,
+    Apps,
     DemoDatasets,
     Modalities,
-    Qualities,
 )
 from now.dataclasses import UserInput
 from now.run_backend import finetune_flow_setup
@@ -21,8 +21,16 @@ class ImageToImage(JinaNOWApp):
         super().__init__()
 
     @property
+    def app(self) -> str:
+        return Apps.IMAGE_TO_IMAGE
+
+    @property
+    def is_enabled(self) -> bool:
+        return True
+
+    @property
     def description(self) -> str:
-        return 'Image to text search'
+        return 'Image to image search app'
 
     @property
     def input_modality(self) -> Modalities:
