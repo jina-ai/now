@@ -9,7 +9,6 @@ from now.apps.base.app import JinaNOWApp
 from now.data_loading.data_loading import load_data
 from now.dataclasses import UserInput
 from now.deployment.flow import deploy_flow
-from now.finetuning.embeddings import get_encoder_config
 from now.finetuning.run_finetuning import finetune_now
 from now.finetuning.settings import FinetuneSettings, parse_finetune_settings
 from now.log import time_profiler
@@ -20,10 +19,11 @@ cur_dir = pathlib.Path(__file__).parent.resolve()
 def finetune_flow_setup(
     app_instance: JinaNOWApp,
     dataset: DocumentArray,
-    user_input,
-    kubectl_path,
+    user_input: UserInput,
+    kubectl_path: str,
     encoder_uses: str,
-    artifact: str,
+    encoder_uses_with: Dict,
+    indexer_uses: str,
     finetune_datasets: Tuple = (),
     pre_trained_head_map: Optional[Dict] = None,
 ):
@@ -36,14 +36,22 @@ def finetune_flow_setup(
     if finetune_settings.perform_finetuning:
         print(f'🔧 Perform finetuning!')
         finetune_settings.finetuned_model_name = finetune_now(
-            user_input, dataset, finetune_settings, pre_trained_head_map, kubectl_path
+            user_input,
+            dataset,
+            finetune_settings,
+            pre_trained_head_map,
+            kubectl_path,
+            encoder_uses,
+            encoder_uses_with,
         )
 
     finetuning = finetune_settings.perform_finetuning
 
     app_instance.flow_yaml = finetuning
 
-    env = get_custom_env_file(user_input, finetune_settings, encoder_uses, artifact)
+    env = get_custom_env_file(
+        finetune_settings, encoder_uses, encoder_uses_with, indexer_uses
+    )
     return env
 
 
@@ -86,13 +94,13 @@ def write_env_file(env_file, config):
 
 
 def get_custom_env_file(
-    user_input: UserInput,
     finetune_settings: FinetuneSettings,
     encoder_uses: str,
-    artifact: str,
+    encoder_uses_with: Dict,
+    indexer_uses: str,
 ):
-    indexer_name = f'jinahub+docker://DocarrayIndexer'
-    encoder_config = get_encoder_config(encoder_uses, artifact)
+    indexer_name = f'jinahub+docker://' + indexer_uses
+    encoder_name = f'jinahub+docker://' + encoder_uses
     linear_head_name = f'jinahub+docker://{finetune_settings.finetuned_model_name}'
 
     if finetune_settings.bi_modal:
@@ -100,13 +108,13 @@ def get_custom_env_file(
     else:
         pre_trained_embedding_size = finetune_settings.pre_trained_embedding_size
     config = {
-        'ENCODER_NAME': encoder_config.uses,
+        'ENCODER_NAME': encoder_name,
         'FINETUNE_LAYER_SIZE': finetune_settings.finetune_layer_size,
         'PRE_TRAINED_EMBEDDINGS_SIZE': pre_trained_embedding_size,
         'INDEXER_NAME': indexer_name,
     }
-    if encoder_config.uses_with.get('pretrained_model_name_or_path'):
-        config['PRE_TRAINED_MODEL_NAME'] = encoder_config.uses_with[
+    if encoder_uses_with.get('pretrained_model_name_or_path'):
+        config['PRE_TRAINED_MODEL_NAME'] = encoder_uses_with[
             "pretrained_model_name_or_path"
         ]
     if finetune_settings.perform_finetuning:

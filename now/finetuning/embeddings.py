@@ -1,25 +1,29 @@
 """ This module implements functionality to fine tune on the music dataset """
-
 import math
 import tempfile
+from typing import Dict
 
 from docarray import DocumentArray
 from jina import Client, Flow
 from tqdm import tqdm
 
-from now.dataclasses import UserInput
-from now.deployment.flow import _ExecutorConfig, batch, deploy_k8s
+from now.deployment.flow import batch, deploy_k8s
 
 _KS_NAMESPACE = 'embed-now'
 
 
-def embed_now(user_input: UserInput, dataset: DocumentArray, kubectl_path: str):
+def embed_now(
+    encoder_uses: str,
+    encoder_uses_with: Dict,
+    dataset: DocumentArray,
+    kubectl_path: str,
+):
     documents_without_embedding = DocumentArray(
         list(filter(lambda d: d.embedding is None, dataset))
     )
 
     flow = Flow(name=_KS_NAMESPACE, port_expose=8080, cors=True).add(
-        **get_encoder_config(user_input)._asdict()
+        uses=encoder_uses, uses_with=encoder_uses_with
     )
     result = DocumentArray()
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -37,16 +41,3 @@ def embed_now(user_input: UserInput, dataset: DocumentArray, kubectl_path: str):
 
     for doc in result:
         dataset[doc.id].embedding = doc.embedding
-
-
-def get_encoder_config(encoder_uses: str, artifact: str) -> _ExecutorConfig:
-    """
-    Gets the correct Executor running the pre-trained model given the user configuration.
-    :param user_input: Configures user input.
-    :return: Small data-transfer-object with information about the executor
-    """
-    return _ExecutorConfig(
-        name='encoder',
-        uses=f'jinahub+docker://{encoder_uses}',
-        uses_with={'pretrained_model_name_or_path': artifact},
-    )

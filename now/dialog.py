@@ -67,13 +67,11 @@ def print_headline():
     print(f.renderText('Jina NOW'))
     print('Get your search case up and running - end to end.\n')
     print(
-        'You can choose between image and text search. \nJina now trains a model, pushes it to the jina hub'
-        ', deploys a flow and a playground app in the cloud or locally. \nCheckout one of the demo cases or bring '
+        'You can choose between image and text search. \nJina NOW trains a model, pushes it to Jina Hub'
+        'and deploys a Flow and a playground app in the cloud or locally. \nCheck out one of our demos or bring '
         'your own data.\n'
     )
-    print(
-        'If you want learn more about our framework please visit: https://docs.jina.ai/'
-    )
+    print('If you want learn more about our framework please visit docs.jina.ai')
     print(
         '💡 Make sure you give enough memory to your Docker daemon. '
         '5GB - 8GB should be okay.'
@@ -86,20 +84,20 @@ def _configure_app(user_input: UserInput, **kwargs) -> None:
     user_input.app = _prompt_value(
         name='app',
         choices=[
-            {'name': '📝 ▶ 🏞 Text to Image search', 'value': Apps.TEXT_TO_IMAGE},
-            {'name': '🏞 ▶ 📝 Image to Text search', 'value': Apps.IMAGE_TO_TEXT},
-            {'name': '🏞 ▶ 🏞 Image to Image search', 'value': Apps.IMAGE_TO_IMAGE},
+            {'name': '📝 ▶ 🏞 text to image search', 'value': Apps.TEXT_TO_IMAGE},
+            {'name': '🏞 ▶ 📝 image to text search', 'value': Apps.IMAGE_TO_TEXT},
+            {'name': '🏞 ▶ 🏞 image to image search', 'value': Apps.IMAGE_TO_IMAGE},
             {
-                'name': '📝 ▶ 📝 Text to Text search (Experimental)',
+                'name': '📝 ▶ 📝 text to text search (experimental)',
                 'value': Apps.TEXT_TO_TEXT,
             },
             {
-                'name': '🥁 ▶ 🥁 Music to Music Search',
+                'name': '🥁 ▶ 🥁 music to music Search',
                 'value': Apps.MUSIC_TO_MUSIC,
                 'disabled': AVAILABLE_SOON,
             },
         ],
-        prompt_message='Please select an app!',
+        prompt_message='What sort of search engine would you like to build?',
         prompt_type='list',
         **kwargs,
     )
@@ -164,14 +162,14 @@ def _configure_custom_dataset(user_input: UserInput, **kwargs) -> None:
     if user_input.custom_dataset_type == DatasetTypes.DOCARRAY:
         user_input.dataset_secret = _prompt_value(
             name='dataset_secret',
-            prompt_message='Please enter your docarray secret.',
+            prompt_message='Please enter your DocArray secret.',
             prompt_type='password',
         )
 
     elif user_input.custom_dataset_type == DatasetTypes.URL:
         user_input.dataset_url = _prompt_value(
             name='dataset_url',
-            prompt_message='Please paste in your url for the docarray.',
+            prompt_message='Please paste in the URL for your DocArray.',
             prompt_type='input',
         )
 
@@ -240,7 +238,7 @@ def _configure_cluster(user_input: UserInput, skip=False, **kwargs):
         user_input.cluster = _prompt_value(
             name='cluster',
             choices=choices,
-            prompt_message='Which cluster you want to use to deploy your search engine?',
+            prompt_message='On which cluster do you want to deploy your search engine?',
             prompt_type='list',
             **kwargs,
         )

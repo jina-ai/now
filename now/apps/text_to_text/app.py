@@ -32,10 +32,6 @@ class TextToText(JinaNOWApp):
         now_package_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
         flow_dir = os.path.join(now_package_dir, 'deployment', 'flow')
         self._flow_yaml = os.path.join(flow_dir, 'flow-text.yml')
-        # if finetuning:
-        #     self._flow_yaml = os.path.join(flow_dir, 'ft-flow-clip.yml')
-        # else:
-        #     self._flow_yaml = os.path.join(flow_dir, 'flow-clip.yml')
 
     @property
     def pre_trained_embedding_size(self) -> Dict[Qualities, int]:
@@ -52,5 +48,8 @@ class TextToText(JinaNOWApp):
             user_config,
             kubectl_path,
             encoder_uses='TransformerTorchEncoder/v0.4',
-            artifact='sentence-transformers/all-MiniLM-L6-v2',
+            encoder_uses_with={
+                'pretrained_model_name_or_path': 'sentence-transformers/all-MiniLM-L6-v2'
+            },
+            indexer_uses='DocarrayIndexer',
         )

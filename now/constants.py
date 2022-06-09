@@ -1,6 +1,6 @@
 from now.utils import BetterEnum
 
-DOCKER_BFF_PLAYGROUND_TAG = '0.0.54-text2text-2'
+DOCKER_BFF_PLAYGROUND_TAG = '0.0.57-text2text'
 
 
 class Modalities(BetterEnum):
@@ -54,10 +54,6 @@ class DemoDatasets:
     GEOLOCATION_GEOGUESSR = 'geolocation-geoguessr'
     MUSIC_GENRES_MID = 'music-genres-mid'
     MUSIC_GENRES_LARGE = 'music-genres-large'
-    MUSIC_GENRES_EXTRA_LARGE = 'music-genres-xl'
-    MUSIC_MID = 'music-mid'
-    MUSIC_LARGE = 'music-large'
-    MUSIC_EXTRA_LARGE = 'music-xl'
     ROCK_LYRICS = 'rock-lyrics'
     POP_LYRICS = 'pop-lyrics'
     RAP_LYRICS = 'rap-lyrics'

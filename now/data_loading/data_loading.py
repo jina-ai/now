@@ -187,7 +187,7 @@ def get_dataset_url(
     elif output_modality == Modalities.MUSIC:
         data_folder = 'music'
 
-    if model_quality is not None:
+    if output_modality != Modalities.MUSIC:
         return f'{BASE_STORAGE_URL}/{data_folder}/{dataset}.{IMAGE_MODEL_QUALITY_MAP[model_quality][0]}-{docarray_version}.bin'
     else:
         return f'{BASE_STORAGE_URL}/{data_folder}/{dataset}-{docarray_version}.bin'

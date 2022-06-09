@@ -254,7 +254,7 @@ def deploy_streamlit():
         matches = deepcopy(st.session_state.matches)
         if st.session_state.search_count > 2:
             st.write(
-                f"🔥 How did you like Jina NOW? [Please leave a feedback]({SURVEY_LINK}) 🔥"
+                f"🔥 How did you like Jina NOW? [Please leave feedback]({SURVEY_LINK}) 🔥"
             )
         st.header('Search results')
         # Results area
@@ -290,6 +290,7 @@ def deploy_streamlit():
                                 f"<em>{additional_info[0]}</em> "
                                 f"<small>by {additional_info[1]}</small>"
                             )
+
                         else:
                             additional_info_text = " ".join(additional_info)
                     body += f"<figcaption>{additional_info_text}</figcaption>"

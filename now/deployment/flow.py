@@ -1,7 +1,6 @@
 import json
 import os.path
 import pathlib
-from collections import namedtuple
 from os.path import expanduser as user
 from time import sleep
 
@@ -20,7 +19,6 @@ from now.log import time_profiler, yaspin_extended
 from now.utils import sigmap
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
-_ExecutorConfig = namedtuple('_ExecutorConfig', 'name, uses, uses_with')
 
 
 def batch(data_list, n=1):

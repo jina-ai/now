@@ -8,7 +8,7 @@ from starlette.routing import Mount
 
 import deployment.bff.app.settings as api_settings
 from deployment.bff.app.decorators import api_method, timed
-from deployment.bff.app.v1.routers import image, text
+from deployment.bff.app.v1.routers import image, music, text
 
 logging.config.dictConfig(api_settings.DEFAULT_LOGGING_CONFIG)
 logger = logging.getLogger('bff.app')
@@ -74,8 +74,19 @@ def build_app():
     text_app = get_app_instance()
     text_app.include_router(text.router, tags=['Text'])
 
+    # Music router
+    music_mount = "/api/v1/music"
+    music_app = get_app_instance()
+    music_app.include_router(music.router, tags=['Music'])
+
     # Mount them - for other modalities just add an app instance
-    app = Starlette(routes=[Mount(image_mount, image_app), Mount(text_mount, text_app)])
+    app = Starlette(
+        routes=[
+            Mount(image_mount, image_app),
+            Mount(text_mount, text_app),
+            Mount(music_mount, music_app),
+        ]
+    )
 
     return app
 
