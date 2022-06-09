@@ -1,8 +1,10 @@
 import argparse
 
+import click
 from jina.parsers.helper import _ColoredHelpFormatter
 
 from now import __version__
+from now.constants import Apps
 
 
 def set_base_parser():
@@ -69,7 +71,7 @@ def set_start_parser(sp=None):
     parser.add_argument(
         '--app',
         help='Select the app you would like to use.',
-        type=str,
+        type=click.Choice(Apps()),
     )
 
     parser.add_argument(

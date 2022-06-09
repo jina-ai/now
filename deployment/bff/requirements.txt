@@ -3,4 +3,5 @@ uvicorn
 uvloop
 pydantic
 jina[perf]==3.4.4
+docarray==0.13.17
 protobuf~=3.19

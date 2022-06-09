@@ -8,6 +8,7 @@ import numpy as np
 import requests
 import streamlit as st
 from docarray import Document, DocumentArray
+from docarray import __version__ as docarray_version
 from streamlit_webrtc import ClientSettings, webrtc_streamer
 
 WEBRTC_CLIENT_SETTINGS = ClientSettings(
@@ -85,14 +86,14 @@ def deploy_streamlit():
         if OUTPUT_MODALITY == 'image':
             output_modality_dir = 'jpeg'
             data_dir = root_data_dir + output_modality_dir + '/'
-            da_img, da_txt = load_data(data_dir + DATA + '.img10.bin'), load_data(
-                data_dir + DATA + '.txt10.bin'
-            )
+            da_img, da_txt = load_data(
+                data_dir + DATA + f'.img10-{docarray_version}.bin'
+            ), load_data(data_dir + DATA + f'.txt10-{docarray_version}.bin')
         elif OUTPUT_MODALITY == 'text':
             # for now deactivated sample images for text
             output_modality_dir = 'text'
             data_dir = root_data_dir + output_modality_dir + '/'
-            da_txt = load_data(data_dir + DATA + '.txt10.bin')
+            da_txt = load_data(data_dir + DATA + f'.txt10-{docarray_version}.bin')
 
     if OUTPUT_MODALITY == 'text':
         # censor words in text incl. in custom data
@@ -253,7 +254,7 @@ def deploy_streamlit():
         matches = deepcopy(st.session_state.matches)
         if st.session_state.search_count > 2:
             st.write(
-                f"🔥 How did you like Jina NOW? [Please leave a feedback]({SURVEY_LINK}) 🔥"
+                f"🔥 How did you like Jina NOW? [Please leave feedback]({SURVEY_LINK}) 🔥"
             )
         st.header('Search results')
         # Results area
@@ -289,6 +290,7 @@ def deploy_streamlit():
                                 f"<em>{additional_info[0]}</em> "
                                 f"<small>by {additional_info[1]}</small>"
                             )
+
                         else:
                             additional_info_text = " ".join(additional_info)
                     body += f"<figcaption>{additional_info_text}</figcaption>"

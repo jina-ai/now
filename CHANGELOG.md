@@ -4,6 +4,7 @@
 
 
 
+
 <a name=release-note-0-0-7></a>
 ## Release Note (`0.0.7`)
 
@@ -206,4 +207,30 @@
 ### 🍹 Other Improvements
 
  - [[```8e31f83a```](https://github.com/jina-ai/now/commit/8e31f83a1feaeac93d465166997823108d29223f)] __-__ __version__: the next version will be 0.0.10 (*Jina Dev Bot*)
+
+<a name=release-note-0-0-11></a>
+## Release Note (`0.0.11`)
+
+> Release time: 2022-06-07 15:23:01
+
+
+
+🙇 We'd like to thank all contributors for this new release! In particular,
+ Florian Hönicke,  Florian Hönicke,  joschkabraun,  Jina Dev Bot,  🙇
+
+
+### 🐞 Bug fixes
+
+ - [[```fc1b4e6d```](https://github.com/jina-ai/now/commit/fc1b4e6dc62013ed42ee5cd4bd2737cd42abc2fa)] __-__ include test requirements (*Florian Hönicke*)
+
+### 🧼 Code Refactoring
+
+ - [[```462e0aa9```](https://github.com/jina-ai/now/commit/462e0aa96c672c343a741ab1018325627668092e)] __-__ remove dockerfile (#229) (*Florian Hönicke*)
+ - [[```493b4b13```](https://github.com/jina-ai/now/commit/493b4b13230fe614de91806ebad9497793241a50)] __-__ test requirements (#221) (*Florian Hönicke*)
+
+### 🍹 Other Improvements
+
+ - [[```56a29350```](https://github.com/jina-ai/now/commit/56a2935000a132b5f2556a3d57ad15d293f93724)] __-__ Add time profiling for CI (#231) (*joschkabraun*)
+ - [[```6a3c1d7c```](https://github.com/jina-ai/now/commit/6a3c1d7c8c6e2dac4488c83216e8dd427ea64983)] __-__ __version__: the next version will be 0.0.11 (*Jina Dev Bot*)
+ - [[```22048ce4```](https://github.com/jina-ai/now/commit/22048ce40ef411d54a375a51ee35d186cc547a0c)] __-__ __version__: the next version will be 0.0.9 (*Jina Dev Bot*)
 

@@ -3,14 +3,13 @@ from typing import List
 
 from docarray import Document, DocumentArray
 from fastapi import APIRouter
-from jina import Client
 
 from deployment.bff.app.v1.models.image import (
     NowImageIndexRequestModel,
     NowImageResponseModel,
     NowImageSearchRequestModel,
 )
-from deployment.bff.app.v1.routers.helper import process_query
+from deployment.bff.app.v1.routers.helper import get_jina_client, process_query
 
 router = APIRouter()
 
@@ -31,11 +30,7 @@ def index(data: NowImageIndexRequestModel):
         message = base64.decodebytes(base64_bytes)
         index_docs.append(Document(blob=message))
 
-    if 'wolf.jina.ai' in data.host:
-        c = Client(host=data.host)
-    else:
-        c = Client(host=data.host, port=data.port)
-    c.post('/index', index_docs)
+    get_jina_client(data.host, data.port).post('/index', index_docs)
 
 
 # Search
@@ -50,9 +45,7 @@ def search(data: NowImageSearchRequestModel):
     `base64` encoded using human-readable characters - `utf-8`.
     """
     query_doc = process_query(image=data.image)
-    if 'wolf.jina.ai' in data.host:
-        c = Client(host=data.host)
-    else:
-        c = Client(host=data.host, port=data.port)
-    docs = c.post('/search', query_doc, parameters={"limit": data.limit})
+    docs = get_jina_client(data.host, data.port).post(
+        '/search', query_doc, parameters={"limit": data.limit}
+    )
     return docs[0].matches.to_dict()

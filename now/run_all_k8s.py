@@ -6,14 +6,12 @@ import cowsay
 
 from now import run_backend, run_bff_playground
 from now.cloud_manager import setup_cluster
-from now.constants import JC_SECRET, SURVEY_LINK
+from now.constants import DOCKER_BFF_PLAYGROUND_TAG, JC_SECRET, SURVEY_LINK
 from now.deployment.deployment import cmd, status_wolf, terminate_wolf
 from now.dialog import _get_context_names, configure_user_input, maybe_prompt_user
 from now.log import yaspin_extended
 from now.system_information import get_system_state
 from now.utils import sigmap
-
-docker_bff_playground_tag = '0.0.49-7'
 
 
 def get_remote_flow_details():
@@ -96,7 +94,7 @@ def start_now(os_type, arch, contexts, active_context, **kwargs):
             gateway_host=gateway_host,
             gateway_host_internal=gateway_host_internal,
             gateway_port_internal=gateway_port_internal,
-            docker_bff_playground_tag=docker_bff_playground_tag,
+            docker_bff_playground_tag=DOCKER_BFF_PLAYGROUND_TAG,
             kubectl_path=kwargs['kubectl_path'],
         )
     else:
