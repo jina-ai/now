@@ -23,6 +23,20 @@ class JinaNOWApp:
         self._flow_yaml = os.path.join(curdir, 'flow.yml')
 
     @property
+    def app(self) -> str:
+        """
+        Name of the app. Should be an enum value set in now.constants.Apps
+        """
+        raise NotImplementedError()
+
+    @property
+    def is_enabled(self) -> bool:
+        """
+        Set to True if this app is enabled for the end user.
+        """
+        raise NotImplementedError()
+
+    @property
     def description(self) -> str:
         """
         Short description of the app.
@@ -108,6 +122,25 @@ class JinaNOWApp:
 
         """
         return []
+
+    def set_app_parser(self, parser, formatter) -> None:
+        """
+        This parser reads from the `options` property and parses it
+        to form the command line arguments for app
+        """
+        if self.is_enabled:
+            parser = parser.add_parser(
+                self.app,
+                help=self.description,
+                description=f'Create an {self.app} app.',
+                formatter_class=formatter,
+            )
+            for option in self.options:
+                parser.add_argument(
+                    f'--{option["name"]}',
+                    help=option['description'],
+                    type=str,
+                )
 
     def check_requirements(self) -> bool:
         """

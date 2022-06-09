@@ -1,10 +1,10 @@
 import argparse
 
-import click
 from jina.parsers.helper import _ColoredHelpFormatter
 
 from now import __version__
 from now.constants import Apps
+from now.dialog import _construct_app
 
 
 def set_base_parser():
@@ -22,7 +22,7 @@ def set_base_parser():
     url_str = '\n'.join(f'- {v[0]:<10} {k:10.10}\t{v[1]}' for k, v in urls.items())
 
     parser = argparse.ArgumentParser(
-        epilog=f'Jina NOW - get your neural search case up in minutes. \n\n {url_str}',
+        epilog=f'Jina NOW - get your neural search case up in minutes. \n\n{url_str}',
         formatter_class=_chf,
         description='Command Line Interface of `%(prog)s`',
     )
@@ -55,7 +55,38 @@ def set_help_parser(parser=None):
     return parser
 
 
-def set_start_parser(sp=None):
+def set_default_start_args(parser):
+    parser.add_argument(
+        '--app',
+        help='Select the app you would like to use. Do not use this argument when'
+        ' using the `%(prog)-8s [sub-command]`',
+        choices=[app for app in Apps() if _construct_app(app).is_enabled],
+        type=str,
+    )
+
+    parser.add_argument(
+        '--data',
+        help='Select one of the available datasets or provide local filepath, '
+        'docarray url, or docarray secret to use your own dataset',
+        type=str,
+    )
+
+    parser.add_argument(
+        '--deployment-type',
+        help='Option is `local` and `remote`. Select `local` if you want search engine to be deployed on local '
+        'cluster. Select `remote` to deploy it on Jina Cloud',
+        type=str,
+    )
+
+    parser.add_argument(
+        '--cluster',
+        help='Reference an existing `local` cluster or select `new` to create a new one. '
+        'Use this only when the `--deployment-type=local`',
+        type=str,
+    )
+
+
+def set_start_parser(sp):
     """Add the arguments for the jina now to the parser
     :param parser: an optional existing parser to build upon
     :return: the parser
@@ -68,37 +99,18 @@ def set_start_parser(sp=None):
         formatter_class=_chf,
     )
 
-    parser.add_argument(
-        '--app',
-        help='Select the app you would like to use.',
-        type=click.Choice(Apps()),
+    set_default_start_args(parser)
+
+    sub_parser = parser.add_subparsers(
+        dest='app',
+        description='use `%(prog)-8s [sub-command] --help` '
+        'to get additional arguments to be used with each sub-command',
+        required=False,
     )
 
-    parser.add_argument(
-        '--data',
-        help='Select one of the available datasets or provide local filepath, '
-        'docarray url, or docarray secret to use your own dataset',
-        type=str,
-    )
-
-    parser.add_argument(
-        '--quality',
-        help='Choose the quality of the model that you would like to finetune',
-        type=str,
-    )
-
-    parser.add_argument(
-        '--cluster',
-        help='Reference an existing `local` cluster or select `new` to create a new one.',
-        type=str,
-    )
-
-    parser.add_argument(
-        '--deployment-type',
-        help='Option is `local` and `remote`. Select `local` if you want search engine to be deployed on local '
-        'cluster. Select `remote` to deploy it on Jina Cloud',
-        type=str,
-    )
+    # Set parser args for the enabled apps
+    for app in Apps():
+        _construct_app(app).set_app_parser(sub_parser, formatter=_chf)
 
 
 def set_stop_parser(sp):
@@ -130,6 +142,7 @@ def get_main_parser():
         description='',
         required=True,
     )
+
     set_start_parser(sp)
     set_stop_parser(sp)
     set_survey_parser(sp)

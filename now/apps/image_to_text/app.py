@@ -4,15 +4,23 @@ from docarray import DocumentArray
 from now_common import options
 
 from now.apps.base.app import JinaNOWApp
-from now.constants import CLIP_USES, IMAGE_MODEL_QUALITY_MAP, Modalities
+from now.constants import CLIP_USES, IMAGE_MODEL_QUALITY_MAP, Apps, Modalities
 from now.dataclasses import UserInput
 from now.run_backend import finetune_flow_setup
 
 
 class ImageToText(JinaNOWApp):
     @property
+    def app(self) -> str:
+        return Apps.IMAGE_TO_TEXT
+
+    @property
+    def is_enabled(self) -> bool:
+        return True
+
+    @property
     def description(self) -> str:
-        return 'Image to text search'
+        return 'Image to text search app'
 
     @property
     def input_modality(self) -> Modalities:
