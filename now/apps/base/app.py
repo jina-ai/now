@@ -58,8 +58,9 @@ class JinaNOWApp:
         Set the flow yaml. Either the path to the yaml or the yaml content.
         :param finetuning: whether flow for finetuning should be used
         """
-        curdir = os.path.realpath(__file__)
-        self._flow_yaml = os.path.join(curdir, 'flow.yml')
+        now_package_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
+        flow_dir = os.path.join(now_package_dir, 'deployment', 'flow')
+        self._flow_yaml = os.path.join(flow_dir, 'flow.yml')
 
     @property
     def bff(self) -> Optional[str]:

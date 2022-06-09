@@ -11,12 +11,12 @@ def test_index_image(resources_folder_path: str):
     ) as f:
         binary = f.read()
         img_query = base64.b64encode(binary).decode('utf-8')
-    return {'images': [img_query]}
+    return {'images': [img_query], 'tags': [{'tag1': 'val1'}]}
 
 
 @pytest.fixture
 def test_index_text():
-    return {'texts': ['Hello']}
+    return {'texts': ['Hello'], 'tags': [{'tag1': 'val1'}]}
 
 
 @pytest.fixture

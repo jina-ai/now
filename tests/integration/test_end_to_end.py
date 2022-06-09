@@ -52,8 +52,7 @@ def cleanup(deployment_type, dataset):
 )  # art, rock-lyrics -> no finetuning, fashion -> finetuning
 @pytest.mark.parametrize('quality', ['medium'])
 @pytest.mark.parametrize('cluster', [NEW_CLUSTER['value']])
-# @pytest.mark.parametrize('deployment_type', ['local', 'remote'])
-@pytest.mark.parametrize('deployment_type', ['local'])
+@pytest.mark.parametrize('deployment_type', ['local', 'remote'])
 def test_backend(
     app: str,
     output_modality: str,
