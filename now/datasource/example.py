@@ -5,7 +5,7 @@ from now.datasource.datasource import Datasource
 
 
 # TODO just a prototype - needs to be implemented in the future
-class ExampleDatasource(Datasource):
+class DocarrayURLDatasource(Datasource):
     def __init__(self, ds_id, display_name, modality):
         self.ds_id = ds_id
         self.display_name = display_name
@@ -22,6 +22,14 @@ class ExampleDatasource(Datasource):
         url = f'{BASE_STORAGE_URL}/{self.modality}/{self.ds_id}{("." + quality) if quality is not None else ""}.bin'
         # TODO  return document array from url
         raise NotImplementedError()
+
+
+class DocarrayPullDatasource(Datasource):
+    def __init__(self, name):
+        self.name = name
+
+    def get_data(self, quality: str) -> DocumentArray:
+        pass
 
 
 example_datasources = [
