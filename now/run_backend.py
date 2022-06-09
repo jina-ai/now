@@ -47,7 +47,7 @@ def finetune_flow_setup(
 
     finetuning = finetune_settings.perform_finetuning
 
-    app_instance.flow_yaml = finetuning
+    app_instance.set_flow_yaml(finetuning=finetuning)
 
     env = get_custom_env_file(
         finetune_settings, encoder_uses, encoder_uses_with, indexer_uses
