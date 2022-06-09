@@ -30,14 +30,13 @@ class NowMusicResponseModel(BaseModel):
     blob: Optional[str] = Field(
         description='Matching song (base64encoded string `utf-8`) result.'
     )
+    uri: Optional[str] = Field(description='Uri of the audio file.')
     scores: Optional[Dict[str, '_NamedScore']] = Field(
         description='Similarity score with respect to the query.'
     )
     tags: Optional[Dict[str, '_StructValueType']] = Field(
         description='Additional tags associated with the file.'
     )
-    uri: Optional[str] = Field(description='Uri of the audio file.')
-    text: Optional[str] = Field(description='Matching text result.')
 
     class Config:
         case_sensitive = False

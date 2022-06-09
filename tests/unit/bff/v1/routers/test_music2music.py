@@ -26,7 +26,8 @@ def base64_audio_string(resources_folder_path: str) -> str:
 @pytest.fixture
 def sample_search_response_music() -> DocumentArray:
     result = DocumentArray([Document()])
-    result[0].uri = 'match'
+    matches = DocumentArray([Document(uri='match')])
+    result[0].matches = matches
     return result
 
 
@@ -106,4 +107,4 @@ def test_music_search_parse_response(
     assert response.status_code == status.HTTP_200_OK
     results = DocumentArray.from_json(response.content)
     assert len(results) == len(sample_search_response_music)
-    assert results[0].uri == sample_search_response_music[0].uri
+    assert results[0].blob == sample_search_response_music[0].blob
