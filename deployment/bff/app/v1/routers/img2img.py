@@ -44,7 +44,7 @@ def search(data: NowImageSearchRequestModel):
     Retrieve matching images for a given image query. Image query should be
     `base64` encoded using human-readable characters - `utf-8`.
     """
-    query_doc = process_query(image=data.image)
+    query_doc = process_query(blob=data.image)
     docs = get_jina_client(data.host, data.port).post(
         '/search', query_doc, parameters={"limit": data.limit}
     )

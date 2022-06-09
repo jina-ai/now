@@ -2,6 +2,7 @@ import base64
 
 from docarray import Document
 from fastapi import HTTPException
+from jina import Client
 
 
 def process_query(text: str = None, blob: str = None) -> Document:

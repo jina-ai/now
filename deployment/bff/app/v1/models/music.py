@@ -11,12 +11,11 @@ from deployment.bff.app.v1.models.helper import (
 
 class NowMusicIndexRequestModel(BaseRequestModel):
     songs: List[str] = Field(
-        default=..., description='List of base64 encoded ' 'binary audio data to index.'
+        default=..., description='List of base64 encoded binary audio data to index.'
     )
 
 
 class NowMusicSearchRequestModel(BaseRequestModel):
-    text: str = Field(default=None, description='Text query')
     song: str = Field(
         default=None,
         description='Audio data query. Audio data should be base64encoded in `utf-8` format',

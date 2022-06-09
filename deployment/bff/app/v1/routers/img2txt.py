@@ -3,6 +3,7 @@ from typing import List
 from docarray import Document, DocumentArray
 from fastapi import APIRouter
 
+from deployment.bff.app.v1.models.image import NowImageSearchRequestModel
 from deployment.bff.app.v1.models.text import (
     NowTextIndexRequestModel,
     NowTextResponseModel,
@@ -38,7 +39,7 @@ def search(data: NowImageSearchRequestModel):
     Retrieve matching text for a given image query. Image query should be
     `base64` encoded using human-readable characters - `utf-8`.
     """
-    query_doc = process_query(image=data.image)
+    query_doc = process_query(blob=data.image)
     docs = get_jina_client(data.host, data.port).post(
         '/search', query_doc, parameters={"limit": data.limit}
     )
