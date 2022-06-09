@@ -1,6 +1,6 @@
 from now.utils import BetterEnum
 
-DOCKER_BFF_PLAYGROUND_TAG = '0.0.54'
+DOCKER_BFF_PLAYGROUND_TAG = '0.0.54-text2text'
 
 
 class Modalities(BetterEnum):
