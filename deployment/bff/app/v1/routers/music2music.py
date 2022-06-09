@@ -46,4 +46,4 @@ def search(data: NowMusicSearchRequestModel):
     docs = get_jina_client(data.host, data.port).post(
         '/search', query_doc, parameters={"limit": data.limit}
     )
-    return docs.to_dict()
+    return docs[0].matches.to_dict()
