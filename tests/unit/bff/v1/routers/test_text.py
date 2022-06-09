@@ -48,7 +48,7 @@ def test_text_index(
     client_with_mocked_jina_client: Callable[[DocumentArray], requests.Session],
 ):
     response = client_with_mocked_jina_client(DocumentArray()).post(
-        '/api/v1/text/index', json={'texts': ['Hello'], 'tags': [{'tag': val}]}
+        '/api/v1/text/index', json={'texts': ['Hello'], 'tags': [{'tag': 'val'}]}
     )
     assert response.status_code == status.HTTP_200_OK
 
