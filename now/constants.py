@@ -1,5 +1,7 @@
 from now.utils import BetterEnum
 
+DOCKER_BFF_PLAYGROUND_TAG = '0.0.54'
+
 
 class Modalities(BetterEnum):
     TEXT = 'text'
@@ -90,4 +92,4 @@ AVAILABLE_DATASET = {
 
 JC_SECRET = '~/.cache/jina-now/wolf.json'
 
-SURVEY_LINK = 'https://docs.google.com/forms/d/e/1FAIpQLSex5gMN4wuQc63TriwRqREBfdijwOrATPe7RotcPaT1SSPfEw/viewform?usp=pp_url&entry.1126738320=Jina+NOW+pip+package'
+SURVEY_LINK = 'https://10sw1tcpld4.typeform.com/to/VTAyYRpR?utm_source=cli'

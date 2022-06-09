@@ -8,6 +8,7 @@ import numpy as np
 import requests
 import streamlit as st
 from docarray import Document, DocumentArray
+from docarray import __version__ as docarray_version
 from streamlit_webrtc import ClientSettings, webrtc_streamer
 
 WEBRTC_CLIENT_SETTINGS = ClientSettings(
@@ -34,6 +35,8 @@ ds_set = [
     'indie-lyrics',
     'metal-lyrics',
 ]
+
+SURVEY_LINK = 'https://10sw1tcpld4.typeform.com/to/VTAyYRpR?utm_source=cli'
 
 
 def deploy_streamlit():
@@ -83,14 +86,14 @@ def deploy_streamlit():
         if OUTPUT_MODALITY == 'image':
             output_modality_dir = 'jpeg'
             data_dir = root_data_dir + output_modality_dir + '/'
-            da_img, da_txt = load_data(data_dir + DATA + '.img10.bin'), load_data(
-                data_dir + DATA + '.txt10.bin'
-            )
+            da_img, da_txt = load_data(
+                data_dir + DATA + f'.img10-{docarray_version}.bin'
+            ), load_data(data_dir + DATA + f'.txt10-{docarray_version}.bin')
         elif OUTPUT_MODALITY == 'text':
             # for now deactivated sample images for text
             output_modality_dir = 'text'
             data_dir = root_data_dir + output_modality_dir + '/'
-            da_txt = load_data(data_dir + DATA + '.txt10.bin')
+            da_txt = load_data(data_dir + DATA + f'.txt10-{docarray_version}.bin')
 
     if OUTPUT_MODALITY == 'text':
         # censor words in text incl. in custom data
@@ -125,6 +128,7 @@ def deploy_streamlit():
         """
 
     def search_by_t(search_text, limit=TOP_K) -> DocumentArray:
+        st.session_state.search_count += 1
         print(f'Searching by text: {search_text}')
         data = {'host': HOST, 'text': search_text, 'limit': limit}
         if PORT:
@@ -136,6 +140,7 @@ def deploy_streamlit():
         """
         Wrap file in Jina Document for searching, and do all necessary conversion to make similar to indexed Docs
         """
+        st.session_state.search_count += 1
         print(f"Searching by image")
         query_doc = document
         if query_doc.blob == b'':
@@ -247,6 +252,10 @@ def deploy_streamlit():
 
     if st.session_state.matches:
         matches = deepcopy(st.session_state.matches)
+        if st.session_state.search_count > 2:
+            st.write(
+                f"🔥 How did you like Jina NOW? [Please leave a feedback]({SURVEY_LINK}) 🔥"
+            )
         st.header('Search results')
         # Results area
         c1, c2, c3 = st.columns(3)
@@ -360,6 +369,9 @@ def setup_session_state():
 
     if 'snap' not in st.session_state:
         st.session_state.snap = None
+
+    if 'search_count' not in st.session_state:
+        st.session_state.search_count = 0
 
 
 if __name__ == '__main__':

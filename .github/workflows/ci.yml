@@ -118,8 +118,8 @@ jobs:
       - name: Get bff and playground tag
         if: steps.check_has_deployment_changed.outputs.has_deployment_changed == 'true'
         run: |
-          FILE='now/run_all_k8s.py'
-          BFF_PLAYGROUND_TAG=$(sed -n '/docker_bff_playground_tag =/p' $FILE | cut -d \' -f2)
+          FILE='now/constants.py'
+          BFF_PLAYGROUND_TAG=$(sed -n '/DOCKER_BFF_PLAYGROUND_TAG =/p' $FILE | cut -d \' -f2)
           echo "BFF_PLAYGROUND_TAG=$BFF_PLAYGROUND_TAG" >> $GITHUB_ENV
       - name: Check that tag isn't used already for bff
         if: steps.check_has_deployment_changed.outputs.has_deployment_changed == 'true'
