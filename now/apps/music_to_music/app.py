@@ -30,7 +30,7 @@ class MusicToMusic(JinaNOWApp):
 
     @property
     def is_enabled(self) -> bool:
-        return False
+        return True
 
     @property
     def description(self) -> str:
@@ -69,14 +69,14 @@ class MusicToMusic(JinaNOWApp):
             encoder_uses='BiModalMusicTextEncoder:fcb025de625784073c4fcf5eb6ba2d50/v0.0.11',
             encoder_uses_with={},
             finetune_datasets=(
-                DemoDatasets.MUSIC_GENRES_MID,
-                DemoDatasets.MUSIC_GENRES_LARGE,
+                DemoDatasets.MUSIC_GENRES_ROCK,
+                DemoDatasets.MUSIC_GENRES_MIX,
             ),
             pre_trained_head_map={
-                DemoDatasets.MUSIC_GENRES_MID: 'FineTunedLinearHeadEncoder:93ea59dbd1ee3fe0bdc44252c6e86a87/'
+                DemoDatasets.MUSIC_GENRES_ROCK: 'FineTunedLinearHeadEncoder:93ea59dbd1ee3fe0bdc44252c6e86a87/'
                 'linear_head_encoder_music_2k',
-                DemoDatasets.MUSIC_GENRES_LARGE: 'FineTunedLinearHeadEncoder:93ea59dbd1ee3fe0bdc44252c6e86a87/'
-                'linear_head_encoder_music_10k',
+                DemoDatasets.MUSIC_GENRES_MIX: 'FineTunedLinearHeadEncoder:93ea59dbd1ee3fe0bdc44252c6e86a87/'
+                'linear_head_encoder_music_10k',  # music-genres-mix is sampled from the 10k dataset
             },
             indexer_uses='MusicRecommendationIndexer:e0b75cc6569bd73cee76e1161a433b9d/v0.0.5',
         )

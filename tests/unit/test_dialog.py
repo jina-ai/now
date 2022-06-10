@@ -38,7 +38,7 @@ MOCKED_DIALOGS_WITH_CONFIGS = [
     (
         {
             'app': Apps.MUSIC_TO_MUSIC,
-            'data': 'music-genres-large',
+            'data': 'music-genres-mix',
             'cluster': 'new',
             'deployment_type': 'local',
         },

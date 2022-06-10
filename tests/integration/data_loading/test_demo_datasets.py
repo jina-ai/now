@@ -21,10 +21,6 @@ def test_dataset_is_available(
     modality: Modalities,
     quality: Qualities,
 ):
-    if modality == Modalities.MUSIC:  # music has no quality config
-        quality = None
-        # TODO: Remove skip on music release
-        pytest.skip('music case not fully implemented yet')
     url = get_dataset_url(ds_name, quality, modality)
 
     assert requests.head(url).status_code == status.HTTP_200_OK
@@ -51,6 +47,8 @@ def test_dataset_is_available(
         "https://storage.googleapis.com/jina-fashion-data/data/one-line/datasets/jpeg/bird-species.txt10-{}.bin",
         "https://storage.googleapis.com/jina-fashion-data/data/one-line/datasets/jpeg/best-artworks.txt10-{}.bin",
         "https://storage.googleapis.com/jina-fashion-data/data/one-line/datasets/jpeg/geolocation-geoguessr.txt10-{}.bin",
+        "https://storage.googleapis.com/jina-fashion-data/data/one-line/datasets/music/music-genres-mid-song5-{}.bin",
+        "https://storage.googleapis.com/jina-fashion-data/data/one-line/datasets/music/music-genres-mix-song5-{}.bin",
     ],
 )
 def test_sample_data_is_available(ds_url: str):

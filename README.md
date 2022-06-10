@@ -4,7 +4,8 @@
 
 
 <br>
-One command to host them all. Bring your search case into the cloud in minutes. <a href="https://docs.google.com/forms/d/e/1FAIpQLSex5gMN4wuQc63TriwRqREBfdijwOrATPe7RotcPaT1SSPfEw/viewform?usp=pp_url&entry.1126738320=Jina+NOW+pip+package">Survey</a>
+One command to host them all. Bring your search case into the cloud in minutes. <br>
+Tell us what you think: <a href="https://10sw1tcpld4.typeform.com/to/VTAyYRpR?utm_source=cli">Survey</a>
 </p>
 
 <p align=center>

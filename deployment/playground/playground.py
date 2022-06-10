@@ -1,4 +1,5 @@
 import base64
+import io
 import os
 from copy import deepcopy
 from urllib.request import urlopen
@@ -15,7 +16,6 @@ WEBRTC_CLIENT_SETTINGS = ClientSettings(
     rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
     media_stream_constraints={"video": True, "audio": False},
 )
-
 
 root_data_dir = (
     'https://storage.googleapis.com/jina-fashion-data/data/one-line/datasets/'
@@ -72,15 +72,12 @@ def deploy_streamlit():
         URL_HOST = f"http://now-bff/api/v1/{INPUT_MODALITY}-to-{OUTPUT_MODALITY}/search"
     else:
         URL_HOST = f"https://nowrun.jina.ai/api/v1/{INPUT_MODALITY}-to-{OUTPUT_MODALITY}/search"
-        # URL_HOST = f"localhost/api/v1/{OUTPUT_MODALITY}/search"
 
     da_img = None
     da_txt = None
 
     # General
     TOP_K = 9
-    DEBUG = os.getenv("DEBUG", False)
-    DATA_DIR = "../data/images/"
 
     if DATA in ds_set:
         if OUTPUT_MODALITY == 'image':
@@ -136,7 +133,7 @@ def deploy_streamlit():
         response = requests.post(URL_HOST, json=data)
         return DocumentArray.from_json(response.content)
 
-    def search_by_file(document, limit=TOP_K) -> DocumentArray:
+    def search_by_image(document, limit=TOP_K) -> DocumentArray:
         """
         Wrap file in Jina Document for searching, and do all necessary conversion to make similar to indexed Docs
         """
@@ -159,10 +156,40 @@ def deploy_streamlit():
         response = requests.post(URL_HOST, json=data)
         return DocumentArray.from_json(response.content)
 
+    def search_by_audio(document: Document, limit=TOP_K):
+        data = {
+            'host': HOST,
+            'song': base64.b64encode(document.blob).decode('utf-8'),
+            'limit': limit * 3,
+        }
+
+        if PORT:
+            data['port'] = PORT
+        response = requests.post(URL_HOST, json=data)
+        result = DocumentArray.from_json(response.content)
+        already_added_tracks = set()
+        final_result = DocumentArray()
+        for doc in result:
+            if (
+                doc.tags['track_id'] in already_added_tracks
+                or 'location' not in doc.tags
+            ):
+                continue
+            else:
+                final_result.append(doc)
+                already_added_tracks.add(doc.tags['track_id'])
+            if len(final_result) >= TOP_K:
+                break
+        return final_result
+
     def convert_file_to_document(query):
         data = query.read()
         doc = Document(blob=data)
         return doc
+
+    def load_music_examples() -> DocumentArray:
+        ds_url = root_data_dir + 'music/' + DATA + f'-song5-{docarray_version}.bin'
+        return load_data(ds_url)[0, 1, 4]
 
     # Layout
     st.markdown(
@@ -188,13 +215,16 @@ def deploy_streamlit():
     elif INPUT_MODALITY == 'text':
         media_type = 'Text'
 
+    elif INPUT_MODALITY == 'music':
+        media_type = 'Music'
+
     if media_type == "Image":
         upload_c, preview_c = st.columns([12, 1])
         query = upload_c.file_uploader("")
         if query:
             doc = convert_file_to_document(query)
             st.image(doc.blob, width=160)
-            st.session_state.matches = search_by_file(document=doc)
+            st.session_state.matches = search_by_image(document=doc)
         if da_img is not None:
             st.subheader("samples:")
             img_cs = st.columns(5)
@@ -204,7 +234,7 @@ def deploy_streamlit():
                     st.image(doc.blob if doc.blob else doc.tensor, width=100)
                 with txt:
                     if st.button('Search', key=doc.id):
-                        st.session_state.matches = search_by_file(document=doc)
+                        st.session_state.matches = search_by_image(document=doc)
 
     elif media_type == "Text":
         query = st.text_input("", key="text_search_box")
@@ -244,11 +274,41 @@ def deploy_streamlit():
                 st.session_state.snap = query
                 doc = Document(tensor=query)
                 doc.convert_image_tensor_to_blob()
-                st.session_state.matches = search_by_file(document=doc)
+                st.session_state.matches = search_by_image(document=doc)
             elif st.session_state.snap is not None:
                 st.image(st.session_state.snap, width=160)
         else:
             clear_match()
+
+    elif media_type == 'Music':
+        st.header('Welcome to JinaNOW music search 👋🏽')
+        st.text('Upload a song to search with or select one of the examples.')
+        st.text(
+            'Pro tip: You can download search results and use them to search again :)'
+        )
+
+        query = st.file_uploader("", type=['mp3', 'wav'])
+        if query:
+            doc = convert_file_to_document(query)
+            st.subheader('Play your song')
+            st.audio(doc.blob)
+            st.session_state.matches = search_by_audio(document=doc, limit=TOP_K)
+
+        else:
+            columns = st.columns(3)
+            music_examples = load_music_examples()
+
+            def on_button_click(doc_id: str):
+                def callback():
+                    st.session_state.matches = search_by_audio(
+                        music_examples[doc_id], limit=TOP_K
+                    )
+
+                return callback
+
+            for c, song in zip(columns, music_examples):
+                display_song(c, song)
+                c.button('Search', on_click=on_button_click(song.id), key=song.id)
 
     if st.session_state.matches:
         matches = deepcopy(st.session_state.matches)
@@ -299,6 +359,9 @@ def deploy_streamlit():
                     body=body,
                     unsafe_allow_html=True,
                 )
+            elif OUTPUT_MODALITY == 'music':
+                display_song(c, match)
+
             elif match.uri is not None:
                 if match.blob != b'':
                     match.convert_blob_to_datauri()
@@ -313,6 +376,25 @@ def deploy_streamlit():
             key='slider',
             on_change=update_conf,
         )
+
+
+def display_song(attach_to, song_doc: Document):
+    attach_to.markdown(
+        body=f"<!DOCTYPE html><html><body>"
+        f"<p style=\"font-size: 20px; font-weight: 700; margin-bottom: -8px\">{song_doc.tags['name']}</p>"
+        f"<p style=\"margin-bottom: -5px\">{song_doc.tags['artist']}</p>"
+        f"<p style=\"font-size: 10px\">{' | '.join(song_doc.tags['genre_tags'][:3])}</p>"
+        f"</body></html>",
+        unsafe_allow_html=True,
+    )
+    if 'album_cover_image_url' in song_doc.tags:
+        attach_to.markdown(
+            body="<!DOCTYPE html><html><body>"
+            f"<img/ src={song_doc.tags['album_cover_image_url']} style=\"width: 200px; height: 200px; padding: 10px 0 10px 0\">"
+            "</body></html>",
+            unsafe_allow_html=True,
+        )
+    attach_to.audio(io.BytesIO(song_doc.blob))
 
 
 def update_conf():
