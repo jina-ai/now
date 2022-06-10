@@ -45,15 +45,16 @@ class TextToText(JinaNOWApp):
         self, da: DocumentArray, user_config: UserInput, kubectl_path: str
     ) -> Dict:
         quality_pretrained_model_map = {
-            Qualities.MEDIUM: 'paraphrase-MiniLM-L3-v2',
-            Qualities.GOOD: 'sentence-transformers/all-MiniLM-L6-v2',
+            # Qualities.MEDIUM: 'paraphrase-MiniLM-L3-v2',
+            # Qualities.GOOD: 'sentence-transformers/all-MiniLM-L6-v2',
+            Qualities.MEDIUM: 'sentence-transformers/all-MiniLM-L6-v2',
         }
         return finetune_flow_setup(
             self,
             da,
             user_config,
             kubectl_path,
-            encoder_uses='TransformerTorchEncoder/v0.4',
+            encoder_uses='TransformerSentenceEncoder/v0.4',
             encoder_uses_with={
                 'pretrained_model_name_or_path': quality_pretrained_model_map[
                     user_config.quality

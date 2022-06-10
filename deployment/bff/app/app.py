@@ -8,7 +8,13 @@ from starlette.routing import Mount
 
 import deployment.bff.app.settings as api_settings
 from deployment.bff.app.decorators import api_method, timed
-from deployment.bff.app.v1.routers import img2img, img2txt, music2music, txt2img
+from deployment.bff.app.v1.routers import (
+    img2img,
+    img2txt,
+    music2music,
+    text2text,
+    txt2img,
+)
 
 logging.config.dictConfig(api_settings.DEFAULT_LOGGING_CONFIG)
 logger = logging.getLogger('bff.app')
@@ -79,6 +85,11 @@ def build_app():
     txt2img_app = get_app_instance()
     txt2img_app.include_router(txt2img.router, tags=['Text-To-Image'])
 
+    # Text2Text router
+    text2text_mount = '/api/v1/text-to-text'
+    text2text_app = get_app_instance()
+    text2text_app.include_router(text2text.router, tags=['Text-To-Text'])
+
     # Music2Music router
     music2music_mount = '/api/v1/music-to-music'
     music2music_app = get_app_instance()
@@ -90,6 +101,7 @@ def build_app():
             Mount(img2img_mount, img2img_app),
             Mount(img2txt_mount, img2txt_app),
             Mount(txt2img_mount, txt2img_app),
+            Mount(text2text_mount, text2text_app),
             Mount(music2music_mount, music2music_app),
         ]
     )
