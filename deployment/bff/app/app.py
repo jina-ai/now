@@ -8,7 +8,7 @@ from starlette.routing import Mount
 
 import deployment.bff.app.settings as api_settings
 from deployment.bff.app.decorators import api_method, timed
-from deployment.bff.app.v1.routers import image, music, text
+from deployment.bff.app.v1.routers import img2img, img2txt, music2music, txt2img
 
 logging.config.dictConfig(api_settings.DEFAULT_LOGGING_CONFIG)
 logger = logging.getLogger('bff.app')
@@ -18,7 +18,7 @@ TITLE = 'Jina NOW'
 DESCRIPTION = 'The Jina NOW service API'
 AUTHOR = 'Jina AI'
 EMAIL = 'hello@jina.ai'
-__version__ = "latest"
+__version__ = 'latest'
 
 
 def get_app_instance():
@@ -64,27 +64,33 @@ def get_app_instance():
 
 
 def build_app():
-    # Image router
-    image_mount = "/api/v1/image"
-    image_app = get_app_instance()
-    image_app.include_router(image.router, tags=['Image'])
+    # Image2Image router
+    img2img_mount = '/api/v1/image-to-image'
+    img2img_app = get_app_instance()
+    img2img_app.include_router(img2img.router, tags=['Image-To-Image'])
 
-    # Text router
-    text_mount = "/api/v1/text"
-    text_app = get_app_instance()
-    text_app.include_router(text.router, tags=['Text'])
+    # Image2Text router
+    img2txt_mount = '/api/v1/image-to-text'
+    img2txt_app = get_app_instance()
+    img2txt_app.include_router(img2txt.router, tags=['Image-To-Text'])
 
-    # Music router
-    music_mount = "/api/v1/music"
-    music_app = get_app_instance()
-    music_app.include_router(music.router, tags=['Music'])
+    # Text2Image router
+    txt2img_mount = '/api/v1/text-to-image'
+    txt2img_app = get_app_instance()
+    txt2img_app.include_router(txt2img.router, tags=['Text-To-Image'])
+
+    # Music2Music router
+    music2music_mount = '/api/v1/music-to-music'
+    music2music_app = get_app_instance()
+    music2music_app.include_router(music2music.router, tags=['Music-To-Music'])
 
     # Mount them - for other modalities just add an app instance
     app = Starlette(
         routes=[
-            Mount(image_mount, image_app),
-            Mount(text_mount, text_app),
-            Mount(music_mount, music_app),
+            Mount(img2img_mount, img2img_app),
+            Mount(img2txt_mount, img2txt_app),
+            Mount(txt2img_mount, txt2img_app),
+            Mount(music2music_mount, music2music_app),
         ]
     )
 

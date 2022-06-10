@@ -12,12 +12,11 @@ from deployment.bff.app.v1.models.helper import (
 
 class NowMusicIndexRequestModel(BaseIndexRequestModel):
     songs: List[str] = Field(
-        default=..., description='List of base64 encoded ' 'binary audio data to index.'
+        default=..., description='List of base64 encoded binary audio data to index.'
     )
 
 
 class NowMusicSearchRequestModel(BaseRequestModel):
-    text: str = Field(default=None, description='Text query')
     song: str = Field(
         default=None,
         description='Audio data query. Audio data should be base64encoded in `utf-8` format',
@@ -32,14 +31,13 @@ class NowMusicResponseModel(BaseModel):
     blob: Optional[str] = Field(
         description='Matching song (base64encoded string `utf-8`) result.'
     )
+    uri: Optional[str] = Field(description='Uri of the audio file.')
     scores: Optional[Dict[str, '_NamedScore']] = Field(
         description='Similarity score with respect to the query.'
     )
     tags: Optional[Dict[str, '_StructValueType']] = Field(
         description='Additional tags associated with the file.'
     )
-    uri: Optional[str] = Field(description='Uri of the audio file.')
-    text: Optional[str] = Field(description='Matching text result.')
 
     class Config:
         case_sensitive = False

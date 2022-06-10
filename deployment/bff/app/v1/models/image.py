@@ -19,7 +19,6 @@ class NowImageIndexRequestModel(BaseIndexRequestModel):
 
 
 class NowImageSearchRequestModel(BaseRequestModel):
-    text: str = Field(default=None, description='Text query')
     image: str = Field(
         default=None,
         description='Image query. Image should be base64encoded in `utf-8` format',

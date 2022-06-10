@@ -17,7 +17,7 @@ router = APIRouter()
 # Index
 @router.post(
     "/index",
-    summary='Add more data to the indexer',
+    summary='Add more image data to the indexer',
 )
 def index(data: NowImageIndexRequestModel):
     """
@@ -37,14 +37,14 @@ def index(data: NowImageIndexRequestModel):
 @router.post(
     "/search",
     response_model=List[NowImageResponseModel],
-    summary='Search image data via text or image as query',
+    summary='Search image data via image as query',
 )
 def search(data: NowImageSearchRequestModel):
     """
-    Retrieve matching images for a given query. Image query should be `base64` encoded
-    using human-readable characters - `utf-8`.
+    Retrieve matching images for a given image query. Image query should be
+    `base64` encoded using human-readable characters - `utf-8`.
     """
-    query_doc = process_query(data.text, data.image)
+    query_doc = process_query(blob=data.image)
     docs = get_jina_client(data.host, data.port).post(
         '/search', query_doc, parameters={"limit": data.limit}
     )

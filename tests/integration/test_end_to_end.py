@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 import time
@@ -13,6 +14,16 @@ from now.constants import JC_SECRET, Apps, DemoDatasets, Modalities
 from now.deployment.deployment import cmd, terminate_wolf
 from now.dialog import NEW_CLUSTER
 from now.run_all_k8s import get_remote_flow_details
+
+
+@pytest.fixture
+def test_search_image(resources_folder_path: str):
+    with open(
+        os.path.join(resources_folder_path, 'image', '5109112832.jpg'), 'rb'
+    ) as f:
+        binary = f.read()
+        img_query = base64.b64encode(binary).decode('utf-8')
+    return img_query
 
 
 @pytest.fixture()
@@ -42,12 +53,32 @@ def cleanup(deployment_type, dataset):
 
 
 @pytest.mark.parametrize(
-    'app, output_modality, dataset',
+    'app, input_modality, output_modality, dataset',
     [
-        (Apps.TEXT_TO_IMAGE, Modalities.IMAGE, DemoDatasets.BIRD_SPECIES),
-        (Apps.IMAGE_TO_IMAGE, Modalities.IMAGE, DemoDatasets.BEST_ARTWORKS),
-        (Apps.IMAGE_TO_TEXT, Modalities.TEXT, DemoDatasets.ROCK_LYRICS),
-        (Apps.TEXT_TO_TEXT, Modalities.TEXT, DemoDatasets.POP_LYRICS),
+        (
+            Apps.TEXT_TO_IMAGE,
+            Modalities.TEXT,
+            Modalities.IMAGE,
+            DemoDatasets.BIRD_SPECIES,
+        ),
+        (
+            Apps.IMAGE_TO_IMAGE,
+            Modalities.IMAGE,
+            Modalities.IMAGE,
+            DemoDatasets.BEST_ARTWORKS,
+        ),
+        (
+            Apps.IMAGE_TO_TEXT,
+            Modalities.IMAGE,
+            Modalities.TEXT,
+            DemoDatasets.ROCK_LYRICS,
+        ),
+        (
+            Apps.TEXT_TO_TEXT,
+            Modalities.TEXT,
+            Modalities.TEXT,
+            DemoDatasets.POP_LYRICS,
+        ),
     ],
 )  # art, rock-lyrics -> no finetuning, fashion -> finetuning
 @pytest.mark.parametrize('quality', ['medium'])
@@ -55,12 +86,14 @@ def cleanup(deployment_type, dataset):
 @pytest.mark.parametrize('deployment_type', ['local', 'remote'])
 def test_backend(
     app: str,
-    output_modality: str,
     dataset: str,
     quality: str,
     cluster: str,
     deployment_type: str,
+    test_search_image,
     cleanup,
+    input_modality,
+    output_modality,
 ):
     if deployment_type == 'remote' and dataset != 'best-artworks':
         pytest.skip('Too time consuming, hence skipping!')
@@ -93,7 +126,13 @@ def test_backend(
         search_text = 'test'
 
     # Perform end-to-end check via bff
-    request_body = {'text': search_text, 'limit': 9}
+    if app == Apps.IMAGE_TO_IMAGE or app == Apps.IMAGE_TO_TEXT:
+        request_body = {'image': test_search_image, 'limit': 9}
+    elif app == Apps.TEXT_TO_IMAGE:
+        request_body = {'text': search_text, 'limit': 9}
+    else:  # Add different request body if app changes
+        request_body = {}
+
     if deployment_type == 'local':
         request_body['host'] = 'gateway'
         request_body['port'] = 8080
@@ -104,7 +143,8 @@ def test_backend(
         request_body['host'] = flow_details['gateway']
 
     response = requests.post(
-        f'http://localhost:30090/api/v1/{output_modality}/search', json=request_body
+        f'http://localhost:30090/api/v1/{input_modality}-to-{output_modality}/search',
+        json=request_body,
     )
 
     assert response.status_code == 200

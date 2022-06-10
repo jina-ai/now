@@ -105,7 +105,7 @@ def start_now(os_type, arch, contexts, active_context, **kwargs):
     bff_url = (
         bff_playground_host
         + ('' if str(bff_port) == '80' else f':{bff_port}')
-        + f'/api/v1/{app_instance.input_modality}/redoc'
+        + f'/api/v1/{app_instance.input_modality}-to-{app_instance.output_modality}/redoc'
     )
     playground_url = (
         bff_playground_host

@@ -46,13 +46,17 @@ def client_with_mocked_jina_client(
             return MockedJinaClient(response)
 
         mocker.patch(
-            'deployment.bff.app.v1.routers.text.get_jina_client', _get_jina_client
+            'deployment.bff.app.v1.routers.img2img.get_jina_client', _get_jina_client
         )
         mocker.patch(
-            'deployment.bff.app.v1.routers.image.get_jina_client', _get_jina_client
+            'deployment.bff.app.v1.routers.img2txt.get_jina_client', _get_jina_client
         )
         mocker.patch(
-            'deployment.bff.app.v1.routers.music.get_jina_client', _get_jina_client
+            'deployment.bff.app.v1.routers.music2music.get_jina_client',
+            _get_jina_client,
+        )
+        mocker.patch(
+            'deployment.bff.app.v1.routers.txt2img.get_jina_client', _get_jina_client
         )
         return TestClient(build_app())
 

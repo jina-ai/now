@@ -19,5 +19,7 @@ executors:
       JINA_LOG_LEVEL: DEBUG
   - name: indexer
     uses: ${{ ENV.INDEXER_NAME }}
+    resources:
+      memory: 4G
     env:
       JINA_LOG_LEVEL: DEBUG

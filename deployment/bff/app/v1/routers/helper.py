@@ -5,11 +5,9 @@ from fastapi import HTTPException
 from jina import Client
 
 
-def process_query(text: str, blob: str) -> Document:
+def process_query(text: str = None, blob: str = None) -> Document:
     if text is None and blob is None:
-        raise ValueError('Please set one of the value - `blob` or `text`')
-    if text is not None and blob is not None:
-        raise ValueError('Please set either image or text not both!')
+        raise ValueError('Please pass the query to make a search')
     try:
         if text is not None:
             query_doc = Document(text=text)
