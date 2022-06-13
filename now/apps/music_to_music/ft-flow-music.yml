@@ -6,12 +6,16 @@ with:
 executors:
   - name: encoder_music
     uses: ${{ ENV.ENCODER_NAME }}
-    resources:
-      memory: 8G
+    jcloud:
+      capacity: on-demand
+      resources:
+        memory: 8G
     env:
       JINA_LOG_LEVEL: DEBUG
   - name: linear_head
     uses: ${{ ENV.LINEAR_HEAD_NAME }}
+    jcloud:
+      capacity: on-demand
     uses_with:
       finetune_layer_size: ${{ ENV.FINETUNE_LAYER_SIZE }}
       pre_trained_embedding_size: ${{ ENV.PRE_TRAINED_EMBEDDINGS_SIZE }}
@@ -19,7 +23,9 @@ executors:
       JINA_LOG_LEVEL: DEBUG
   - name: indexer
     uses: ${{ ENV.INDEXER_NAME }}
-    resources:
-      memory: 4G
+    jcloud:
+      capacity: on-demand
+      resources:
+        memory: 4G
     env:
       JINA_LOG_LEVEL: DEBUG

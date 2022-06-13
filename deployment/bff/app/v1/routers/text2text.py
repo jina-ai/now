@@ -16,7 +16,7 @@ router = APIRouter()
 # Index
 @router.post(
     "/index",
-    summary='Add more image data to the indexer',
+    summary='Add more text data to the indexer',
 )
 def index(data: NowTextIndexRequestModel):
     """
