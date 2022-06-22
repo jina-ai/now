@@ -45,7 +45,7 @@ class TextToText(JinaNOWApp):
         self, da: DocumentArray, user_config: UserInput, kubectl_path: str
     ) -> Dict:
         quality_pretrained_model_map = {
-            Qualities.MEDIUM: 'sentence-transformers/msmarco-distilbert-base-v3',
+            Qualities.MEDIUM: 'sentence-transformers/msmarco-distilbert-base-v4',
         }
         return finetune_flow_setup(
             self,
