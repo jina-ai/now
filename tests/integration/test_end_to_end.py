@@ -39,6 +39,7 @@ def cleanup(deployment_type, dataset):
             'deployment_type': deployment_type,
             'now': 'stop',
             'cluster': 'kind-jina-now',
+            'delete-cluster': True,
         }
         kwargs = Namespace(**kwargs)
         cli(args=kwargs)
