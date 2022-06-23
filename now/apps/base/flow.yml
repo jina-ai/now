@@ -1,4 +1,6 @@
 jtype: Flow
 version: '1'
 with:
+jcloud:
+  version: 3.4.11
 executors:
