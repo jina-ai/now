@@ -73,7 +73,7 @@
     "tests/integration/test_end_to_end.py::test_backend[local-new-medium-image_to_image-image-image-best-artworks]": 195.06407034,
     "tests/integration/test_end_to_end.py::test_backend[local-new-medium-image_to_text-image-text-rock-lyrics]": 284.8249985039999,
     "tests/integration/test_end_to_end.py::test_backend[local-new-medium-text_to_image-text-image-bird-species]": 289.48343265000005,
-    "tests/integration/test_end_to_end.py::test_backend[local-new-medium-text_to_text-text-text-pop-lyrics]": 357.18236176300013,
+    "tests/integration/test_end_to_end.py::test_backend[local-new-medium-text_to_text-text-text-pop-lyrics]": 1200.2,
     "tests/integration/test_end_to_end.py::test_backend[remote-new-medium-image_to_image-image-image-best-artworks]": 357.00228575799997,
     "tests/integration/test_end_to_end.py::test_backend[remote-new-medium-image_to_text-image-text-rock-lyrics]": 0.004999250999844662,
     "tests/integration/test_end_to_end.py::test_backend[remote-new-medium-text_to_image-text-image-bird-species]": 0.004999250999844662,

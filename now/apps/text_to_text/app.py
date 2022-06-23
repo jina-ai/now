@@ -39,7 +39,7 @@ class TextToText(JinaNOWApp):
 
     @property
     def pre_trained_embedding_size(self) -> Dict[Qualities, int]:
-        return {Qualities.MEDIUM: 384, Qualities.GOOD: 384}
+        return {Qualities.MEDIUM: 768}
 
     def setup(
         self, da: DocumentArray, user_config: UserInput, kubectl_path: str
