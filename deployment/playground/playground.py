@@ -8,6 +8,7 @@ import av
 import numpy as np
 import requests
 import streamlit as st
+import streamlit.components.v1 as components
 from docarray import Document, DocumentArray
 from docarray import __version__ as docarray_version
 from streamlit_webrtc import ClientSettings, webrtc_streamer
@@ -375,6 +376,46 @@ def deploy_streamlit():
             1.0,
             key='slider',
             on_change=update_conf,
+        )
+
+    # Adding social share buttons
+    _, twitter, linkedin, facebook = st.columns([0.55, 0.12, 0.12, 0.12])
+    with twitter:
+        components.html(
+            """
+                <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button"
+                Tweet
+                </a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            """
+        )
+
+    with linkedin:
+        components.html(
+            """
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://now.jina.ai"
+                class="linkedin-share-button"
+                rel="noreferrer noopener" when using target="_blank">
+                </a>
+                <script src="https://platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script>
+                <script type="IN/Share" data-url="https://now.jina.ai"></script>
+            """
+        )
+
+    with facebook:
+        components.html(
+            """
+                <a href="https://www.facebook.com/sharer.php?u=https://now.jina.ai" class="facebook-share-button"
+                rel="noreferrer noopener" when using target="_blank">
+                </a>
+                <div id="fb-root"></div>
+                <script async defer crossorigin="anonymous"
+                src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v14.0" nonce="kquhy3fp"></script>
+                <div class="fb-share-button" data-href="https://now.jina.ai" data-layout="button" data-size="small">
+                <a target="_blank"
+                 href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fnow.jina.ai%2F&amp;src=sdkpreparse"
+                  class="fb-xfbml-parse-ignore">Share</a></div>
+            """
         )
 
 

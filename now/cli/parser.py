@@ -85,6 +85,13 @@ def set_default_start_args(parser):
         type=str,
     )
 
+    parser.add_argument(
+        '--proceed',
+        help='Proceed even if app is deployed already. In that case, the old app is deleted.',
+        default=None,
+        type=bool,
+    )
+
 
 def set_start_parser(sp):
     """Add the arguments for the jina now to the parser

@@ -5,6 +5,8 @@
 
 
 
+
+
 <a name=release-note-0-0-7></a>
 ## Release Note (`0.0.7`)
 
@@ -233,4 +235,65 @@
  - [[```56a29350```](https://github.com/jina-ai/now/commit/56a2935000a132b5f2556a3d57ad15d293f93724)] __-__ Add time profiling for CI (#231) (*joschkabraun*)
  - [[```6a3c1d7c```](https://github.com/jina-ai/now/commit/6a3c1d7c8c6e2dac4488c83216e8dd427ea64983)] __-__ __version__: the next version will be 0.0.11 (*Jina Dev Bot*)
  - [[```22048ce4```](https://github.com/jina-ai/now/commit/22048ce40ef411d54a375a51ee35d186cc547a0c)] __-__ __version__: the next version will be 0.0.9 (*Jina Dev Bot*)
+
+<a name=release-note-0-0-12></a>
+## Release Note (`0.0.12`)
+
+> Release time: 2022-06-22 22:37:13
+
+
+
+🙇 We'd like to thank all contributors for this new release! In particular,
+ Florian Hönicke,  Mohammad Kalim Akram,  Sebastian Lettner,  Joschka Braun,  joschkabraun,  Leon Wolf,  Alex Cureton-Griffiths,  Roshan Jossy,  Jina Dev Bot,  🙇
+
+
+### 🆕 New Features
+
+ - [[```085e83cc```](https://github.com/jina-ai/now/commit/085e83ccbd5c2b21b465807f211984d19546ff00)] __-__ proceed configurable via cli (#274) (*Florian Hönicke*)
+ - [[```53e64359```](https://github.com/jina-ai/now/commit/53e643596cec72ff316b5983c67c8978f3298887)] __-__ add text-to-text app and update indexing in bff (#237) (*joschkabraun*)
+ - [[```9dc57677```](https://github.com/jina-ai/now/commit/9dc57677032a1cbf61d9eab33ca7c2837f829d3e)] __-__ add music to playground (#252) (*Sebastian Lettner*)
+ - [[```9a01eddf```](https://github.com/jina-ai/now/commit/9a01eddf9d00665b759e796d7ba24d8f559875a3)] __-__ add apps as subcommand (#241) (*Mohammad Kalim Akram*)
+ - [[```d54875c9```](https://github.com/jina-ai/now/commit/d54875c94d149177dc7edf341466fb085b3bbea5)] __-__ add music to music app (#247) (*Sebastian Lettner*)
+ - [[```f5c1be45```](https://github.com/jina-ai/now/commit/f5c1be452495b428bd426ca65c60a513da69fdbe)] __-__ update bff music (#243) (*Sebastian Lettner*)
+
+### 🐞 Bug fixes
+
+ - [[```b87cd4df```](https://github.com/jina-ai/now/commit/b87cd4df99f621431ac435c9026bbe751d9a8a55)] __-__ rename docarray pull kwarg (#272) (*Florian Hönicke*)
+ - [[```c69a0f87```](https://github.com/jina-ai/now/commit/c69a0f879a4378465cb4380d0bc31dd51054251b)] __-__ now stop delete namespace (#257) (*Sebastian Lettner*)
+ - [[```57f3bb56```](https://github.com/jina-ai/now/commit/57f3bb561bab9500919c508cb710a0fb1d8acadb)] __-__ include commons in packaging (*Mohammad Kalim Akram*)
+ - [[```02300f37```](https://github.com/jina-ai/now/commit/02300f379b93aa0ebde9375d143fb99587d5fc2e)] __-__ update the endpoints based on app (#226) (*Mohammad Kalim Akram*)
+
+### 🧼 Code Refactoring
+
+ - [[```138ea3bf```](https://github.com/jina-ai/now/commit/138ea3bf8ee4b1cfd0f66ace394fe5c54f7dd0f5)] __-__ datasource init (#224) (*Florian Hönicke*)
+
+### 🏁 Unit Test and CICD
+
+ - [[```3591b6cd```](https://github.com/jina-ai/now/commit/3591b6cdec4d3366339d1e6319bca973338e586b)] __-__ reverse cd (*Joschka Braun*)
+ - [[```75121b8a```](https://github.com/jina-ai/now/commit/75121b8a51b3991f0d0da7415567935587068438)] __-__ trigger deployment (*Joschka Braun*)
+ - [[```f6483efa```](https://github.com/jina-ai/now/commit/f6483efa2bcc04d9c47c03b97a0749e6736a97d9)] __-__ update ci tests to match cd (*Joschka Braun*)
+ - [[```9238625e```](https://github.com/jina-ai/now/commit/9238625e15866f5adbc90fef12bc09940c568f9a)] __-__ remove unnecessary test (#251) (*Florian Hönicke*)
+
+### 🍹 Other Improvements
+
+ - [[```49f30dde```](https://github.com/jina-ai/now/commit/49f30dde1953d1f724193fb18cad7ea7d695bf7d)] __-__ Feat share button (#259) (*Mohammad Kalim Akram*)
+ - [[```10b80338```](https://github.com/jina-ai/now/commit/10b803385a4d5b33a9f5c78535b1dd23d62f225f)] __-__ readme survey link (#254) (*Leon Wolf*)
+ - [[```6deb7aa1```](https://github.com/jina-ai/now/commit/6deb7aa1766ea4736950dc95ed22859c1de5fd41)] __-__ fix text strings (#245) (*Alex Cureton-Griffiths*)
+ - [[```4afc03ea```](https://github.com/jina-ai/now/commit/4afc03ea12647387e0d9db60c10a426d4f5702c2)] __-__ update docarray version to 0.13.17 (#240) (*Sebastian Lettner*)
+ - [[```5cc69e9e```](https://github.com/jina-ai/now/commit/5cc69e9e195665d2278d101cd56ddeec95829488)] __-__ __version__: the next version will be 0.0.12 (*Jina Dev Bot*)
+
+<a name=release-note-0-0-13></a>
+## Release Note (`0.0.13`)
+
+> Release time: 2022-06-23 08:20:59
+
+
+
+🙇 We'd like to thank all contributors for this new release! In particular,
+ Jina Dev Bot,  🙇
+
+
+### 🍹 Other Improvements
+
+ - [[```2177b9f8```](https://github.com/jina-ai/now/commit/2177b9f84d8e2a1b26c6dfaf377476bda8a635eb)] __-__ __version__: the next version will be 0.0.13 (*Jina Dev Bot*)
 
