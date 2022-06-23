@@ -77,7 +77,7 @@ def _fetch_da_from_url(
 
 def _pull_docarray(dataset_secret: str):
     try:
-        return DocumentArray.pull(token=dataset_secret, show_progress=True)
+        return DocumentArray.pull(name=dataset_secret, show_progress=True)
     except Exception:
         print(
             '💔 oh no, the secret of your docarray is wrong, or it was deleted after 14 days'
