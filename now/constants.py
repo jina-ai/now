@@ -1,6 +1,6 @@
 from now.utils import BetterEnum
 
-DOCKER_BFF_PLAYGROUND_TAG = '0.0.69-2'
+DOCKER_BFF_PLAYGROUND_TAG = '0.0.70-1'
 
 
 class Modalities(BetterEnum):

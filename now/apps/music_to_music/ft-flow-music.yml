@@ -3,6 +3,8 @@ with:
   name: nowapi
   port_expose: 8080
   cors: True
+jcloud:
+  version: 3.4.11
 executors:
   - name: encoder_music
     uses: ${{ ENV.ENCODER_NAME }}
