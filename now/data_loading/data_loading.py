@@ -88,7 +88,10 @@ def _pull_docarray(dataset_secret: str):
 def _load_from_disk(dataset_path: str, modality: Modalities) -> DocumentArray:
     if os.path.isfile(dataset_path):
         try:
-            return DocumentArray.load_binary(dataset_path)
+            if True: #modality == Modalities.MESH:
+                return DocumentArray.load_binary(dataset_path, protocol='protobuf')
+            else:
+                return DocumentArray.load_binary(dataset_path)
         except Exception as e:
             print(f'Failed to load the binary file provided under path {dataset_path}')
             exit(1)
@@ -102,6 +105,8 @@ def _load_from_disk(dataset_path: str, modality: Modalities) -> DocumentArray:
                 return _load_texts_from_folder(dataset_path)
             elif modality == Modalities.MUSIC:
                 return _load_music_from_folder(dataset_path)
+            # elif modality == Modalities.MESH:
+            #     return _load_mesh_from_folder(dataset_path)
             spinner.ok('🏭')
     else:
         raise ValueError(
@@ -173,6 +178,18 @@ def _load_texts_from_folder(path: str) -> DocumentArray:
     for d in da:
         ret += split_document(d)
     return ret
+
+
+# def _load_mesh_from_folder(path: str) -> DocumentArray:
+#     def convert_fn(d):
+#         try:
+#             d.convert_blob_to_image_tensor()
+#             return d
+#         except:
+#             return d
+#     da = DocumentArray.load_binary(path, protocol='protobuf')
+#     da.apply(convert_fn)
+#     return da
 
 
 def get_dataset_url(

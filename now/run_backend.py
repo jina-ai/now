@@ -46,12 +46,13 @@ def finetune_flow_setup(
         )
 
     finetuning = finetune_settings.perform_finetuning
-
+    print(f'🔧 Finetuning: {finetuning}')
     app_instance.set_flow_yaml(finetuning=finetuning)
 
     env = get_custom_env_file(
         finetune_settings, encoder_uses, encoder_uses_with, indexer_uses
     )
+    print(env)
     return env
 
 
@@ -66,6 +67,7 @@ def run(app_instance: JinaNOWApp, user_input: UserInput, kubectl_path: str):
     :return:
     """
     dataset = load_data(app_instance.output_modality, user_input)
+    # if app_instance.output_modality == Modalities.MESH:
     env = app_instance.setup(dataset, user_input, kubectl_path)
     with tempfile.TemporaryDirectory() as tmpdir:
         env_file = os.path.join(tmpdir, 'dot.env')
@@ -89,6 +91,7 @@ def run(app_instance: JinaNOWApp, user_input: UserInput, kubectl_path: str):
 
 def write_env_file(env_file, config):
     config_string = '\n'.join([f'{key}={value}' for key, value in config.items()])
+    print(f'🔧 Writing env file: {config_string}')
     with open(env_file, 'w+') as fp:
         fp.write(config_string)
 
@@ -117,6 +120,8 @@ def get_custom_env_file(
         config['PRE_TRAINED_MODEL_NAME'] = encoder_uses_with[
             "pretrained_model_name_or_path"
         ]
+    if encoder_uses_with.get('traversal_paths'):
+        config['TRAVERSAL_PATHS'] = encoder_uses_with["traversal_paths"]
     if finetune_settings.perform_finetuning:
         config['LINEAR_HEAD_NAME'] = linear_head_name
 

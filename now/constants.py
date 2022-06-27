@@ -7,7 +7,7 @@ class Modalities(BetterEnum):
     TEXT = 'text'
     IMAGE = 'image'
     MUSIC = 'music'
-
+    MESH = 'mesh'
 
 class Apps(BetterEnum):
     TEXT_TO_TEXT = 'text_to_text'
@@ -15,6 +15,7 @@ class Apps(BetterEnum):
     IMAGE_TO_TEXT = 'image_to_text'
     IMAGE_TO_IMAGE = 'image_to_image'
     MUSIC_TO_MUSIC = 'music_to_music'
+    TEXT_TO_MESH = 'text_to_mesh'
 
 
 class DatasetTypes(BetterEnum):
@@ -59,6 +60,8 @@ class DemoDatasets:
     RAP_LYRICS = 'rap-lyrics'
     INDIE_LYRICS = 'indie-lyrics'
     METAL_LYRICS = 'metal-lyrics'
+    MODELNET_40_TRAIN = 'modelnet40-train'
+    MODELNET_40_TEST = 'modelnet40-test'
 
 
 AVAILABLE_DATASET = {
@@ -82,6 +85,10 @@ AVAILABLE_DATASET = {
         (DemoDatasets.RAP_LYRICS, '🎤 rap lyrics (200K docs)'),
         (DemoDatasets.INDIE_LYRICS, '🎤 indie lyrics (200K docs)'),
         (DemoDatasets.METAL_LYRICS, '🎤 metal lyrics (200K docs)'),
+    ],
+    Modalities.MESH: [
+        (DemoDatasets.MODELNET_40_TRAIN, '🗿 ModelNet 40 training dataset (≈10K objects)'),
+        (DemoDatasets.MODELNET_40_TEST, '🗿 ModelNet 40 testing dataset (≈2K objects)'),
     ],
 }
 

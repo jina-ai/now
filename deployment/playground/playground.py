@@ -128,11 +128,29 @@ def deploy_streamlit():
     def search_by_t(search_text, limit=TOP_K) -> DocumentArray:
         st.session_state.search_count += 1
         print(f'Searching by text: {search_text}')
-        data = {'host': HOST, 'text': search_text, 'limit': limit}
-        if PORT:
-            data['port'] = PORT
-        response = requests.post(URL_HOST, json=data)
-        return DocumentArray.from_json(response.content)
+        # data = {'host': HOST, 'text': search_text, 'limit': limit, 'parameters': {'traversal_paths': '@r'}}
+        # if PORT:
+        #     data['port'] = PORT
+        # response = requests.post(URL_HOST, json=data)
+        #
+        #
+        #
+        # print(123123)
+        # print(data)
+        # print(response.content)
+        # return DocumentArray.from_json(response.content)
+
+        from jina import Client
+
+        client = Client(host=URL_HOST)
+        da = client.post(
+            on='/search',
+            inputs=Document(text=search_text),
+            parameters={'traversal_paths': '@r', 'limit': limit},
+        )
+        da = DocumentArray.from_json(da.content)
+        da.summary()
+        return da
 
     def search_by_image(document, limit=TOP_K) -> DocumentArray:
         """
@@ -207,6 +225,7 @@ def deploy_streamlit():
         '<style>div.st-bf{flex-direction:column;} div.st-ag{font-weight:bold;padding-right:50px;}</style>',
         unsafe_allow_html=True,
     )
+    media_type = ''
     if INPUT_MODALITY == 'image':
         media_type = st.radio(
             '',
@@ -315,7 +334,7 @@ def deploy_streamlit():
         matches = deepcopy(st.session_state.matches)
         if st.session_state.search_count > 2:
             st.write(
-                f"🔥 How did you like Jina NOW? [Please leave feedback]({SURVEY_LINK}) 🔥"
+                f"🔥 How did you like Jina NOW? !!!!!!!!!![Please leave feedback]({SURVEY_LINK}) 🔥"
             )
         st.header('Search results')
         # Results area
@@ -362,6 +381,10 @@ def deploy_streamlit():
                 )
             elif OUTPUT_MODALITY == 'music':
                 display_song(c, match)
+
+            elif OUTPUT_MODALITY == 'mesh':
+                match.summary()
+                display_mesh(c, match)
 
             elif match.uri is not None:
                 if match.blob != b'':
@@ -436,6 +459,12 @@ def display_song(attach_to, song_doc: Document):
             unsafe_allow_html=True,
         )
     attach_to.audio(io.BytesIO(song_doc.blob))
+
+
+def display_mesh(attach_to, mesh_doc: Document):
+    # mesh_doc.convert_image_tensor_to_uri()
+    # attach_to.image(mesh_doc.convert_blob_to_datauri().uri)
+    attach_to.markdown(body=f"<!DOCTYPE html><html><body><blockquote>AAA</blockquote>")
 
 
 def update_conf():

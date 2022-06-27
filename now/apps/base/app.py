@@ -170,7 +170,7 @@ class JinaNOWApp:
         :param user_config: user configuration based on the given options
         :return: dict used to replace variables in flow yaml and to clean up resources after the flow is terminated
         """
-        pass
+        return {}
 
     def cleanup(self, app_config: dict) -> None:
         """

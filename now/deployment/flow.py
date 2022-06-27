@@ -118,6 +118,11 @@ def deploy_flow(
     from jina.clients import Client
 
     if user_input.deployment_type == 'remote':
+        print(f'Deploying Jina Flow to remote cluster')
+        with open(env_file, 'r') as f:
+            env = f.read()
+            print(env)
+        print(f'yaml {app_instance.flow_yaml}, env {env_file}, namespace {ns}')
         flow = deploy_wolf(path=app_instance.flow_yaml, env_file=env_file, name=ns)
         host = flow.gateway
         client = Client(host=host)
@@ -157,6 +162,7 @@ def deploy_flow(
         index = [x for x in index if x.text == '']
     elif app_instance.output_modality == 'text':
         index = [x for x in index if x.text != '']
+    index = index[:64]
     print(f'▶ indexing {len(index)} documents')
     request_size = 64
 
@@ -180,6 +186,7 @@ def deploy_flow(
         '/index',
         request_size=request_size,
         inputs=tqdm(index),
+        parameters={'traversal_paths': '@c'},
     )
 
     print('⭐ Success - your data is indexed')
