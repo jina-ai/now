@@ -100,6 +100,7 @@ def test_backend(
         pytest.skip('Too time consuming, hence skipping!')
 
     os.environ['NOW_CI_RUN'] = 'True'
+    os.environ['JCLOUD_LOGLEVEL'] = 'DEBUG'
     kwargs = {
         'now': 'start',
         'app': app,
@@ -117,7 +118,21 @@ def test_backend(
         cmd(f'{kubectl_path} create namespace nowapi')
 
     kwargs = Namespace(**kwargs)
-    cli(args=kwargs)
+    response = cli(args=kwargs)
+
+    assert (
+        response['bff']
+        == f'http://localhost:30090/api/v1/{app.replace("_", "-")}/redoc'
+    )
+    assert response['playground'].startswith('http://localhost:30080/?')
+    assert response['input_modality'] == input_modality
+    assert response['output_modality'] == output_modality
+    if deployment_type == 'local':
+        assert response['host'] == 'gateway.nowapi.svc.cluster.local'
+    else:
+        assert response['host'].startswith('grpcs://')
+        assert response['host'].endswith('.wolf.jina.ai')
+    assert response['port'] == 8080 or response['port'] is None
 
     if dataset == DemoDatasets.BEST_ARTWORKS:
         search_text = 'impressionism'

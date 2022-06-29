@@ -81,7 +81,7 @@ def deploy_streamlit():
     TOP_K = 9
 
     if DATA in ds_set:
-        if OUTPUT_MODALITY == 'image':
+        if OUTPUT_MODALITY == 'image' or OUTPUT_MODALITY == 'video':
             output_modality_dir = 'jpeg'
             data_dir = root_data_dir + output_modality_dir + '/'
             da_img, da_txt = load_data(

@@ -77,5 +77,5 @@ class ImageToImage(JinaNOWApp):
                 ][1]
             },
             finetune_datasets=(DemoDatasets.DEEP_FASHION, DemoDatasets.BIRD_SPECIES),
-            indexer_uses='DocarrayIndexer',
+            indexer_uses='DocarrayIndexerV2',
         )

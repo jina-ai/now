@@ -7,13 +7,14 @@ with:
 jcloud:
   version: 3.6.6
 executors:
-  - name: encoder_text
+  - name: encoder_clip
     uses: ${{ ENV.ENCODER_NAME }}
     jcloud:
       resources:
         memory: 8G
     uses_with:
-      model_name: ${{ ENV.PRE_TRAINED_MODEL_NAME }}
+      pretrained_model_name_or_path: ${{ ENV.PRE_TRAINED_MODEL_NAME }}
+      traversal_paths: '@c'
     env:
       JINA_LOG_LEVEL: DEBUG
   - name: indexer
@@ -22,5 +23,7 @@ executors:
       capacity: on-demand
       resources:
         memory: 4G
+    uses_with:
+      traversal_paths: '@c'
     env:
       JINA_LOG_LEVEL: DEBUG

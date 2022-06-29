@@ -7,7 +7,6 @@ from time import sleep
 from docarray import DocumentArray
 from kubernetes import client as k8s_client
 from kubernetes import config
-from tqdm import tqdm
 from yaspin.spinners import Spinners
 
 from now.apps.base.app import JinaNOWApp
@@ -158,7 +157,7 @@ def deploy_flow(
     elif app_instance.output_modality == 'text':
         index = [x for x in index if x.text != '']
     print(f'▶ indexing {len(index)} documents')
-    request_size = 64
+    request_size = 16
 
     # doublecheck that flow is up and running - should be done by wolf/core in the future
     while True:
@@ -176,11 +175,7 @@ def deploy_flow(
                 print(traceback.format_exc())
             sleep(1)
 
-    client.post(
-        '/index',
-        request_size=request_size,
-        inputs=tqdm(index),
-    )
+    client.post('/index', request_size=request_size, inputs=index, show_progress=True)
 
     print('⭐ Success - your data is indexed')
     return gateway_host, gateway_port, gateway_host_internal, gateway_port_internal

@@ -14,6 +14,7 @@ from deployment.bff.app.v1.routers import (
     music2music,
     text2text,
     txt2img,
+    txt2video,
 )
 
 logging.config.dictConfig(api_settings.DEFAULT_LOGGING_CONFIG)
@@ -95,6 +96,11 @@ def build_app():
     music2music_app = get_app_instance()
     music2music_app.include_router(music2music.router, tags=['Music-To-Music'])
 
+    # Text2Video router
+    text2video_mount = '/api/v1/text-to-video'
+    text2video_app = get_app_instance()
+    text2video_app.include_router(txt2video.router, tags=['Text-To-Video'])
+
     # Mount them - for other modalities just add an app instance
     app = Starlette(
         routes=[
@@ -103,6 +109,7 @@ def build_app():
             Mount(txt2img_mount, txt2img_app),
             Mount(text2text_mount, text2text_app),
             Mount(music2music_mount, music2music_app),
+            Mount(text2video_mount, text2video_app),
         ]
     )
 

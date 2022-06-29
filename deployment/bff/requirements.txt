@@ -2,6 +2,6 @@ fastapi
 uvicorn
 uvloop
 pydantic
-jina[perf]==3.4.11
+jina[perf]==3.6.6
 docarray==0.13.17
 protobuf~=3.19

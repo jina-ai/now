@@ -22,7 +22,7 @@ def embed_now(
         list(filter(lambda d: d.embedding is None, dataset))
     )
 
-    flow = Flow(name=_KS_NAMESPACE, port_expose=8080, cors=True).add(
+    flow = Flow(name=_KS_NAMESPACE, port_expose=8080, prefetch=10, cors=True).add(
         uses=encoder_uses, uses_with=encoder_uses_with
     )
     result = DocumentArray()

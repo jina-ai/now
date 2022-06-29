@@ -1,46 +1,61 @@
 import abc
+from typing import List, Optional
 
 from docarray import DocumentArray
 
-from now.constants import BASE_STORAGE_URL, Modalities
+from now.constants import Modalities, Qualities
+from now.data_loading.data_loading import _fetch_da_from_url, get_dataset_url
+from now.utils import BetterEnum
 
 
-# TODO just a prototype - needs to be implemented in the future
+class DatasourceType(BetterEnum):
+    DEMO = 'demo'
+    CUSTOM_DOCARRAY = 'custom-docarray'
+    LOCAL_FILES = 'local-files'
+    DATABASE_CONNECTOR = 'db-connector'
+
+
 class Datasource:
+    @property
     @abc.abstractmethod
-    def get_data(self, mapping, *args, **kwargs) -> DocumentArray:
-        raise NotImplementedError()
+    def type(self) -> DatasourceType:
+        raise NotImplementedError('type')
+
+    @property
+    @abc.abstractmethod
+    def modalities(self) -> List[Modalities]:
+        raise NotImplementedError('modalities')
+
+    @abc.abstractmethod
+    def get_data(self, *args, **kwargs) -> DocumentArray:
+        raise NotImplementedError('get_data')
 
 
-# TODO just a prototype - needs to be implemented in the future
-class DocarrayURLDatasource(Datasource):
-    def __init__(self, ds_id, display_name, modality):
-        self.ds_id = ds_id
+class DemoDatasource(Datasource):
+    def __init__(
+        self,
+        id_: str,
+        display_name: str,
+        modality_folder: Modalities,
+    ):
+        self.id = id_
         self.display_name = display_name
-        self.modality = modality
+        self.modalities_folder = modality_folder
 
-    def get_data(self, mapping, quality: str) -> DocumentArray:
-        # TODO comment from sebastian:
-        #  This signature misses the mapping arg from the baseclass.
-        #  The baseclass interface is not really guiding the user a lot at the moment.
-        #  Maybe we should start with an explicit ObjectStorageDataset or something like that
-        #  because all our app are using that atm. and abstract the interface furhter once we work on
-        #  the database table column mapping stuff?
+    @property
+    def type(self) -> DatasourceType:
+        return DatasourceType.DEMO
 
-        url = f'{BASE_STORAGE_URL}/{self.modality}/{self.ds_id}{("." + quality) if quality is not None else ""}.bin'
-        # TODO  return document array from url
-        raise NotImplementedError()
+    @property
+    def modalities(self) -> List[Modalities]:
+        return [Modalities.TEXT, Modalities.IMAGE]
 
-
-class DocarrayPullDatasource(Datasource):
-    def __init__(self, name):
-        self.name = name
-
-    def get_data(self, quality: str) -> DocumentArray:
-        pass
+    def get_data(self, quality: Optional[Qualities] = None) -> DocumentArray:
+        url = get_dataset_url(self.id, quality, self.modalities_folder)
+        return _fetch_da_from_url(url)
 
 
-example_datasources = [
-    DocarrayURLDatasource('bird-species', '🦆 birds (≈12K docs)', Modalities.IMAGE),
-    ...,
-]
+# example_datasources = [
+#     DocarrayURLDatasource('bird-species', '🦆 birds (≈12K docs)', Modalities.IMAGE),
+#     ...,
+# ]

@@ -71,5 +71,5 @@ class ImageToText(JinaNOWApp):
                     user_config.quality
                 ][1]
             },
-            indexer_uses='DocarrayIndexer',
+            indexer_uses='DocarrayIndexerV2',
         )

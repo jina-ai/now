@@ -2,22 +2,20 @@ jtype: Flow
 with:
   name: nowapi
   port_expose: 8080
+  prefetch: 10
   cors: True
 jcloud:
-  version: 3.4.11
+  version: 3.6.6
 executors:
   - name: encoder_music
     uses: ${{ ENV.ENCODER_NAME }}
     jcloud:
-      capacity: on-demand
       resources:
         memory: 8G
     env:
       JINA_LOG_LEVEL: DEBUG
   - name: linear_head
     uses: ${{ ENV.LINEAR_HEAD_NAME }}
-    jcloud:
-      capacity: on-demand
     uses_with:
       finetune_layer_size: ${{ ENV.FINETUNE_LAYER_SIZE }}
       pre_trained_embedding_size: ${{ ENV.PRE_TRAINED_EMBEDDINGS_SIZE }}

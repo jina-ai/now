@@ -7,6 +7,7 @@
 
 
 
+
 <a name=release-note-0-0-7></a>
 ## Release Note (`0.0.7`)
 
@@ -296,4 +297,27 @@
 ### 🍹 Other Improvements
 
  - [[```2177b9f8```](https://github.com/jina-ai/now/commit/2177b9f84d8e2a1b26c6dfaf377476bda8a635eb)] __-__ __version__: the next version will be 0.0.13 (*Jina Dev Bot*)
+
+<a name=release-note-0-0-14></a>
+## Release Note (`0.0.14`)
+
+> Release time: 2022-06-23 12:45:01
+
+
+
+🙇 We'd like to thank all contributors for this new release! In particular,
+ Mohammad Kalim Akram,  Florian Hönicke,  Jina Dev Bot,  🙇
+
+
+### 🐞 Bug fixes
+
+ - [[```aefc30a9```](https://github.com/jina-ai/now/commit/aefc30a900159809a6c42e38f6eb8a97a0fbce6c)] __-__ update version (#276) (*Mohammad Kalim Akram*)
+
+### 🏁 Unit Test and CICD
+
+ - [[```878e26c6```](https://github.com/jina-ai/now/commit/878e26c607bf835e75a3f453a028b8bd55b39c26)] __-__ balance (#275) (*Florian Hönicke*)
+
+### 🍹 Other Improvements
+
+ - [[```02311a24```](https://github.com/jina-ai/now/commit/02311a24f0056541deb7d40300e60f7f3e1a11b6)] __-__ __version__: the next version will be 0.0.14 (*Jina Dev Bot*)
 

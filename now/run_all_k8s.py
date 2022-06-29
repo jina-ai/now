@@ -150,15 +150,23 @@ def start_now(os_type, arch, contexts, active_context, **kwargs):
     print()
     print(f'BFF docs are accessible at:\n{bff_url}')
     print(f'Playground is accessible at:\n{playground_url}')
+    return {
+        'bff': bff_url,
+        'playground': playground_url,
+        'input_modality': app_instance.input_modality,
+        'output_modality': app_instance.output_modality,
+        'host': gateway_host_internal,
+        'port': gateway_port_internal,
+    }
 
 
 def run_k8s(os_type: str = 'linux', arch: str = 'x86_64', **kwargs):
     contexts, active_context = get_system_state(**kwargs)
     task = get_task(kwargs)
     if task == 'start':
-        start_now(os_type, arch, contexts, active_context, **kwargs)
+        return start_now(os_type, arch, contexts, active_context, **kwargs)
     elif task == 'stop':
-        stop_now(contexts, active_context, **kwargs)
+        return stop_now(contexts, active_context, **kwargs)
     elif task == 'survey':
         import webbrowser
 

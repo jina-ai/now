@@ -2,14 +2,14 @@ jtype: Flow
 with:
   name: nowapi
   port_expose: 8080
+  prefetch: 10
   cors: True
 jcloud:
-  version: 3.4.11
+  version: 3.6.6
 executors:
   - name: encoder_clip
     uses: ${{ ENV.ENCODER_NAME }}
     jcloud:
-      capacity: on-demand
       resources:
         memory: 8G
     uses_with:
