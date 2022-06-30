@@ -1,6 +1,6 @@
 from now.utils import BetterEnum
 
-DOCKER_BFF_PLAYGROUND_TAG = '0.0.73-feat-tracking'
+DOCKER_BFF_PLAYGROUND_TAG = '0.0.74'
 
 
 class Modalities(BetterEnum):
@@ -16,6 +16,7 @@ class Apps(BetterEnum):
     IMAGE_TO_TEXT = 'image_to_text'
     IMAGE_TO_IMAGE = 'image_to_image'
     MUSIC_TO_MUSIC = 'music_to_music'
+    TEXT_TO_VIDEO = 'text_to_video'
 
 
 class DatasetTypes(BetterEnum):
