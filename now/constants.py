@@ -7,6 +7,7 @@ class Modalities(BetterEnum):
     TEXT = 'text'
     IMAGE = 'image'
     MUSIC = 'music'
+    VIDEO = 'video'
 
 
 class Apps(BetterEnum):
@@ -83,8 +84,8 @@ AVAILABLE_DATASET = {
         (DemoDatasets.INDIE_LYRICS, '🎤 indie lyrics (200K docs)'),
         (DemoDatasets.METAL_LYRICS, '🎤 metal lyrics (200K docs)'),
     ],
+    Modalities.VIDEO: [],
 }
-
 
 JC_SECRET = '~/.cache/jina-now/wolf.json'
 
