@@ -35,7 +35,7 @@ def finetune_flow_setup(
     )
     if finetune_settings.perform_finetuning:
         print(f'🔧 Perform finetuning!')
-        finetune_settings.finetuned_model_name = finetune_now(
+        finetune_settings.finetuned_model_artifact = finetune_now(
             user_input,
             dataset,
             finetune_settings,
@@ -101,7 +101,6 @@ def get_custom_env_file(
 ):
     indexer_name = f'jinahub+docker://' + indexer_uses
     encoder_name = f'jinahub+docker://' + encoder_uses
-    linear_head_name = f'jinahub+docker://{finetune_settings.finetuned_model_name}'
 
     if finetune_settings.bi_modal:
         pre_trained_embedding_size = finetune_settings.pre_trained_embedding_size * 2
@@ -118,6 +117,6 @@ def get_custom_env_file(
             "pretrained_model_name_or_path"
         ]
     if finetune_settings.perform_finetuning:
-        config['LINEAR_HEAD_NAME'] = linear_head_name
+        config['FINETUNE_ARTIFACT'] = finetune_settings.finetuned_model_artifact
 
     return config

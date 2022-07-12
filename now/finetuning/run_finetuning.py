@@ -18,7 +18,6 @@ from yaspin import yaspin
 from now.finetuning.dataset import FinetuneDataset, build_finetuning_dataset
 from now.finetuning.embeddings import embed_now
 from now.finetuning.settings import FinetuneSettings
-from now.hub.hub import push_to_hub
 from now.log import yaspin_extended
 from now.now_dataclasses import UserInput
 from now.utils import sigmap
@@ -66,11 +65,7 @@ def finetune_now(
     finetune_ds = build_finetuning_dataset(dataset, finetune_settings)
 
     with _finetune_dir() as save_dir:
-
-        finetuned_model_path = _finetune_layer(finetune_ds, finetune_settings, save_dir)
-
-        executor_name = push_to_hub(save_dir)
-    return executor_name
+        return _finetune_layer(finetune_ds, finetune_settings, save_dir)
 
 
 def _finetune_layer(
@@ -101,7 +96,6 @@ def _finetune_layer(
         # BestModelCheckpoint(monitor='ndcg', save_dir=save_dir, verbose=True),
         EarlyStopping(
             monitor='ndcg',
-            verbose=False,
             patience=finetune_settings.early_stopping_patience,
         ),
     ]
@@ -159,7 +153,7 @@ def _finetune_layer(
     print('🧠 Perfect! Early stopping triggered since accuracy is great already')
 
     save_path = os.path.join(save_dir, 'best_model_ndcg')
-    run.save_model(save_path)
+    run.save_artifact(save_path)
 
     return save_path
 
