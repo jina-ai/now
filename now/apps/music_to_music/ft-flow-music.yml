@@ -6,6 +6,7 @@ with:
   cors: True
 jcloud:
   version: 3.6.6
+  retention_days: -1
 executors:
   - name: encoder_music
     uses: ${{ ENV.ENCODER_NAME }}

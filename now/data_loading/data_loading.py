@@ -34,7 +34,7 @@ def load_data(output_modality, user_input: UserInput) -> DocumentArray:
     if user_input.is_custom_dataset:
         if user_input.custom_dataset_type == DatasetTypes.DOCARRAY:
             print('⬇  Pull DocArray dataset')
-            da = _pull_docarray(user_input.dataset_secret)
+            da = _pull_docarray(user_input.dataset_name)
         elif user_input.custom_dataset_type == DatasetTypes.URL:
             print('⬇  Pull DocArray dataset')
             da = _fetch_da_from_url(user_input.dataset_url)
@@ -75,9 +75,9 @@ def _fetch_da_from_url(
     return da
 
 
-def _pull_docarray(dataset_secret: str):
+def _pull_docarray(dataset_name: str):
     try:
-        return DocumentArray.pull(name=dataset_secret, show_progress=True)
+        return DocumentArray.pull(name=dataset_name, show_progress=True)
     except Exception:
         print(
             '💔 oh no, the secret of your docarray is wrong, or it was deleted after 14 days'

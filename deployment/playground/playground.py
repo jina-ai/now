@@ -360,15 +360,23 @@ def deploy_streamlit():
                     body=body,
                     unsafe_allow_html=True,
                 )
+
             elif OUTPUT_MODALITY == 'music':
                 display_song(c, match)
 
-            elif match.uri is not None:
+            elif OUTPUT_MODALITY in ('image', 'video'):
                 if match.blob != b'':
                     match.convert_blob_to_datauri()
-                if match.tensor is not None:
+                elif match.tensor is not None:
                     match.convert_image_tensor_to_uri()
-                c.image(match.convert_blob_to_datauri().uri)
+                elif match.uri != '':
+                    match.convert_uri_to_datauri()
+
+                if match.uri != '':
+                    c.image(match.uri)
+            else:
+                raise ValueError(f'{OUTPUT_MODALITY} not handled')
+
         st.markdown("""---""")
         st.session_state.min_confidence = st.slider(
             'Confidence threshold',

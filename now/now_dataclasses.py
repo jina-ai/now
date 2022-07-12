@@ -14,7 +14,7 @@ class UserInput:
     is_custom_dataset: Optional[bool] = None
 
     custom_dataset_type: Optional[DatasetTypes] = None
-    dataset_secret: Optional[str] = None
+    dataset_name: Optional[str] = None
     dataset_url: Optional[str] = None
     dataset_path: Optional[str] = None
 

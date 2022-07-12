@@ -227,6 +227,28 @@
         </aside>
 
     </div>
+    <qa-bot
+        token="lXJjgkFi_QYX8jJYul0J6y8DuBMKry8N4lwH7SIR5BNN6CgM9FwC6w=="
+        theme="infer"
+        target="_self"
+        orientation="bottom-right"
+        title="Jina Now"
+        description="Bring your search case into the cloud in minutes."
+        show-tip>
+         <template>
+          <dl>
+           <dt>You can ask questions about our docs. Try:</dt>
+           <dd>What is Jina NOW?</dd>
+           <dd>How to install NOW?</dd>
+           <dd>What apps are supported?</dd>
+          </dl>
+         </template>
+         <template slot="texts">
+           <span for="tip">Hi there 👋
+        Ask our docs!</span>
+           <span for="unknownAnswerText">😵‍💫 I'm sorry but I don't know the answer.</span>
+         </template>
+    </qa-bot>
 </div>
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=cc97e3c2-cdb1-4e56-9cc9-ecde64264681" />
 {%- endblock %}

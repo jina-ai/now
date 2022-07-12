@@ -53,7 +53,7 @@ def test_da_pull(da: DocumentArray):
     user_input = UserInput()
     user_input.is_custom_dataset = True
     user_input.custom_dataset_type = DatasetTypes.DOCARRAY
-    user_input.dataset_secret = 'secret-token'
+    user_input.dataset_name = 'secret-token'
 
     loaded_da = load_data('', user_input)
 

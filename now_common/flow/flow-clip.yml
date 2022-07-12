@@ -1,11 +1,13 @@
 jtype: Flow
 with:
   name: nowapi
+  monitoring: true
   port_expose: 8080
   prefetch: 10
   cors: True
 jcloud:
   version: 3.6.6
+  retention_days: -1
 executors:
   - name: encoder_clip
     uses: ${{ ENV.ENCODER_NAME }}

@@ -40,11 +40,11 @@ jobs:
       - name: Test
         id: test
         run: pytest --suppress-no-test-exit-code -v -s -m "not gpu" --splits 6 --group ${{ matrix.group }} tests/
-        timeout-minutes: 25
+        timeout-minutes: 30
       - name: Setup tmate session for debugging
         if: ${{ failure() }}
         uses: mxschmitt/action-tmate@v3
-        timeout-minutes: 120
+        timeout-minutes: 60
 
   prerelease:
     runs-on: ubuntu-latest

@@ -8,6 +8,9 @@
 
 
 
+
+
+
 <a name=release-note-0-0-7></a>
 ## Release Note (`0.0.7`)
 
@@ -320,4 +323,85 @@
 ### 🍹 Other Improvements
 
  - [[```02311a24```](https://github.com/jina-ai/now/commit/02311a24f0056541deb7d40300e60f7f3e1a11b6)] __-__ __version__: the next version will be 0.0.14 (*Jina Dev Bot*)
+
+<a name=release-note-0-0-15></a>
+## Release Note (`0.0.15`)
+
+> Release time: 2022-06-30 12:18:41
+
+
+
+🙇 We'd like to thank all contributors for this new release! In particular,
+ joschkabraun,  Florian Hönicke,  Florian Hönicke,  Sebastian Lettner,  Jina Dev Bot,  🙇
+
+
+### 🆕 New Features
+
+ - [[```366134e3```](https://github.com/jina-ai/now/commit/366134e3792d602614fa8b082fe60265b61bbbd8)] __-__ add tracking (#268) (*joschkabraun*)
+ - [[```a517c662```](https://github.com/jina-ai/now/commit/a517c662b4ce97638c2111cf7a0513ff41269056)] __-__ bump jina version (#281) (*Florian Hönicke*)
+ - [[```a3a55b63```](https://github.com/jina-ai/now/commit/a3a55b63828700b2ba11c6a54aedf09eb7706e2c)] __-__ use msmarco-distilbert-base-v4 for text-to-text search (#271) (*joschkabraun*)
+ - [[```f2a97c4b```](https://github.com/jina-ai/now/commit/f2a97c4b175aeb2411e39086dd9738ea9c5870e5)] __-__ log version (#279) (*Florian Hönicke*)
+ - [[```16edb976```](https://github.com/jina-ai/now/commit/16edb9760fb61996a6e2a2bb90f62bd673998752)] __-__ return value for deployment (#270) (*Florian Hönicke*)
+ - [[```3fc9064a```](https://github.com/jina-ai/now/commit/3fc9064a3c260a537ad2705e12ed853ab7d74b26)] __-__ __datasource__: add demo datasets to apps (#273) (*Sebastian Lettner*)
+
+### 🐞 Bug fixes
+
+ - [[```b63ddb4a```](https://github.com/jina-ai/now/commit/b63ddb4a803a40ada7d539035128f7c77e4bb088)] __-__ spinner (*Florian Hönicke*)
+ - [[```1f8cd409```](https://github.com/jina-ai/now/commit/1f8cd409728e77ecda420783392f4cd64bc48029)] __-__ setup returns empty dict (#285) (*Florian Hönicke*)
+ - [[```7852e5f8```](https://github.com/jina-ai/now/commit/7852e5f87b99d1887e6466ee8adbf4dc3ef61f1c)] __-__ progress bar (#287) (*Florian Hönicke*)
+
+### 🧼 Code Refactoring
+
+ - [[```8273a0a1```](https://github.com/jina-ai/now/commit/8273a0a1f667aebf3f5790a28e5c8dea47455871)] __-__ no on demand (#282) (*Florian Hönicke*)
+
+### 🏁 Unit Test and CICD
+
+ - [[```d9b4cd2b```](https://github.com/jina-ai/now/commit/d9b4cd2b52e722ba9a31607f7f32ebb8ca84df08)] __-__ jcloud debug (#284) (*Florian Hönicke*)
+
+### 🍹 Other Improvements
+
+ - [[```0f76cc72```](https://github.com/jina-ai/now/commit/0f76cc729a8ad31c07f16b07d88629c1950f3fed)] __-__ Feat video search (#286) (*Florian Hönicke*)
+ - [[```bafa1077```](https://github.com/jina-ai/now/commit/bafa10770dbd7b393c143718df265b1d5a6a735e)] __-__ __version__: the next version will be 0.0.15 (*Jina Dev Bot*)
+
+<a name=release-note-0-0-16></a>
+## Release Note (`0.0.16`)
+
+> Release time: 2022-06-30 17:17:00
+
+
+
+🙇 We'd like to thank all contributors for this new release! In particular,
+ Sebastian Lettner,  Jina Dev Bot,  🙇
+
+
+### 🍹 Other Improvements
+
+ - [[```b35d903e```](https://github.com/jina-ai/now/commit/b35d903e68e086d629bdd84826db2353895c1c1c)] __-__ update and release music (#291) (*Sebastian Lettner*)
+ - [[```98d1ec05```](https://github.com/jina-ai/now/commit/98d1ec052fd5c6b4216c606faf3d852850e3ed16)] __-__ __version__: the next version will be 0.0.16 (*Jina Dev Bot*)
+
+<a name=release-note-0-0-17></a>
+## Release Note (`0.0.17`)
+
+> Release time: 2022-07-07 08:01:34
+
+
+
+🙇 We'd like to thank all contributors for this new release! In particular,
+ Mohammad Kalim Akram,  Zac Li,  Florian Hönicke,  Winston Wong,  Jina Dev Bot,  🙇
+
+
+### 🆕 New Features
+
+ - [[```1a688490```](https://github.com/jina-ai/now/commit/1a688490eb654dc5a423b0c858417c1ad15b234a)] __-__ enable monitoring for flow-clip (#297) (*Zac Li*)
+ - [[```e79e1671```](https://github.com/jina-ai/now/commit/e79e16716c13672dc4b54ac0896355ea3bd07422)] __-__ __docs__: add qabot to jina now docs (#292) (*Winston Wong*)
+
+### 🐞 Bug fixes
+
+ - [[```bf0fe0c0```](https://github.com/jina-ai/now/commit/bf0fe0c0474442e1f1edc66e31d72c5fd2d06b7c)] __-__ the uri loading (#298) (*Mohammad Kalim Akram*)
+ - [[```a85bfff5```](https://github.com/jina-ai/now/commit/a85bfff5e446bb473c6b9ebd76ddc4023dbf6373)] __-__ reduce request_size (#290) (*Florian Hönicke*)
+
+### 🍹 Other Improvements
+
+ - [[```f8c20e7a```](https://github.com/jina-ai/now/commit/f8c20e7a74ebc443216b058f06210eef637479b6)] __-__ Fix update flow retention (#296) (*Mohammad Kalim Akram*)
+ - [[```ca5d84e2```](https://github.com/jina-ai/now/commit/ca5d84e21d38dd0a16bfcbf6384dbdebf7d83eb1)] __-__ __version__: the next version will be 0.0.17 (*Jina Dev Bot*)
 

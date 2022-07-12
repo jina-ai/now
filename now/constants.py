@@ -1,8 +1,7 @@
 from now.utils import BetterEnum
 
-
 DEMO_DATASET_DOCARRAY_VERSION = '0.13.17'
-DOCKER_BFF_PLAYGROUND_TAG = '0.0.73'
+DOCKER_BFF_PLAYGROUND_TAG = '0.0.76-finetuner-client'
 
 
 class Modalities(BetterEnum):
@@ -89,7 +88,6 @@ AVAILABLE_DATASET = {
     ],
     Modalities.VIDEO: [],
 }
-
 
 JC_SECRET = '~/.cache/jina-now/wolf.json'
 

@@ -95,7 +95,6 @@ def _configure_app(user_input: UserInput, **kwargs) -> None:
             {
                 'name': '🥁 ▶ 🥁 music to music search',
                 'value': Apps.MUSIC_TO_MUSIC,
-                'disabled': AVAILABLE_SOON,
             },
         ],
         prompt_message='What sort of search engine would you like to build?',
@@ -136,7 +135,7 @@ def _parse_custom_data_from_cli(user_input: UserInput):
         user_input.dataset_url = data
     else:
         user_input.custom_dataset_type = DatasetTypes.DOCARRAY
-        user_input.dataset_secret = data
+        user_input.dataset_name = data
 
 
 def _configure_custom_dataset(user_input: UserInput, **kwargs) -> None:
@@ -146,31 +145,30 @@ def _configure_custom_dataset(user_input: UserInput, **kwargs) -> None:
         prompt_message='How do you want to provide input? (format: https://docarray.jina.ai/)',
         choices=[
             {
-                'name': 'docarray.pull id (recommended)',
+                'name': 'DocArray name (recommended)',
                 'value': DatasetTypes.DOCARRAY,
             },
             {
-                'name': 'docarray URL',
+                'name': 'DocArray URL',
                 'value': DatasetTypes.URL,
             },
             {
-                'name': 'local path',
+                'name': 'Local path',
                 'value': DatasetTypes.PATH,
             },
         ],
         **kwargs,
     )
     if user_input.custom_dataset_type == DatasetTypes.DOCARRAY:
-        user_input.dataset_secret = _prompt_value(
-            name='dataset_secret',
-            prompt_message='Please enter your DocArray secret.',
-            prompt_type='password',
+        user_input.dataset_name = _prompt_value(
+            name='dataset_name',
+            prompt_message='Please enter your DocArray name.',
         )
 
     elif user_input.custom_dataset_type == DatasetTypes.URL:
         user_input.dataset_url = _prompt_value(
             name='dataset_url',
-            prompt_message='Please paste in the URL for your DocArray.',
+            prompt_message='Please paste in the URL to download your DocArray from.',
             prompt_type='input',
         )
 
