@@ -35,7 +35,7 @@ def finetune_flow_setup(
     )
     if finetune_settings.perform_finetuning:
         print(f'🔧 Perform finetuning!')
-        finetune_settings.finetuned_model_artifact = finetune_now(
+        artifact_id, token = finetune_now(
             user_input,
             dataset,
             finetune_settings,
@@ -44,6 +44,8 @@ def finetune_flow_setup(
             encoder_uses,
             encoder_uses_with,
         )
+        finetune_settings.finetuned_model_artifact = artifact_id
+        finetune_settings.token = token
 
     finetuning = finetune_settings.perform_finetuning
 
@@ -118,5 +120,6 @@ def get_custom_env_file(
         ]
     if finetune_settings.perform_finetuning:
         config['FINETUNE_ARTIFACT'] = finetune_settings.finetuned_model_artifact
+        config['JINA_TOKEN'] = finetune_settings.token
 
     return config

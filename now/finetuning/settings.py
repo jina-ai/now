@@ -49,6 +49,7 @@ class FinetuneSettings:
     pre_trained_embedding_size: int
     bi_modal: bool  # atm, bi-modal means text and some blob value
     finetuned_model_artifact: Optional[str] = None
+    token: Optional[str] = None
 
     hidden_sizes: Tuple[int] = DEFAULT_HIDDEN_SIZES
     batch_size: int = DEFAULT_BATCH_SIZE

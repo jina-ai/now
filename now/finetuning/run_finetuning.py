@@ -7,7 +7,7 @@ import tempfile
 from contextlib import contextmanager
 from os.path import join as osp
 from time import sleep
-from typing import Dict
+from typing import Dict, Tuple
 
 import finetuner
 import numpy as np
@@ -33,7 +33,7 @@ def finetune_now(
     kubectl_path: str,
     encoder_uses: str,
     encoder_uses_with: Dict,
-):
+) -> Tuple[str, str]:
     """
     Performs the finetuning procedure:
      1. If embeddings are not present -> compute them using a k8s deployed flow
@@ -48,7 +48,7 @@ def finetune_now(
     :param finetune_settings: Mainly parameter configuration for the finetuner.fit
     :param kubectl_path: Path to the kubectl binary on the system
 
-    :return: Path to the tuned model.
+    :return: artifact of finetuned model and token required for FinetunerExecutor
     """
     if pre_trained_head_map is not None and user_input.data in pre_trained_head_map:
         print(f'⚡️ Using cached hub model for speed')
@@ -72,7 +72,7 @@ def _finetune_layer(
     finetune_ds: FinetuneDataset,
     finetune_settings: FinetuneSettings,
     save_dir: str,
-) -> str:
+) -> Tuple[str, str]:
     assert all([d.embedding is not None for d in finetune_ds.index])
 
     save_dir = os.path.join(save_dir, 'now', 'hub', 'head_encoder')
@@ -152,10 +152,14 @@ def _finetune_layer(
 
     print('🧠 Perfect! Early stopping triggered since accuracy is great already')
 
-    save_path = os.path.join(save_dir, 'best_model_ndcg')
-    run.save_artifact(save_path)
+    # save_path = os.path.join(save_dir, 'best_model_ndcg')
+    # run.save_artifact(save_path)
 
-    return save_path
+    # finetune_artifact = run._client.get_run(experiment_name=experiment_name, run_name=run_name)['artifact_id']
+    finetune_artifact = run.artifact_id
+    token = finetuner.get_token()
+
+    return finetune_artifact, token
 
 
 @contextmanager

@@ -21,6 +21,9 @@ executors:
     uses: jinahub+docker://FinetunerExecutor
     uses_with:
       artifact: ${{ ENV.FINETUNE_ARTIFACT }}
+      token: ${{ ENV.JINA_TOKEN }}
+    uses_requests:
+      /index: encode
 #      finetune_layer_size: ${{ ENV.FINETUNE_LAYER_SIZE }}
 #      pre_trained_embedding_size: ${{ ENV.PRE_TRAINED_EMBEDDINGS_SIZE }}
     env:
