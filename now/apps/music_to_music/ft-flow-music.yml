@@ -15,6 +15,10 @@ executors:
         memory: 8G
     env:
       JINA_LOG_LEVEL: DEBUG
+  - name: cast_convert
+    uses: jinahub+docker://CastNMoveNowExecutor/v0.0.1'
+    uses_with:
+      output_size: ${{ ENV.PRE_TRAINED_EMBEDDINGS_SIZE }}
   - name: linear_head
     uses: jinahub+docker://FinetunerExecutor
     uses_with:
