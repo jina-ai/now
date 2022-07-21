@@ -164,5 +164,7 @@ def test_backend(
         json=request_body,
     )
 
-    assert response.status_code == 200
+    assert (
+        response.status_code == 200
+    ), f"Received code {response.status_code} with text: {response.text}"
     assert len(response.json()) == 9

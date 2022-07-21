@@ -15,13 +15,13 @@ class HubbleAuthPatch:
 
     @staticmethod
     def get_auth_token() -> str:
-        token = os.environ.get('HUBBLE_AUTH_TOKEN')
-        log.debug(f'Found token in env *** (Len={len(token)})')
+        token = os.environ.get('WOLF_TOKEN')
         if token:
+            log.debug(f'Found token in env *** (Len={len(token)})')
             return token
         else:
             raise RuntimeError(
-                'Hubble token not found in environment under key `HUBBLE_AUTH_TOKEN`'
+                'WOLF token not found in environment under key `WOLF_TOKEN`'
             )
 
 
