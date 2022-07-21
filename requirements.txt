@@ -1,3 +1,4 @@
+finetuner==0.5.1
 pyfiglet==0.8.post1
 jina[perf]==3.6.6
 cowsay==4.0
