@@ -103,7 +103,6 @@ def _finetune_layer(
         experiment_name = 'now-ci-finetuning-' + _get_random_string(8)
     else:
         experiment_name = 'now-finetuning-' + _get_random_string(8)
-    run_name = _get_random_string(12)
     print(f'🧪 Creating finetune experiment ({experiment_name})')
     finetuner.create_experiment(experiment_name)
 
@@ -117,9 +116,9 @@ def _finetune_layer(
         },
         train_data=finetune_ds.train,
         experiment_name=experiment_name,
-        run_name=run_name,
         eval_data=finetune_ds.val,
         callbacks=callbacks,
+        learning_rate=finetune_settings.learning_rate,
     )
 
     run_failed = False
