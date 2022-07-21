@@ -10,7 +10,6 @@ import finetuner
 import numpy as np
 from docarray import DocumentArray
 from finetuner.callback import EarlyStopping, EvaluationCallback
-from yaspin import yaspin
 
 from now.finetuning.dataset import FinetuneDataset, build_finetuning_dataset
 from now.finetuning.embeddings import embed_now
@@ -114,7 +113,7 @@ def _finetune_layer(
     )
 
     run_failed = False
-    with yaspin(
+    with yaspin_extended(
         sigmap=sigmap, text='Waiting for finetune job to be assigned', color='green'
     ) as spinner:
         while run.status()['status'] == 'CREATED' and not run_failed:
@@ -127,7 +126,9 @@ def _finetune_layer(
         else:
             spinner.ok('👍')
 
-    with yaspin(sigmap=sigmap, text='Running finetune job', color='green') as spinner:
+    with yaspin_extended(
+        sigmap=sigmap, text='Running finetune job', color='green'
+    ) as spinner:
         while run.status()['status'] == 'STARTED' and not run_failed:
             run_failed = run.status()['status'] == 'FAILED'
             sleep(1)
