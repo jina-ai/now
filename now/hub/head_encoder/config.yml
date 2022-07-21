@@ -1,4 +1,0 @@
-jtype: FineTunedLinearHeadEncoderV4
-metas:
-  py_modules:
-    - head_encoder.py

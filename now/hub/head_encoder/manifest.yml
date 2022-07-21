@@ -1,5 +1,0 @@
-manifest_version: 1
-name: FineTunedLinearHeadEncoderV4
-description: Finetuned version
-url: https://github.com/jina-ai/executor-image-clip-encoder
-keywords: [clip, image, crossmodal, encoder, PyTorch, en]
