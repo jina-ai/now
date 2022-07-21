@@ -99,7 +99,10 @@ def _finetune_layer(
             patience=finetune_settings.early_stopping_patience,
         ),
     ]
-    experiment_name = 'now-finetuning-' + _get_random_string(8)
+    if 'NOW_CI_RUN' in os.environ:
+        experiment_name = 'now-ci-finetuning-' + _get_random_string(8)
+    else:
+        experiment_name = 'now-finetuning-' + _get_random_string(8)
     run_name = _get_random_string(12)
     print(f'🧪 Creating finetune experiment ({experiment_name})')
     finetuner.create_experiment(experiment_name)
