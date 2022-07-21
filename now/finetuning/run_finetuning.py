@@ -3,7 +3,6 @@ import os
 import random
 import string
 import sys
-from contextlib import contextmanager
 from time import sleep
 from typing import Dict, Tuple
 
@@ -153,7 +152,6 @@ def _finetune_layer(
     return finetune_artifact, token
 
 
-@contextmanager
 def _maybe_add_embeddings(
     encoder_uses: str,
     encoder_uses_with: Dict,

@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 from docarray import Document, DocumentArray
 
@@ -8,8 +9,18 @@ from now.finetuning.settings import FinetuneSettings
 @pytest.fixture()
 def docs() -> DocumentArray:
     return DocumentArray(
-        [Document(text='hello') for _ in range(5)]
-        + [Document(text='world') for _ in range(5)]
+        [
+            Document(
+                text='hello', embedding=np.array([0, 1]), tags={'finetuner_label': 0}
+            )
+            for _ in range(5)
+        ]
+        + [
+            Document(
+                text='world', embedding=np.array([1, 0]), tags={'finetuner_label': 1}
+            )
+            for _ in range(5)
+        ]
     )
 
 
@@ -51,14 +62,3 @@ def test_create_finetuning_dataset_val_index(
 
     assert len(dataset.val) == len(dataset.val_index)
     assert len(dataset.val_query) == finetune_setting.num_val_queries
-
-
-def test_create_finetuning_dataset_deep_copy(
-    docs: DocumentArray, finetune_setting: FinetuneSettings
-):
-    dataset = build_finetuning_dataset(docs, finetune_setting)
-
-    target_id = dataset.index[0].id
-    dataset.index[target_id].text = 'changed'
-
-    assert dataset.train[target_id].text != 'changed'
