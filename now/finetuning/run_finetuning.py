@@ -3,9 +3,7 @@ import os
 import random
 import string
 import sys
-import tempfile
 from contextlib import contextmanager
-from os.path import join as osp
 from time import sleep
 from typing import Dict, Tuple
 
@@ -64,19 +62,14 @@ def finetune_now(
 
     finetune_ds = build_finetuning_dataset(dataset, finetune_settings)
 
-    with _finetune_dir() as save_dir:
-        return _finetune_layer(finetune_ds, finetune_settings, save_dir)
+    return _finetune_layer(finetune_ds, finetune_settings)
 
 
 def _finetune_layer(
     finetune_ds: FinetuneDataset,
     finetune_settings: FinetuneSettings,
-    save_dir: str,
 ) -> Tuple[str, str]:
     assert all([d.embedding is not None for d in finetune_ds.index])
-
-    save_dir = os.path.join(save_dir, 'now', 'hub', 'head_encoder')
-    os.makedirs(save_dir, exist_ok=True)
 
     print('💪 fine-tuning:')
     input_size = (
@@ -154,10 +147,6 @@ def _finetune_layer(
 
     print('🧠 Perfect! Early stopping triggered since accuracy is great already')
 
-    # save_path = os.path.join(save_dir, 'best_model_ndcg')
-    # run.save_artifact(save_path)
-
-    # finetune_artifact = run._client.get_run(experiment_name=experiment_name, run_name=run_name)['artifact_id']
     finetune_artifact = run.artifact_id
     token = finetuner.get_token()
 
@@ -165,13 +154,6 @@ def _finetune_layer(
 
 
 @contextmanager
-def _finetune_dir() -> str:
-    with tempfile.TemporaryDirectory() as tmpdir:
-        full_save_path = osp(tmpdir, _BASE_SAVE_DIR)
-        os.makedirs(full_save_path, exist_ok=True)
-        yield full_save_path
-
-
 def _maybe_add_embeddings(
     encoder_uses: str,
     encoder_uses_with: Dict,
