@@ -28,6 +28,7 @@ executors:
       token: ${{ ENV.JINA_TOKEN }}
     uses_requests:
       /index: encode
+      /search: encode
     output_array_type: numpy
     jcloud:
       resources:
