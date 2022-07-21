@@ -2,6 +2,7 @@ import abc
 import os
 from typing import Dict, List, Optional
 
+import docker
 from docarray import DocumentArray
 
 from now.constants import AVAILABLE_DATASET, Modalities, Qualities
@@ -24,7 +25,7 @@ class JinaNOWApp:
         self.set_flow_yaml()
 
     @property
-    def app(self) -> str:
+    def app_name(self) -> str:
         """
         Name of the app. Should be an enum value set in now.constants.Apps
         """
@@ -129,6 +130,30 @@ class JinaNOWApp:
         else:
             return []
 
+    @property
+    def required_docker_memory_in_gb(self) -> int:
+        """
+        Recommended memory limit for the docker client to run this app.
+        """
+        return 8
+
+    def _check_docker_mem_limit(self) -> bool:
+        mem_total = docker.from_env().info().get('MemTotal')
+        if (
+            mem_total is not None
+            and mem_total / 1e9 < self.required_docker_memory_in_gb
+        ):
+            print(
+                '🚨 Your docker container memory limit is set to ~{:.2f}GB'.format(
+                    mem_total / 1e9
+                )
+                + f' which is below the recommended limit of {self.required_docker_memory_in_gb}GB'
+                f' for the {self.app_name} app'
+            )
+            return False
+        else:
+            return True
+
     def set_app_parser(self, parser, formatter) -> None:
         """
         This parser reads from the `options` property and parses it
@@ -136,9 +161,9 @@ class JinaNOWApp:
         """
         if self.is_enabled:
             parser = parser.add_parser(
-                self.app,
+                self.app_name,
                 help=self.description,
-                description=f'Create an {self.app} app.',
+                description=f'Create an {self.app_name} app.',
                 formatter_class=formatter,
             )
             for option in self.options:
@@ -148,11 +173,16 @@ class JinaNOWApp:
                     type=str,
                 )
 
-    def check_requirements(self) -> bool:
+    def _check_requirements(self) -> bool:
         """
         Returns true if all requirements on the system are satisfied. Else False.
         """
         return True
+
+    def run_checks(self) -> bool:
+        req_check = self._check_requirements()
+        mem_check = self._check_docker_mem_limit()
+        return req_check and mem_check
 
     # TODO Remove kubectl_path. At the moment, the setup function needs kubectl because of finetuning a custom
     #  dataset with local deployment. In that case, inference is done on the k8s cluster.

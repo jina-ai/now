@@ -53,11 +53,10 @@ def configure_user_input(**kwargs) -> [JinaNOWApp, UserInput]:
     user_input = UserInput()
     _configure_app(user_input, **kwargs)
     app_instance = _construct_app(user_input.app)
-    app_instance.check_requirements()
+    app_instance.run_checks()
     _configure_app_options(app_instance, user_input, **kwargs)
     _configure_dataset(app_instance, user_input, **kwargs)
     _configure_cluster(user_input, **kwargs)
-
     return app_instance, user_input
 
 

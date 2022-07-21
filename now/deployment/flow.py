@@ -1,6 +1,8 @@
 import json
 import os.path
 import pathlib
+import random
+import sys
 from os.path import expanduser as user
 from time import sleep
 
@@ -103,6 +105,18 @@ def deploy_k8s(f, ns, tmpdir, kubectl_path):
     return gateway_host, gateway_port, gateway_host_internal, gateway_port_internal
 
 
+def estimate_request_size(index):
+    if len(index) > 30:
+        sample = random.sample(index, 30)
+    else:
+        sample = index
+    size = sum([sys.getsizeof(x.content) for x in sample]) / 30
+    max_size = 50000
+    max_request_size = 128
+    request_size = max(min(max_request_size, int(max_size / size)), 1)
+    return request_size
+
+
 @time_profiler
 def deploy_flow(
     user_input: UserInput,
@@ -157,7 +171,7 @@ def deploy_flow(
     elif app_instance.output_modality == 'text':
         index = [x for x in index if x.text != '']
     print(f'▶ indexing {len(index)} documents')
-    request_size = 4
+    request_size = estimate_request_size(index)
 
     # double check that flow is up and running - should be done by wolf/core in the future
     while True:

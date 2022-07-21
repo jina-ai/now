@@ -24,7 +24,7 @@ class TextToVideo(JinaNOWApp):
         super().__init__()
 
     @property
-    def app(self) -> str:
+    def app_name(self) -> str:
         return Apps.TEXT_TO_VIDEO
 
     @property
@@ -42,6 +42,10 @@ class TextToVideo(JinaNOWApp):
     @property
     def output_modality(self) -> Modalities:
         return Modalities.VIDEO
+
+    @property
+    def required_docker_memory_in_gb(self) -> int:
+        return 12
 
     @property
     def options(self) -> List[Dict]:

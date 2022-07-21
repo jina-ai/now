@@ -18,9 +18,9 @@ def status_wolf(flow_id):
     return loop.run_until_complete(CloudFlow(flow_id=flow_id).status)
 
 
-def list_all_wolf(flow_id):
+def list_all_wolf(status=None):
     loop = get_or_reuse_loop()
-    return loop.run_until_complete(CloudFlow().list_all())
+    return loop.run_until_complete(CloudFlow().list_all(status=status))
 
 
 def cmd(command, std_output=False, wait=True):

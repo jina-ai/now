@@ -25,7 +25,7 @@ class MusicToMusic(JinaNOWApp):
         super().__init__()
 
     @property
-    def app(self) -> str:
+    def app_name(self) -> str:
         return Apps.MUSIC_TO_MUSIC
 
     @property
@@ -43,6 +43,10 @@ class MusicToMusic(JinaNOWApp):
     @property
     def output_modality(self) -> Modalities:
         return Modalities.MUSIC
+
+    @property
+    def required_docker_memory_in_gb(self) -> int:
+        return 10
 
     def set_flow_yaml(self, **kwargs):
         flow_dir = os.path.abspath(os.path.join(__file__, '..'))
@@ -69,8 +73,8 @@ class MusicToMusic(JinaNOWApp):
             encoder_uses='BiModalMusicTextEncoderV2',
             encoder_uses_with={},
             finetune_datasets=(
-                DemoDatasets.MUSIC_GENRES_ROCK,
                 DemoDatasets.MUSIC_GENRES_MIX,
+                DemoDatasets.MUSIC_GENRES_ROCK,
             ),
             pre_trained_head_map={
                 DemoDatasets.MUSIC_GENRES_ROCK: 'FinetunedLinearHeadEncoderMusicRock',

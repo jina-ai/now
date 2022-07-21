@@ -21,7 +21,7 @@ class ImageToText(JinaNOWApp):
         super().__init__()
 
     @property
-    def app(self) -> str:
+    def app_name(self) -> str:
         return Apps.IMAGE_TO_TEXT
 
     @property
@@ -39,6 +39,10 @@ class ImageToText(JinaNOWApp):
     @property
     def output_modality(self) -> Modalities:
         return Modalities.TEXT
+
+    @property
+    def required_docker_memory_in_gb(self) -> int:
+        return 8
 
     def set_flow_yaml(self, **kwargs):
         now_package_dir = os.path.abspath(

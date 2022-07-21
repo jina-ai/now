@@ -7,7 +7,7 @@ import cowsay
 from now import run_backend, run_bff_playground
 from now.cloud_manager import setup_cluster
 from now.constants import DOCKER_BFF_PLAYGROUND_TAG, JC_SECRET, SURVEY_LINK
-from now.deployment.deployment import cmd, status_wolf, terminate_wolf
+from now.deployment.deployment import cmd, list_all_wolf, status_wolf, terminate_wolf
 from now.dialog import _get_context_names, configure_user_input, maybe_prompt_user
 from now.log import yaspin_extended
 from now.system_information import get_system_state
@@ -24,8 +24,9 @@ def stop_now(contexts, active_context, **kwargs):
     choices = _get_context_names(contexts, active_context)
     # Add remote Flow if it exists
     if os.path.exists(user(JC_SECRET)):
-        flow_details = get_remote_flow_details()
-        choices += [flow_details['gateway']]
+        alive_flows = list_all_wolf(status='ALIVE')
+        for flow_details in alive_flows:
+            choices.append(flow_details['gateway'])
     if len(choices) == 0:
         cowsay.cow('nothing to stop')
         return

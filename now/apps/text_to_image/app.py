@@ -22,7 +22,7 @@ class TextToImage(JinaNOWApp):
         super().__init__()
 
     @property
-    def app(self) -> str:
+    def app_name(self) -> str:
         return Apps.TEXT_TO_IMAGE
 
     @property

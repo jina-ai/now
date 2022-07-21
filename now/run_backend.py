@@ -6,6 +6,7 @@ from typing import Dict, Optional, Tuple
 from docarray import DocumentArray
 
 from now.apps.base.app import JinaNOWApp
+from now.constants import PREFETCH_NR
 from now.data_loading.data_loading import load_data
 from now.deployment.flow import deploy_flow
 from now.finetuning.run_finetuning import finetune_now
@@ -113,6 +114,7 @@ def get_custom_env_file(
         'FINETUNE_LAYER_SIZE': finetune_settings.finetune_layer_size,
         'PRE_TRAINED_EMBEDDINGS_SIZE': pre_trained_embedding_size,
         'INDEXER_NAME': indexer_name,
+        'PREFETCH': PREFETCH_NR,
     }
     if encoder_uses_with.get('pretrained_model_name_or_path'):
         config['PRE_TRAINED_MODEL_NAME'] = encoder_uses_with[

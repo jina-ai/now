@@ -45,6 +45,8 @@ IMAGE_MODEL_QUALITY_MAP = {
 
 CLIP_USES = 'CLIPEncoder/v0.2.1'
 
+PREFETCH_NR = 10
+
 
 class DemoDatasets:
     BEST_ARTWORKS = 'best-artworks'
