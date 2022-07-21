@@ -7,7 +7,7 @@ py-cpuinfo==8.0.0
 kubernetes==23.3.0
 prompt_toolkit==3.0.28
 protobuf==3.19.4
-docarray[common]==0.13.19
+docarray[common]==0.13.31
 docker==5.0.3
 requests==2.27.1
 pydub==0.25.1
