@@ -24,7 +24,7 @@ executors:
     env:
       JINA_LOG_LEVEL: DEBUG
   - name: linear_head
-    uses: jinahub+docker://FinetunerExecutor
+    uses: jinahub+docker://FinetunerExecutor/v0.9.2
     uses_with:
       artifact: ${{ ENV.FINETUNE_ARTIFACT }}
       token: ${{ ENV.JINA_TOKEN }}
