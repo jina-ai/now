@@ -16,7 +16,6 @@ spec:
       containers:
         - name: now-playground
           image: jinaai/now-playground:{docker_bff_playground_tag}
-#          image: jinaaitmpjoschka/now-playground:latest
           imagePullPolicy: Always
           command: ["streamlit"]
           args: ["run", "playground.py", "--server.port", "80"]
@@ -41,7 +40,6 @@ spec:
       containers:
         - name: now-bff
           image: jinaai/now-bff:{docker_bff_playground_tag}
-#          image: jinaaitmpjoschka/now-bff:latest
           imagePullPolicy: Always
           command: ['uvicorn']
           args:  ["deployment.bff.app.app:application", "--host", "0.0.0.0", "--port", "80", "--loop", "uvloop"]

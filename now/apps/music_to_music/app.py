@@ -3,12 +3,12 @@ from typing import Dict
 
 import cowsay
 from docarray import DocumentArray
+from now_common.utils import setup_clip_music_apps
 
 from now.apps.base.app import JinaNOWApp
 from now.constants import Apps, DemoDatasets, Modalities, Qualities
 from now.dataclasses import UserInput
 from now.deployment.deployment import which
-from now.run_backend import finetune_flow_setup
 
 
 class MusicToMusic(JinaNOWApp):
@@ -49,8 +49,17 @@ class MusicToMusic(JinaNOWApp):
         return 10
 
     def set_flow_yaml(self, **kwargs):
+        finetuning = kwargs.get('finetuning', False)
+        encode = kwargs.get('encode', False)
+        if finetuning and encode:
+            raise ValueError(f"Can't set finetuning={finetuning} and encode={encode}")
+
         flow_dir = os.path.abspath(os.path.join(__file__, '..'))
-        self.flow_yaml = os.path.join(flow_dir, 'ft-flow-music.yml')
+
+        if encode:
+            self.flow_yaml = os.path.join(flow_dir, 'encode-flow-music.yml')
+        else:
+            self.flow_yaml = os.path.join(flow_dir, 'ft-flow-music.yml')
 
     @property
     def pre_trained_embedding_size(self) -> Dict[Qualities, int]:
@@ -64,23 +73,25 @@ class MusicToMusic(JinaNOWApp):
             return False
         return True
 
-    def setup(self, da: DocumentArray, user_config: UserInput, kubectl_path) -> Dict:
-        return finetune_flow_setup(
-            self,
-            da,
-            user_config,
-            kubectl_path,
+    def setup(
+        self, dataset: DocumentArray, user_input: UserInput, kubectl_path
+    ) -> Dict:
+        return setup_clip_music_apps(
+            app_instance=self,
+            user_input=user_input,
+            dataset=dataset,
             encoder_uses='BiModalMusicTextEncoderV2',
             encoder_uses_with={},
-            finetune_datasets=(
-                DemoDatasets.MUSIC_GENRES_MIX,
-                DemoDatasets.MUSIC_GENRES_ROCK,
-            ),
             pre_trained_head_map={
                 DemoDatasets.MUSIC_GENRES_ROCK: 'FinetunedLinearHeadEncoderMusicRock',
                 DemoDatasets.MUSIC_GENRES_MIX: 'FineTunedLinearHeadEncoderMusicMix',
             },
             indexer_uses='MusicRecommendationIndexerV2',
+            finetune_datasets=(
+                DemoDatasets.MUSIC_GENRES_MIX,
+                DemoDatasets.MUSIC_GENRES_ROCK,
+            ),
+            kubectl_path=kubectl_path,
         )
 
 

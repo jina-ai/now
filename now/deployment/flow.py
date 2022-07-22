@@ -1,23 +1,21 @@
 import json
 import os.path
 import pathlib
-import random
-import sys
+import tempfile
 from os.path import expanduser as user
 from time import sleep
 
-from docarray import DocumentArray
+from jina import Flow
+from jina.clients import Client
 from kubernetes import client as k8s_client
 from kubernetes import config
 from yaspin.spinners import Spinners
 
-from now.apps.base.app import JinaNOWApp
 from now.cloud_manager import is_local_cluster
 from now.constants import JC_SECRET
-from now.dataclasses import UserInput
 from now.deployment.deployment import apply_replace, cmd, deploy_wolf
 from now.log import time_profiler, yaspin_extended
-from now.utils import sigmap
+from now.utils import sigmap, write_env_file
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
 
@@ -105,91 +103,57 @@ def deploy_k8s(f, ns, tmpdir, kubectl_path):
     return gateway_host, gateway_port, gateway_host_internal, gateway_port_internal
 
 
-def estimate_request_size(index):
-    if len(index) > 30:
-        sample = random.sample(index, 30)
-    else:
-        sample = index
-    size = sum([sys.getsizeof(x.content) for x in sample]) / 30
-    max_size = 50000
-    max_request_size = 128
-    request_size = max(min(max_request_size, int(max_size / size)), 1)
-    return request_size
-
-
 @time_profiler
 def deploy_flow(
-    user_input: UserInput,
-    app_instance: JinaNOWApp,
+    deployment_type: str,
+    flow_yaml: str,
     ns: str,
-    env_file: str,
-    index: DocumentArray,
-    tmpdir: str,
+    env_dict: str,
     kubectl_path: str,
 ):
-    from jina import Flow
-    from jina.clients import Client
+    with tempfile.TemporaryDirectory() as tmpdir:
+        env_file = os.path.join(tmpdir, 'dot.env')
+        write_env_file(env_file, env_dict)
 
-    if user_input.deployment_type == 'remote':
-        flow = deploy_wolf(path=app_instance.flow_yaml, env_file=env_file, name=ns)
-        host = flow.gateway
-        client = Client(host=host)
+        if deployment_type == 'remote':
+            flow = deploy_wolf(path=flow_yaml, env_file=env_file, name=ns)
+            host = flow.gateway
+            client = Client(host=host)
 
-        # Dump the flow ID and gateway to keep track
-        with open(user(JC_SECRET), 'w') as fp:
-            json.dump({'flow_id': flow.flow_id, 'gateway': host}, fp)
+            # Dump the flow ID and gateway to keep track
+            with open(user(JC_SECRET), 'w') as fp:
+                json.dump({'flow_id': flow.flow_id, 'gateway': host}, fp)
 
-        # host & port
-        gateway_host = 'remote'
-        gateway_port = None
-        gateway_host_internal = host
-        gateway_port_internal = None  # Since host contains protocol
-    else:
-        from dotenv import load_dotenv
+            # host & port
+            gateway_host = 'remote'
+            gateway_port = None
+            gateway_host_internal = host
+            gateway_port_internal = None  # Since host contains protocol
+        else:
+            from dotenv import load_dotenv
 
-        load_dotenv(env_file)
-        f = Flow.load_config(app_instance.flow_yaml)
-        (
-            gateway_host,
-            gateway_port,
-            gateway_host_internal,
-            gateway_port_internal,
-        ) = deploy_k8s(
-            f,
-            ns,
-            tmpdir,
-            kubectl_path=kubectl_path,
-        )
-        client = Client(host=gateway_host, port=gateway_port)
-
-    # delete the env file
-    if os.path.exists(env_file):
-        os.remove(env_file)
-
-    if app_instance.output_modality == 'image':
-        index = [x for x in index if x.text == '']
-    elif app_instance.output_modality == 'text':
-        index = [x for x in index if x.text != '']
-    print(f'▶ indexing {len(index)} documents')
-    request_size = estimate_request_size(index)
-
-    # double check that flow is up and running - should be done by wolf/core in the future
-    while True:
-        try:
-            client.post(
-                '/index',
-                inputs=DocumentArray(),
+            load_dotenv(env_file)
+            f = Flow.load_config(flow_yaml)
+            (
+                gateway_host,
+                gateway_port,
+                gateway_host_internal,
+                gateway_port_internal,
+            ) = deploy_k8s(
+                f,
+                ns,
+                tmpdir,
+                kubectl_path=kubectl_path,
             )
-            break
-        except Exception as e:
-            if 'NOW_CI_RUN' in os.environ:
-                import traceback
+            client = Client(host=gateway_host, port=gateway_port)
 
-                print(e)
-                print(traceback.format_exc())
-            sleep(1)
+        if os.path.exists(env_file):
+            os.remove(env_file)
 
-    client.post('/index', request_size=request_size, inputs=index, show_progress=True)
-
-    print('⭐ Success - your data is indexed')
-    return gateway_host, gateway_port, gateway_host_internal, gateway_port_internal
+    return (
+        client,
+        gateway_host,
+        gateway_port,
+        gateway_host_internal,
+        gateway_port_internal,
+    )

@@ -1,12 +1,11 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from now.constants import Apps, DatasetTypes, Modalities, Qualities
+from now.constants import Apps, DatasetTypes, Qualities
 
 
 @dataclass
 class UserInput:
-    output_modality: Optional[Modalities] = None
     app: Optional[Apps] = None
 
     # data related

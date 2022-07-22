@@ -62,7 +62,11 @@ class JinaNOWApp:
         raise NotImplementedError()
 
     def set_flow_yaml(self, **kwargs):
-        """Used to configure the flow yaml in the Jina NOW app."""
+        """Used to configure the flow yaml in the Jina NOW app.
+        The interface is as follows:
+        - if kwargs['finetuning']=True, choose finetuning flow
+        - if kwargs['encode']=True, choose encoding flow (to get embeddings for finetuning)
+        """
         flow_dir = os.path.abspath(os.path.join(__file__, '..'))
         self.flow_yaml = os.path.join(flow_dir, 'flow.yml')
 
@@ -187,7 +191,7 @@ class JinaNOWApp:
     # TODO Remove kubectl_path. At the moment, the setup function needs kubectl because of finetuning a custom
     #  dataset with local deployment. In that case, inference is done on the k8s cluster.
     def setup(
-        self, da: DocumentArray, user_config: UserInput, kubectl_path: str
+        self, dataset: DocumentArray, user_input: UserInput, kubectl_path: str
     ) -> Dict:
         """
         Runs before the flow is deployed.
@@ -196,8 +200,8 @@ class JinaNOWApp:
             - finetune a model + push the artifact
             - notify other services
             - check if starting the app is currently possible
-        :param da:
-        :param user_config: user configuration based on the given options
+        :param dataset:
+        :param user_input: user configuration based on the given options
         :return: dict used to replace variables in flow yaml and to clean up resources after the flow is terminated
         """
         return {}

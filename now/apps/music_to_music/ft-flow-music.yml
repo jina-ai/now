@@ -1,6 +1,7 @@
 jtype: Flow
 with:
   name: nowapi
+  monitoring: true
   port_expose: 8080
   prefetch: 10
   cors: True
