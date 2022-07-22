@@ -39,6 +39,5 @@ def embed_now(
         response = client.post('/index', request_size=16, inputs=x)
         result.extend(response)
 
-
-for doc in result:
-    dataset[doc.id].embedding = doc.embedding
+    for doc in result:
+        dataset[doc.id].embedding = doc.embedding
