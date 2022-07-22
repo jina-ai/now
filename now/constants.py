@@ -1,7 +1,7 @@
 from now.utils import BetterEnum
 
 DEMO_DATASET_DOCARRAY_VERSION = '0.13.17'
-DOCKER_BFF_PLAYGROUND_TAG = '0.0.76'
+DOCKER_BFF_PLAYGROUND_TAG = '0.0.82'
 
 
 class Modalities(BetterEnum):
