@@ -338,3 +338,9 @@ def to_camel_case(text):
 
 
 sigmap = {signal.SIGINT: my_handler, signal.SIGTERM: my_handler}
+
+
+def write_env_file(env_file, config):
+    config_string = '\n'.join([f'{key}={value}' for key, value in config.items()])
+    with open(env_file, 'w+') as fp:
+        fp.write(config_string)

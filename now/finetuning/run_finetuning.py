@@ -5,7 +5,7 @@ import warnings
 from contextlib import contextmanager
 from copy import deepcopy
 from os.path import join as osp
-from typing import Dict
+from typing import Dict, Optional
 
 import finetuner
 from docarray import DocumentArray
@@ -18,6 +18,7 @@ from finetuner.tuner.callback import (
 from finetuner.tuner.pytorch.losses import TripletLoss
 from finetuner.tuner.pytorch.miner import TripletEasyHardMiner
 
+from now.apps.base.app import JinaNOWApp
 from now.constants import Apps
 from now.dataclasses import UserInput
 from now.finetuning.dataset import FinetuneDataset, build_finetuning_dataset
@@ -26,22 +27,24 @@ from now.finetuning.settings import FinetuneSettings
 from now.hub.head_encoder.head_encoder import LinearHead, get_bi_modal_embedding
 from now.hub.hub import push_to_hub
 from now.improvements.improvements import show_improvement
-from now.log import yaspin_extended
+from now.log import time_profiler, yaspin_extended
 from now.utils import sigmap
 
 _BASE_SAVE_DIR = 'now/hub/head_encoder'
 
 
-def finetune_now(
-    user_input: UserInput,
-    dataset: DocumentArray,
+@time_profiler
+def maybe_finetune(
     finetune_settings: FinetuneSettings,
-    pre_trained_head_map: Dict[str, str],
+    app_instance: JinaNOWApp,
+    dataset: DocumentArray,
+    user_input: UserInput,
+    env_dict: Dict,
     kubectl_path: str,
-    encoder_uses: str,
-    encoder_uses_with: Dict,
+    pre_trained_head_map: Optional[Dict] = None,
 ):
-    """
+    """If possible, applies finetuning and updates finetune_settings.finetuned_model_name accordingly.
+
     Performs the finetuning procedure:
      1. If embeddings are not present -> compute them using a k8s deployed flow
      2. If bi-modal, prepare the embeddings by concatenating zeros for the opposing modality
@@ -50,18 +53,30 @@ def finetune_now(
     Note, for music we use cached models because the datasets are too large and consume too much time
 
     :param user_input: The configured user input object
+    :param env_dict: environment variables for flow.yml file
     :param dataset: The dataset with the finetuning labels on all documents. Embeddings are optional and can
         be computed on the fly
     :param finetune_settings: Mainly parameter configuration for the finetuner.fit
     :param kubectl_path: Path to the kubectl binary on the system
 
-    :return: Path to the tuned model.
     """
+    if not finetune_settings.perform_finetuning:
+        return
+
     if pre_trained_head_map is not None and user_input.data in pre_trained_head_map:
         print(f'⚡️ Using cached hub model for speed')
-        return pre_trained_head_map[user_input.data]
+        finetune_settings.finetuned_model_name = pre_trained_head_map[user_input.data]
+        return
+
+    print(f'🔧 Perform finetuning!')
+    app_instance.set_flow_yaml(encode=True)
+
     dataset = _maybe_add_embeddings(
-        encoder_uses, encoder_uses_with, dataset, kubectl_path
+        app_instance=app_instance,
+        user_input=user_input,
+        env_dict=env_dict,
+        dataset=dataset,
+        kubectl_path=kubectl_path,
     )
 
     dataset = dataset.shuffle(42)
@@ -72,7 +87,6 @@ def finetune_now(
     finetune_ds = build_finetuning_dataset(dataset, finetune_settings)
 
     with _finetune_dir() as save_dir:
-
         finetuned_model_path = _finetune_layer(finetune_ds, finetune_settings, save_dir)
 
         if "NOW_CI_RUN" not in os.environ and user_input.app == Apps.TEXT_TO_IMAGE:
@@ -81,9 +95,11 @@ def finetune_now(
             )
 
         executor_name = push_to_hub(save_dir)
-    return executor_name
+
+    finetune_settings.finetuned_model_name = executor_name
 
 
+@time_profiler
 def _finetune_layer(
     finetune_ds: FinetuneDataset, finetune_settings: FinetuneSettings, save_dir: str
 ) -> str:
@@ -151,8 +167,9 @@ def _finetune_dir() -> str:
 
 
 def _maybe_add_embeddings(
-    encoder_uses: str,
-    encoder_uses_with: Dict,
+    app_instance: JinaNOWApp,
+    user_input: UserInput,
+    env_dict: Dict,
     dataset: DocumentArray,
     kubectl_path: str,
 ):
@@ -165,7 +182,14 @@ def _maybe_add_embeddings(
         else:
             spinner.fail('👎')
 
-    embed_now(encoder_uses, encoder_uses_with, dataset, kubectl_path=kubectl_path)
+    app_instance.set_flow_yaml(encode=True)
+    embed_now(
+        deployment_type=user_input.deployment_type,
+        flow_yaml=app_instance.flow_yaml,
+        env_dict=env_dict,
+        dataset=dataset,
+        kubectl_path=kubectl_path,
+    )
 
     assert all([d.embedding is not None for d in dataset]), (
         "Some docs slipped through and" " still have no embedding..."

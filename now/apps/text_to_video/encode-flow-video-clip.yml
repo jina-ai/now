@@ -19,13 +19,3 @@ executors:
       traversal_paths: '@c'
     env:
       JINA_LOG_LEVEL: DEBUG
-  - name: indexer
-    uses: ${{ ENV.INDEXER_NAME }}
-    jcloud:
-      capacity: on-demand
-      resources:
-        memory: 4G
-    uses_with:
-      traversal_paths: '@c'
-    env:
-      JINA_LOG_LEVEL: DEBUG

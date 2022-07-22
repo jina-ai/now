@@ -13,11 +13,7 @@ cur_dir = pathlib.Path(__file__).parent.resolve()
 
 @time_profiler
 def run(
-    output_modality,
-    dataset,
     gateway_host,
-    gateway_host_internal,
-    gateway_port_internal,
     docker_bff_playground_tag,
     kubectl_path,
 ):
@@ -28,10 +24,6 @@ def run(
         apply_replace(
             f'{cur_dir}/deployment/k8s_playground-deployment.yml',
             {
-                'output_modality': output_modality,
-                'data': dataset,
-                'gateway_host': gateway_host_internal,
-                'gateway_port': gateway_port_internal,
                 'docker_bff_playground_tag': docker_bff_playground_tag,
             },
             kubectl_path,

@@ -3,6 +3,7 @@ from typing import Dict, List
 
 from docarray import DocumentArray
 from now_common import options
+from now_common.utils import setup_clip_music_apps
 
 from now.apps.base.app import JinaNOWApp
 from now.constants import (
@@ -14,7 +15,6 @@ from now.constants import (
     Qualities,
 )
 from now.dataclasses import UserInput
-from now.run_backend import finetune_flow_setup
 
 
 class ImageToImage(JinaNOWApp):
@@ -46,13 +46,20 @@ class ImageToImage(JinaNOWApp):
         return 8
 
     def set_flow_yaml(self, **kwargs):
+        finetuning = kwargs.get('finetuning', False)
+        encode = kwargs.get('encode', False)
+        if finetuning and encode:
+            raise ValueError(f"Can't set finetuning={finetuning} and encode={encode}")
+
         now_package_dir = os.path.abspath(
             os.path.join(__file__, '..', '..', '..', '..')
         )
         flow_dir = os.path.join(now_package_dir, 'now_common', 'flow')
-        finetuning = kwargs.get('finetuning', False)
+
         if finetuning:
             self.flow_yaml = os.path.join(flow_dir, 'ft-flow-clip.yml')
+        elif encode:
+            self.flow_yaml = os.path.join(flow_dir, 'encode-flow-clip.yml')
         else:
             self.flow_yaml = os.path.join(flow_dir, 'flow-clip.yml')
 
@@ -68,18 +75,20 @@ class ImageToImage(JinaNOWApp):
             Qualities.EXCELLENT: 768,
         }
 
-    def setup(self, da: DocumentArray, user_config: UserInput, kubectl_path) -> Dict:
-        return finetune_flow_setup(
-            self,
-            da,
-            user_config,
-            kubectl_path,
+    def setup(
+        self, dataset: DocumentArray, user_input: UserInput, kubectl_path
+    ) -> Dict:
+        return setup_clip_music_apps(
+            app_instance=self,
+            user_input=user_input,
+            dataset=dataset,
             encoder_uses=CLIP_USES,
             encoder_uses_with={
                 'pretrained_model_name_or_path': IMAGE_MODEL_QUALITY_MAP[
-                    user_config.quality
+                    user_input.quality
                 ][1]
             },
-            finetune_datasets=(DemoDatasets.DEEP_FASHION, DemoDatasets.BIRD_SPECIES),
             indexer_uses='DocarrayIndexerV2',
+            finetune_datasets=(DemoDatasets.DEEP_FASHION, DemoDatasets.BIRD_SPECIES),
+            kubectl_path=kubectl_path,
         )

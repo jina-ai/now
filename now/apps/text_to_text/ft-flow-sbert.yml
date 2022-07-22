@@ -1,0 +1,48 @@
+jtype: Flow
+with:
+  name: nowapi
+  monitoring: true
+  port_expose: 8080
+  prefetch: 10
+  cors: True
+jcloud:
+  version: 3.6.6
+  retention_days: -1
+executors:
+  - name: encoder_text
+    uses: ${{ ENV.ENCODER_NAME }}
+    jcloud:
+      resources:
+        memory: 8G
+    uses_with:
+      model_name: ${{ ENV.PRE_TRAINED_MODEL_NAME }}
+    env:
+      JINA_LOG_LEVEL: DEBUG
+  - name: cast_convert
+    uses: jinahub+docker://CastNMoveNowExecutor/v0.0.1
+    uses_with:
+      output_size: ${{ ENV.PRE_TRAINED_EMBEDDINGS_SIZE }}
+    env:
+      JINA_LOG_LEVEL: DEBUG
+  - name: linear_head
+    uses: jinahub+docker://FinetunerExecutor/v0.9.2
+    uses_with:
+      artifact: ${{ ENV.FINETUNE_ARTIFACT }}
+      token: ${{ ENV.JINA_TOKEN }}
+    uses_requests:
+      /index: encode
+      /search: encode
+    output_array_type: numpy
+    jcloud:
+      resources:
+        memory: 4G
+    env:
+      JINA_LOG_LEVEL: DEBUG
+  - name: indexer
+    uses: ${{ ENV.INDEXER_NAME }}
+    jcloud:
+      capacity: on-demand
+      resources:
+        memory: 4G
+    env:
+      JINA_LOG_LEVEL: DEBUG

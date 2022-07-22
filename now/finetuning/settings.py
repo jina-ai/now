@@ -94,7 +94,7 @@ def parse_finetune_settings(
     app_instance: JinaNOWApp,
     user_input: UserInput,
     dataset: DocumentArray,
-    finetune_datasets: Tuple,
+    finetune_datasets: Optional[Tuple] = (),
 ) -> FinetuneSettings:
     """This function parses the user input configuration into the finetune settings"""
     return FinetuneSettings(

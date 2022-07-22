@@ -1,20 +1,21 @@
 """ This module implements functionality to fine tune on the music dataset """
 import math
-import tempfile
 from typing import Dict
 
 from docarray import DocumentArray
-from jina import Client, Flow
 from tqdm import tqdm
 
-from now.deployment.flow import batch, deploy_k8s
+from now.deployment.flow import batch, deploy_flow
+from now.log import time_profiler
 
 _KS_NAMESPACE = 'embed-now'
 
 
+@time_profiler
 def embed_now(
-    encoder_uses: str,
-    encoder_uses_with: Dict,
+    deployment_type: str,
+    flow_yaml: str,
+    env_dict: Dict,
     dataset: DocumentArray,
     kubectl_path: str,
 ):
@@ -22,22 +23,21 @@ def embed_now(
         list(filter(lambda d: d.embedding is None, dataset))
     )
 
-    flow = Flow(name=_KS_NAMESPACE, port_expose=8080, prefetch=10, cors=True).add(
-        uses=encoder_uses, uses_with=encoder_uses_with
-    )
     result = DocumentArray()
-    with tempfile.TemporaryDirectory() as tmpdir:
-        gateway_host, gateway_port, _, _ = deploy_k8s(
-            flow, _KS_NAMESPACE, tmpdir, kubectl_path=kubectl_path
-        )
-        client = Client(host=gateway_host, port=gateway_port)
-        print(f'▶ create embeddings for {len(documents_without_embedding)} documents')
-        for x in tqdm(
-            batch(documents_without_embedding, 16),
-            total=math.ceil(len(documents_without_embedding) / 16),
-        ):
-            response = client.post('/index', request_size=16, inputs=x)
-            result.extend(response)
+    client, _, _, _, _, = deploy_flow(
+        deployment_type=deployment_type,
+        flow_yaml=flow_yaml,
+        ns=_KS_NAMESPACE,
+        env_dict=env_dict,
+        kubectl_path=kubectl_path,
+    )
+    print(f'▶ create embeddings for {len(documents_without_embedding)} documents')
+    for x in tqdm(
+        batch(documents_without_embedding, 16),
+        total=math.ceil(len(documents_without_embedding) / 16),
+    ):
+        response = client.post('/index', request_size=16, inputs=x)
+        result.extend(response)
 
     for doc in result:
         dataset[doc.id].embedding = doc.embedding
