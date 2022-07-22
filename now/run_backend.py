@@ -48,7 +48,7 @@ def run(app_instance: JinaNOWApp, user_input: UserInput, kubectl_path: str):
         dataset = [x for x in dataset if x.text == '']
     elif app_instance.output_modality == 'text':
         dataset = [x for x in dataset if x.text != '']
-    index_data(app_instance=app_instance, client=client, dataset=dataset)
+    index_data(client=client, dataset=dataset)
 
     return gateway_host, gateway_port, gateway_host_internal, gateway_port_internal
 
