@@ -10,11 +10,11 @@ def process_query(text: str = None, blob: str = None) -> Document:
         raise ValueError('Please pass the query to make a search')
     try:
         if text is not None:
-            query_doc = Document(text=text)
+            query_doc = Document(text=text, mime_type='text')
         else:
             base64_bytes = blob.encode('utf-8')
             message_bytes = base64.decodebytes(base64_bytes)
-            query_doc = Document(blob=message_bytes)
+            query_doc = Document(blob=message_bytes, mime_type='image')
     except BaseException as e:
         raise HTTPException(
             status_code=500,

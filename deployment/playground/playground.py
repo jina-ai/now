@@ -221,6 +221,8 @@ def render_matches(OUTPUT_MODALITY):
             match.mime_type = OUTPUT_MODALITY
 
             if OUTPUT_MODALITY == 'text':
+                if match.text == '' and match.uri != '':
+                    match.load_uri_to_text()
                 display_text = profanity.censor(match.text).replace('\n', ' ')
                 body = f"<!DOCTYPE html><html><body><blockquote>{display_text}</blockquote>"
                 if match.tags.get('additional_info'):

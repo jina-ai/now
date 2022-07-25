@@ -16,7 +16,7 @@ executors:
     env:
       JINA_LOG_LEVEL: DEBUG
   - name: cast_convert
-    uses: jinahub+docker://CastNMoveNowExecutor/v0.0.1'
+    uses: jinahub+docker://CastNMoveNowExecutor/v0.0.3
     uses_with:
       output_size: ${{ ENV.PRE_TRAINED_EMBEDDINGS_SIZE }}
     env:
