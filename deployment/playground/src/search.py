@@ -11,11 +11,12 @@ def get_query_params() -> Parameters:
     query_parameters = st.experimental_get_query_params()
     parameters = Parameters()
     for key, val in query_parameters.items():
-        setattr(
-            parameters,
-            key,
-            val[0],
-        )
+        if val is not None:
+            setattr(
+                parameters,
+                key,
+                val[0],
+            )
     return parameters
 
 

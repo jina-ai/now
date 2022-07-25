@@ -112,6 +112,7 @@ def test_backend(
     }
     # need to create local cluster and namespace to deploy playground and bff for WOLF deployment
     if deployment_type == 'remote':
+        kwargs['secured'] = False
         kind_path = _get_kind_path()
         create_local_cluster(kind_path, **kwargs)
         kubectl_path = _get_kubectl_path()

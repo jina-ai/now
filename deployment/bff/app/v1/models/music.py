@@ -1,12 +1,11 @@
-from typing import Dict, List, Optional
+from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from deployment.bff.app.v1.models.helper import (
     BaseIndexRequestModel,
-    BaseRequestModel,
-    _NamedScore,
-    _StructValueType,
+    BaseSearchRequestModel,
+    BaseSearchResponseModel,
 )
 
 
@@ -16,32 +15,18 @@ class NowMusicIndexRequestModel(BaseIndexRequestModel):
     )
 
 
-class NowMusicSearchRequestModel(BaseRequestModel):
+class NowMusicSearchRequestModel(BaseSearchRequestModel):
     song: str = Field(
         default=None,
         description='Audio data query. Audio data should be base64encoded in `utf-8` format',
     )
-    limit: int = Field(default=10, description='Number of matching results to return')
 
 
-class NowMusicResponseModel(BaseModel):
-    id: str = Field(
-        default=..., nullable=False, description='Id of the matching result.'
-    )
+class NowMusicResponseModel(BaseSearchResponseModel):
     blob: Optional[str] = Field(
         description='Matching song (base64encoded string `utf-8`) result.'
     )
     uri: Optional[str] = Field(description='Uri of the audio file.')
-    scores: Optional[Dict[str, '_NamedScore']] = Field(
-        description='Similarity score with respect to the query.'
-    )
-    tags: Optional[Dict[str, '_StructValueType']] = Field(
-        description='Additional tags associated with the file.'
-    )
-
-    class Config:
-        case_sensitive = False
-        arbitrary_types_allowed = True
 
 
 NowMusicResponseModel.update_forward_refs()

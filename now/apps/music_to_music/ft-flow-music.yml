@@ -8,6 +8,10 @@ jcloud:
   version: 3.6.6
   retention_days: -1
 executors:
+  - name: security_check
+    uses: jinahub+docker://SecurityExecutor
+    uses_with:
+      email_ids: ${{ ENV.EMAIL_IDS }}
   - name: encoder_music
     uses: ${{ ENV.ENCODER_NAME }}
     jcloud:

@@ -2,10 +2,13 @@ import base64
 import io
 import os
 from copy import deepcopy
+from urllib.parse import quote, unquote
 from urllib.request import urlopen
 
 import av
+import extra_streamlit_components as stx
 import numpy as np
+import requests
 import streamlit as st
 import streamlit.components.v1 as components
 from better_profanity import profanity
@@ -13,6 +16,7 @@ from docarray import Document, DocumentArray
 from docarray import __version__ as docarray_version
 from src.constants import (
     BUTTONS,
+    COOKIE_NAME,
     SURVEY_LINK,
     WEBRTC_CLIENT_SETTINGS,
     ds_set,
@@ -24,7 +28,12 @@ from src.search import (
     search_by_image,
     search_by_text,
 )
+from streamlit.server.server import Server
 from streamlit_webrtc import webrtc_streamer
+from tornado.httputil import parse_cookie
+
+# HEADER
+st.set_page_config(page_title="NOW", page_icon='https://jina.ai/favicon.ico')
 
 
 def convert_file_to_document(query):
@@ -38,15 +47,45 @@ def load_music_examples(DATA) -> DocumentArray:
     return load_data(ds_url)[0, 1, 4]
 
 
+@st.cache(allow_output_mutation=True, suppress_st_warning=True)
+def get_cookie_manager():
+    return stx.CookieManager()
+
+
+cookie_manager = get_cookie_manager()
+
+
+def setter_cookie(val):
+    cookie_manager.set(cookie=COOKIE_NAME, val=val)
+
+
+def _get_all_cookies() -> dict:
+    session_infos = Server.get_current()._session_info_by_id.values()
+    headers = [si.ws.request.headers for si in session_infos]
+    cookie_strings = [
+        header_str
+        for header in headers
+        for k, header_str in header.get_all()
+        if k == 'Cookie'
+    ]
+    parsed_cookies = {k: v for c in cookie_strings for k, v in parse_cookie(c).items()}
+
+    return parsed_cookies
+
+
+def get_cookie_value():
+    all_cookies = _get_all_cookies()
+    for k, v in all_cookies.items():
+        if k == COOKIE_NAME:
+            return v
+
+
 def deploy_streamlit():
     """
     We want to provide the end-to-end experience to the user.
     Please deploy a streamlit playground on k8s/local to access the api.
     You can get the starting point for the streamlit application from alex.
     """
-    # Header
-    # put this on the top so that it shows immediately, while the rest is loading
-    st.set_page_config(page_title="NOW", page_icon='https://jina.ai/favicon.ico')
     _, mid, _ = st.columns([0.8, 1, 1])
     with open('./logo.svg', 'r') as f:
         svg = f.read()
@@ -58,48 +97,83 @@ def deploy_streamlit():
 
     params = get_query_params()
 
-    da_img = None
-    da_txt = None
+    login_val = get_cookie_value()
+    login_details = unquote(login_val) if login_val else None
+    if not login_details:
+        login = True
+        code = params.code
+        state = params.state
+        if code and state:
+            resp_jwt = requests.get(
+                url=f'https://api.hubble.jina.ai/v2/rpc/user.identity.grant.auto'
+                f'?code={code}&state={state}'
+            ).json()
+            if resp_jwt and resp_jwt['code'] == 200:
+                setter_cookie(resp_jwt['data'])
+                login = False
+            else:
+                login = True
 
-    da_img, da_txt = load_example_queries(
-        params.data, params.output_modality, da_img, da_txt
-    )
-
-    if params.output_modality == 'text':
-        # censor words in text incl. in custom data
-        from better_profanity import profanity
-
-        profanity.load_censor_words()
-
-    setup_design()
-
-    if params.input_modality == 'image':
-        media_type = st.radio(
-            '',
-            ["Image", 'Webcam'],
-            on_change=clear_match,
-        )
-    elif params.input_modality == 'text':
+        if login:
+            redirect_uri = (
+                f'https://nowrun.jina.ai/?host={params.host}&input_modality={params.output_modality}'
+                f'&output_modality={params.input_modality}&data={params.data}'
+            )
+            redirect_uri = quote(redirect_uri)
+            rsp = requests.get(
+                url=f'https://api.hubble.jina.ai/v2/rpc/user.identity.authorize'
+                f'?provider=jina-login&response_mode=query&redirect_uri={redirect_uri}&scope=email%20profile%20openid'
+            ).json()
+            redirect_to = rsp['data']['redirectTo']
+            st.write('')
+            st.write('You are not Logged in. Please Login.')
+            st.markdown(
+                get_login_button(redirect_to),
+                unsafe_allow_html=True,
+            )
+    else:
+        da_img = None
+        da_txt = None
         media_type = 'Text'
 
-    elif params.input_modality == 'music':
-        media_type = 'Music'
+        da_img, da_txt = load_example_queries(
+            params.data, params.output_modality, da_img, da_txt
+        )
 
-    if media_type == "Image":
-        render_image(da_img)
+        if params.output_modality == 'text':
+            # censor words in text incl. in custom data
+            from better_profanity import profanity
 
-    elif media_type == "Text":
-        render_text(da_txt)
+            profanity.load_censor_words()
 
-    elif media_type == 'Webcam':
-        render_webcam()
+        setup_design()
 
-    elif media_type == 'Music':
-        render_music_app(params.data)
+        if params.input_modality == 'image':
+            media_type = st.radio(
+                '',
+                ["Image", 'Webcam'],
+                on_change=clear_match,
+            )
+        elif params.input_modality == 'text':
+            media_type = 'Text'
+        elif params.input_modality == 'music':
+            media_type = 'Music'
 
-    render_matches(params.output_modality)
+        if media_type == "Image":
+            render_image(da_img)
 
-    add_social_share_buttons()
+        elif media_type == "Text":
+            render_text(da_txt)
+
+        elif media_type == 'Webcam':
+            render_webcam()
+
+        elif media_type == 'Music':
+            render_music_app(params.data)
+
+        render_matches(params.output_modality)
+
+        add_social_share_buttons()
 
 
 def load_example_queries(DATA, OUTPUT_MODALITY, da_img, da_txt):
@@ -400,6 +474,35 @@ def load_data(data_path: str) -> DocumentArray:
     except Exception:
         da = DocumentArray.load_binary(data_path, compress='gzip')
     return da
+
+
+def get_login_button(url):
+    return (
+        f'<a href="{url}" target="_self" class="button">'
+        + 'Login'
+        + """<style>
+                                    .button {
+                                      margin-top: -50px;
+                                      position: relative;
+                                      overflow: hidden;
+                                      -webkit-transition: background 400ms;
+                                      transition: background 400ms;
+                                      color: #fff;
+                                      background-color: #90ee90;
+                                      padding: 0.5em 0.5rem;
+                                      font-family: 'Roboto', sans-serif;
+                                      font-size: 1.0rem;
+                                      outline: 0;
+                                      border: 0;
+                                      border-radius: 0.05rem;
+                                      -webkit-box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
+                                      box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
+                                      cursor: pointer;
+                                    }
+                                    </style>
+                                """
+        + '</a>'
+    )
 
 
 def setup_session_state():

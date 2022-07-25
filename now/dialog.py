@@ -57,6 +57,9 @@ def configure_user_input(**kwargs) -> [JinaNOWApp, UserInput]:
     _configure_app_options(app_instance, user_input, **kwargs)
     _configure_dataset(app_instance, user_input, **kwargs)
     _configure_cluster(user_input, **kwargs)
+    if _configure_security(user_input, **kwargs):
+        if _configure_additional_user(user_input, **kwargs):
+            _configure_email_ids(user_input, **kwargs)
     return app_instance, user_input
 
 
@@ -248,6 +251,42 @@ def _configure_cluster(user_input: UserInput, skip=False, **kwargs):
                 _configure_cluster(user_input, skip=True, **kwargs)
         else:
             user_input.create_new_cluster = True
+
+
+def _configure_security(user_input: UserInput, **kwargs):
+    user_input.secured = _prompt_value(
+        name='secured',
+        prompt_message='Do you want to secure the flow?',
+        choices=[
+            {'name': '⛔ no', 'value': False},
+            {'name': '✅ yes', 'value': True},
+        ],
+        **kwargs,
+    )
+    return user_input.secured
+
+
+def _configure_additional_user(user_input: UserInput, **kwargs):
+    user_input.additional_user = _prompt_value(
+        name='additional_user',
+        prompt_message='Do you want to provide additional users access to this flow?',
+        choices=[
+            {'name': '⛔ no', 'value': False},
+            {'name': '✅ yes', 'value': True},
+        ],
+        **kwargs,
+    )
+    return user_input.additional_user
+
+
+def _configure_email_ids(user_input: UserInput, **kwargs):
+    email_ids = _prompt_value(
+        name='email_ids',
+        prompt_message='Please enter the list of Email IDs(comma separated) who will have access to this flow',
+        prompt_type='input',
+        **kwargs,
+    )
+    user_input.email_ids = [nick_names.split(',') if nick_names else []]
 
 
 def _construct_local_cluster_choices(active_context, contexts):

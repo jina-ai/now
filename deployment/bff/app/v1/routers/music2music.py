@@ -24,12 +24,15 @@ def index(data: NowMusicIndexRequestModel):
     `base64` encoded using human-readable characters - `utf-8`.
     """
     index_docs = DocumentArray()
+    jwt = data.jwt
     for audio, tags in zip(data.songs, data.tags):
         base64_bytes = audio.encode('utf-8')
         message = base64.decodebytes(base64_bytes)
         index_docs.append(Document(blob=message, tags=tags))
 
-    get_jina_client(data.host, data.port).post('/index', index_docs)
+    get_jina_client(data.host, data.port).post(
+        '/index', index_docs, parameters={'jwt': jwt}
+    )
 
 
 @router.post(
@@ -43,7 +46,10 @@ def search(data: NowMusicSearchRequestModel):
     using human-readable characters - `utf-8`. In the case of music, the docs are already the matches.
     """
     query_doc = process_query(blob=data.song)
+    jwt = data.jwt
     docs = get_jina_client(data.host, data.port).post(
-        '/search', query_doc, parameters={"limit": data.limit}
+        '/search',
+        query_doc,
+        parameters={"limit": data.limit, 'jwt': jwt},
     )
     return docs.to_dict()

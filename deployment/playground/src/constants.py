@@ -7,6 +7,8 @@ class Parameters:
     input_modality: str
     output_modality: str
     data: str
+    code: str = None
+    state: str = None
 
 
 WEBRTC_CLIENT_SETTINGS = ClientSettings(
@@ -64,3 +66,5 @@ BUTTONS = {
                   class="fb-xfbml-parse-ignore">Share</a></div>
             """,
 }
+
+COOKIE_NAME = 'JinaNOW'

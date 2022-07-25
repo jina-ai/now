@@ -25,3 +25,6 @@ class UserInput:
     cluster: Optional[str] = None
     create_new_cluster: Optional[bool] = False
     deployment_type: Optional[str] = None
+    secured: Optional[bool] = False
+    additional_user: Optional[bool] = False
+    email_ids: Optional[str] = None

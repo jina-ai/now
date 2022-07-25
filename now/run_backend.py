@@ -1,6 +1,8 @@
+import json
 import os
 import pathlib
 import tempfile
+from os.path import expanduser as user
 from typing import Dict, Optional, Tuple
 
 from docarray import DocumentArray
@@ -50,8 +52,19 @@ def finetune_flow_setup(
 
     app_instance.set_flow_yaml(finetuning=finetuning)
 
+    email_ids = None
+    if user_input.secured:
+        with open(user('~/.jina/config.json')) as f:
+            cont = json.load(f)
+            user_token = cont['auth_token']
+        email_ids = ''  # Need to get this solved from hubble side
+
     env = get_custom_env_file(
-        finetune_settings, encoder_uses, encoder_uses_with, indexer_uses
+        finetune_settings,
+        encoder_uses,
+        encoder_uses_with,
+        indexer_uses,
+        email_ids,
     )
     return env
 
@@ -99,6 +112,7 @@ def get_custom_env_file(
     encoder_uses: str,
     encoder_uses_with: Dict,
     indexer_uses: str,
+    email_ids: str,
 ):
     indexer_name = f'jinahub+docker://' + indexer_uses
     encoder_name = f'jinahub+docker://' + encoder_uses
@@ -114,6 +128,7 @@ def get_custom_env_file(
         'PRE_TRAINED_EMBEDDINGS_SIZE': pre_trained_embedding_size,
         'INDEXER_NAME': indexer_name,
         'PREFETCH': PREFETCH_NR,
+        'EMAIL_IDS': email_ids,
     }
     if encoder_uses_with.get('pretrained_model_name_or_path'):
         config['PRE_TRAINED_MODEL_NAME'] = encoder_uses_with[
